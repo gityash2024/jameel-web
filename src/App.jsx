@@ -11,6 +11,8 @@ import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import NotFound from './pages/NotFound';
+import HomeErraring from './pages/HomeErraring';
+import Homepayment from './pages/Homepayment';
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
+          <Route path="home-erraring" element={<HomeErraring />} />
+          <Route path="home-payment" element={<Homepayment />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
