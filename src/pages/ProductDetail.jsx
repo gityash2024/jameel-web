@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { Heart, ChevronDown, ChevronUp, Diamond } from 'lucide-react';
-import ring_1 from '../assets/ring_1.svg';
-import ring_2 from '../assets/ring_2.svg';
-import ring_3 from '../assets/ring_3.svg';
-import ring_4 from '../assets/ring_4.svg';
-import ring_5 from '../assets/ring_5.svg';
-import ring_6 from '../assets/ring_6.svg';
+import React, { useState } from "react";
+import styled from "styled-components";
+import { Heart, ChevronDown, ChevronUp, Diamond } from "lucide-react";
+import ring_1 from "../assets/ring_1.svg";
+import ring_2 from "../assets/ring_2.svg";
+import ring_3 from "../assets/ring_3.svg";
+import ring_4 from "../assets/ring_4.svg";
+import ring_5 from "../assets/ring_5.svg";
+import ring_6 from "../assets/ring_6.svg";
 
 const Container = styled.div`
   max-width: 1440px;
@@ -17,11 +17,11 @@ const BreadCrumb = styled.div`
   margin-bottom: 30px;
   font-size: 14px;
   color: #666;
-  
+
   a {
     color: inherit;
     text-decoration: none;
-    
+
     &:hover {
       text-decoration: underline;
     }
@@ -44,7 +44,7 @@ const SearchHelp = styled.div`
   gap: 8px;
   color: #666;
   font-size: 14px;
-  
+
   a {
     color: #000;
     text-decoration: underline;
@@ -65,12 +65,12 @@ const FilterHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
-  
+
   h2 {
     font-size: 20px;
     font-weight: 500;
   }
-  
+
   button {
     background: none;
     border: none;
@@ -101,7 +101,7 @@ const ProductCard = styled.div`
     width: 100%;
     padding-bottom: 100%;
     margin-bottom: 12px;
-    
+
     img {
       position: absolute;
       top: 0;
@@ -156,19 +156,19 @@ const PriceInfo = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  
+
   .current-price {
     font-size: 16px;
     font-weight: bold;
     color: #000;
   }
-  
+
   .original-price {
     text-decoration: line-through;
     color: #666;
     font-size: 14px;
   }
-  
+
   .discount {
     background: #e8f4f0;
     padding: 2px 8px;
@@ -177,117 +177,20 @@ const PriceInfo = styled.div`
   }
 `;
 
-
-
-
-// const ProductCard = styled.div`
-//   border: 1px solid #eee;
-//   padding: 24px;
-//   position: relative;
-//   display: flex;
-//   flex-direction: column;
-//   height: 100%;
-//   transition: box-shadow 0.3s ease;
-
-//   &:hover {
-//     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-//   }
-  
-//   .image-container {
-//     position: relative;
-//     width: 100%;
-//     padding-bottom: 100%;
-//     margin-bottom: 20px;
-    
-//     img {
-//       position: absolute;
-//       top: 0;
-//       left: 0;
-//       width: 100%;
-//       height: 100%;
-//       object-fit: contain;
-//     }
-//   }
-// `;
-
-// const FeaturedTag = styled.div`
-//   position: absolute;
-//   top: 20px;
-//   right: 50px;
-//   font-size: 12px;
-//   color: #666;
-//   background: white;
-//   padding: 4px 8px;
-//   border-radius: 2px;
-//   z-index: 1;
-// `;
-
-// const WishlistButton = styled.button`
-//   position: absolute;
-//   top: 16px;
-//   right: 16px;
-//   background: white;
-//   border: none;
-//   cursor: pointer;
-//   padding: 6px;
-//   border-radius: 50%;
-//   z-index: 1;
-  
-//   &:hover {
-//     background: #f5f5f5;
-//   }
-// `;
-
-// const ProductTitle = styled.h3`
-//   font-size: 14px;
-//   line-height: 1.4;
-//   margin-bottom: 16px;
-//   flex-grow: 1;
-//   color: #333;
-// `;
-
-// const PriceInfo = styled.div`
-//   display: flex;
-//   align-items: center;
-//   gap: 12px;
-  
-//   .current-price {
-//     font-size: 18px;
-//     font-weight: bold;
-//     color: #000;
-//   }
-  
-//   .original-price {
-//     text-decoration: line-through;
-//     color: #666;
-//     font-size: 14px;
-//   }
-  
-//   .discount {
-//     background: #e8f4f0;
-//     padding: 4px 8px;
-//     border-radius: 4px;
-//     font-size: 12px;
-//     color: #000;
-//   }
-// `;
-
-
-
 const PriceRange = styled.div`
   margin: 15px 0;
-  
+
   .slider-container {
     margin: 20px 0;
     position: relative;
   }
-  
+
   .range-inputs {
     display: flex;
     gap: 10px;
     margin-top: 15px;
   }
-  
+
   input[type="number"] {
     width: 100px;
     padding: 8px;
@@ -313,74 +216,9 @@ const PriceRange = styled.div`
     cursor: pointer;
   }
 `;
-
-// const ProductGrid = styled.div`
-//   display: grid;
-//   grid-template-columns: repeat(3, 1fr);
-//   gap: 24px;
-// `;
-
-// const ProductCard = styled.div`
-//   border: 1px solid #eee;
-//   padding: 20px;
-//   position: relative;
-  
-//   img {
-//     width: 100%;
-//     height: auto;
-//     margin-bottom: 15px;
-//   }
-// `;
-
-// const FeaturedTag = styled.div`
-//   position: absolute;
-//   top: 20px;
-//   right: 50px;
-//   font-size: 12px;
-//   color: #666;
-// `;
-
-// const WishlistButton = styled.button`
-//   position: absolute;
-//   top: 15px;
-//   right: 15px;
-//   background: none;
-//   border: none;
-//   cursor: pointer;
-//   padding: 5px;
-// `;
-
-// const ProductTitle = styled.h3`
-//   font-size: 14px;
-//   line-height: 1.4;
-//   margin-bottom: 15px;
-// `;
-
-// const PriceInfo = styled.div`
-//   display: flex;
-//   align-items: center;
-//   gap: 10px;
-  
-//   .current-price {
-//     font-size: 18px;
-//     font-weight: bold;
-//   }
-  
-//   .original-price {
-//     text-decoration: line-through;
-//     color: #666;
-//   }
-  
-//   .discount {
-//     background: #e8f4f0;
-//     padding: 4px 8px;
-//     border-radius: 4px;
-//     font-size: 12px;
-//   }
-// `;
 const FilterOptions = styled.div`
   padding: 8px 0;
-  display: ${props => props.isOpen ? 'block' : 'none'};
+  display: ${(props) => (props.isOpen ? "block" : "none")};
   transition: all 0.3s ease;
 `;
 
@@ -389,13 +227,13 @@ const FilterOption = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  
+
   input[type="checkbox"] {
     width: 16px;
     height: 16px;
     cursor: pointer;
   }
-  
+
   label {
     font-size: 14px;
     color: #666;
@@ -413,7 +251,7 @@ const FilterTitle = styled.div`
   align-items: center;
   cursor: pointer;
   padding: 4px 0;
-  
+
   h3 {
     font-size: 16px;
     color: #333;
@@ -426,7 +264,7 @@ const FilterTitle = styled.div`
 
 const PriceRangeContent = styled.div`
   padding: 16px 0;
-  display: ${props => props.isOpen ? 'block' : 'none'};
+  display: ${(props) => (props.isOpen ? "block" : "none")};
 `;
 
 const InputGroup = styled.div`
@@ -451,7 +289,7 @@ const RangeInput = styled.input`
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   font-size: 16px;
-  
+
   &:focus {
     outline: none;
     border-color: #999;
@@ -482,11 +320,11 @@ const RangeSlider = styled.div`
     position: absolute;
     top: -7px;
     cursor: pointer;
-    
+
     &:first-of-type {
       left: 0;
     }
-    
+
     &:last-of-type {
       right: 0;
     }
@@ -506,175 +344,182 @@ const ProductDetail = () => {
 
   const filterCategories = [
     {
-      id: 'offersDiscounts',
-      title: 'Offers & Discounts',
-      options: ['On Sale', 'New Arrivals', 'Limited Time']
+      id: "offersDiscounts",
+      title: "Offers & Discounts",
+      options: ["On Sale", "New Arrivals", "Limited Time"],
     },
     {
-      id: 'gender',
-      title: 'Gender',
-      options: ['Men', 'Women', 'Unisex']
+      id: "gender",
+      title: "Gender",
+      options: ["Men", "Women", "Unisex"],
     },
     {
-      id: 'style',
-      title: 'Style',
-      options: ['Classic', 'Modern', 'Vintage', 'Contemporary']
+      id: "style",
+      title: "Style",
+      options: ["Classic", "Modern", "Vintage", "Contemporary"],
     },
     {
-      id: 'ringSize',
-      title: 'Ring Size',
-      options: ['4', '5', '6', '7', '8', '9', '10', '11', '12']
+      id: "ringSize",
+      title: "Ring Size",
+      options: ["4", "5", "6", "7", "8", "9", "10", "11", "12"],
     },
     {
-      id: 'ringStyle',
-      title: 'Ring Style',
-      options: ['Solitaire', 'Halo', 'Three Stone', 'Eternity', 'Vintage']
+      id: "ringStyle",
+      title: "Ring Style",
+      options: ["Solitaire", "Halo", "Three Stone", "Eternity", "Vintage"],
     },
     {
-      id: 'metalColor',
-      title: 'Metal Color',
-      options: ['Yellow Gold', 'White Gold', 'Rose Gold', 'Platinum']
+      id: "metalColor",
+      title: "Metal Color",
+      options: ["Yellow Gold", "White Gold", "Rose Gold", "Platinum"],
     },
     {
-      id: 'metalType',
-      title: 'Metal Type',
-      options: ['10K Gold', '14K Gold', '18K Gold', 'Platinum']
+      id: "metalType",
+      title: "Metal Type",
+      options: ["10K Gold", "14K Gold", "18K Gold", "Platinum"],
     },
     {
-      id: 'goldKarat',
-      title: 'Gold Karat',
-      options: ['10K', '14K', '18K', '22K']
+      id: "goldKarat",
+      title: "Gold Karat",
+      options: ["10K", "14K", "18K", "22K"],
     },
     {
-      id: 'stoneType',
-      title: 'Stone Type',
-      options: ['Diamond', 'Sapphire', 'Ruby', 'Emerald']
+      id: "stoneType",
+      title: "Stone Type",
+      options: ["Diamond", "Sapphire", "Ruby", "Emerald"],
     },
     {
-      id: 'stoneShape',
-      title: 'Stone Shape',
-      options: ['Round', 'Princess', 'Oval', 'Cushion', 'Pear']
+      id: "stoneShape",
+      title: "Stone Shape",
+      options: ["Round", "Princess", "Oval", "Cushion", "Pear"],
     },
     {
-      id: 'stoneColor',
-      title: 'Stone Color',
-      options: ['White', 'Blue', 'Pink', 'Yellow', 'Green']
+      id: "stoneColor",
+      title: "Stone Color",
+      options: ["White", "Blue", "Pink", "Yellow", "Green"],
     },
     {
-      id: 'stoneNature',
-      title: 'Stone Nature',
-      options: ['Natural', 'Lab-Created']
+      id: "stoneNature",
+      title: "Stone Nature",
+      options: ["Natural", "Lab-Created"],
     },
     {
-      id: 'pearlType',
-      title: 'Pearl Type',
-      options: ['Freshwater', 'Akoya', 'South Sea', 'Tahitian']
+      id: "pearlType",
+      title: "Pearl Type",
+      options: ["Freshwater", "Akoya", "South Sea", "Tahitian"],
     },
     {
-      id: 'collections',
-      title: 'Collections',
-      options: ['Bridal', 'Fashion', 'Designer', 'Classic']
+      id: "collections",
+      title: "Collections",
+      options: ["Bridal", "Fashion", "Designer", "Classic"],
     },
     {
-      id: 'caratRange',
-      title: 'Carat Range',
-      options: ['0.25-0.50', '0.50-1.00', '1.00-2.00', '2.00+']
+      id: "caratRange",
+      title: "Carat Range",
+      options: ["0.25-0.50", "0.50-1.00", "1.00-2.00", "2.00+"],
     },
     {
-      id: 'centerStoneWeight',
-      title: 'Center Stone Total Weight',
-      options: ['Under 0.50', '0.50-1.00', '1.00-2.00', 'Over 2.00']
+      id: "centerStoneWeight",
+      title: "Center Stone Total Weight",
+      options: ["Under 0.50", "0.50-1.00", "1.00-2.00", "Over 2.00"],
     },
     {
-      id: 'customerRating',
-      title: 'Customer Rating',
-      options: ['★★★★★', '★★★★☆ & up', '★★★☆☆ & up']
+      id: "customerRating",
+      title: "Customer Rating",
+      options: ["★★★★★", "★★★★☆ & up", "★★★☆☆ & up"],
     },
     {
-      id: 'certifies',
-      title: 'Certifies',
-      options: ['IGI Certified', 'GIA Certified', 'AGS Certified']
+      id: "certifies",
+      title: "Certifies",
+      options: ["IGI Certified", "GIA Certified", "AGS Certified"],
     },
     {
-      id: 'subCollections',
-      title: 'Sub Collections',
-      options: ['Wedding', 'Anniversary', 'Engagement', 'Fashion']
-    }
+      id: "subCollections",
+      title: "Sub Collections",
+      options: ["Wedding", "Anniversary", "Engagement", "Fashion"],
+    },
   ];
 
   const products = [
     {
       id: 1,
       image: ring_1,
-      title: "Memories, Moments, Magic Princess-Cut Diamond Three-Stone Engagement Ring 1 ct tw 10K White Gold",
+      title:
+        "Memories, Moments, Magic Princess-Cut Diamond Three-Stone Engagement Ring 1 ct tw 10K White Gold",
       currentPrice: 149.99,
-      originalPrice: 199.00,
+      originalPrice: 199.0,
       discount: "25% off",
-      featured: true
+      featured: true,
     },
     {
       id: 2,
       image: ring_2,
-      title: "Memories, Moments, Magic Princess-Cut Diamond Three-Stone Engagement Ring 1 ct tw 10K White Gold",
+      title:
+        "Memories, Moments, Magic Princess-Cut Diamond Three-Stone Engagement Ring 1 ct tw 10K White Gold",
       currentPrice: 149.99,
-      originalPrice: 199.00,
+      originalPrice: 199.0,
       discount: "25% off",
-      featured: true
+      featured: true,
     },
     {
       id: 3,
       image: ring_3,
-      title: "Memories, Moments, Magic Princess-Cut Diamond Three-Stone Engagement Ring 1 ct tw 10K White Gold",
+      title:
+        "Memories, Moments, Magic Princess-Cut Diamond Three-Stone Engagement Ring 1 ct tw 10K White Gold",
       currentPrice: 149.99,
-      originalPrice: 199.00,
+      originalPrice: 199.0,
       discount: "25% off",
-      featured: true
+      featured: true,
     },
     {
       id: 4,
       image: ring_4,
-      title: "Memories, Moments, Magic Princess-Cut Diamond Three-Stone Engagement Ring 1 ct tw 10K White Gold",
+      title:
+        "Memories, Moments, Magic Princess-Cut Diamond Three-Stone Engagement Ring 1 ct tw 10K White Gold",
       currentPrice: 149.99,
-      originalPrice: 199.00,
+      originalPrice: 199.0,
       discount: "25% off",
-      featured: true
+      featured: true,
     },
     {
       id: 5,
       image: ring_5,
-      title: "Memories, Moments, Magic Princess-Cut Diamond Three-Stone Engagement Ring 1 ct tw 10K White Gold",
+      title:
+        "Memories, Moments, Magic Princess-Cut Diamond Three-Stone Engagement Ring 1 ct tw 10K White Gold",
       currentPrice: 149.99,
-      originalPrice: 199.00,
+      originalPrice: 199.0,
       discount: "25% off",
-      featured: true
+      featured: true,
     },
     {
       id: 6,
       image: ring_6,
-      title: "Memories, Moments, Magic Princess-Cut Diamond Three-Stone Engagement Ring 1 ct tw 10K White Gold",
+      title:
+        "Memories, Moments, Magic Princess-Cut Diamond Three-Stone Engagement Ring 1 ct tw 10K White Gold",
       currentPrice: 149.99,
-      originalPrice: 199.00,
+      originalPrice: 199.0,
       discount: "25% off",
-      featured: true
+      featured: true,
     },
   ];
 
   const toggleFilter = (filterId) => {
-    setOpenFilters(prev => ({
+    setOpenFilters((prev) => ({
       ...prev,
-      [filterId]: !prev[filterId]
+      [filterId]: !prev[filterId],
     }));
   };
 
   return (
     <Container>
-       <BreadCrumb>
+      <BreadCrumb>
         <a href="/">Home</a> / <a href="/rings">Rings</a> / New Arrival Rings
       </BreadCrumb>
       <PageHeader>
         <Title>New Arrivals Rings</Title>
         <SearchHelp>
-          <Diamond size={16} /> 506 results too many? Our Jewelry Assistant can help! 
+          <Diamond size={16} /> 506 results too many? Our Jewelry Assistant can
+          help!
           <a href="#">Describe what you're looking for?</a>
         </SearchHelp>
       </PageHeader>
@@ -685,15 +530,19 @@ const ProductDetail = () => {
             <button onClick={() => setOpenFilters({})}>Reset</button>
           </FilterHeader>
 
-          {filterCategories.map(category => (
+          {filterCategories.map((category) => (
             <FilterSection key={category.id}>
               <FilterTitle onClick={() => toggleFilter(category.id)}>
                 <h3>{category.title}</h3>
-                {openFilters[category.id] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                {openFilters[category.id] ? (
+                  <ChevronUp size={16} />
+                ) : (
+                  <ChevronDown size={16} />
+                )}
               </FilterTitle>
-              
+
               <FilterOptions isOpen={openFilters[category.id]}>
-                {category.options.map(option => (
+                {category.options.map((option) => (
                   <FilterOption key={option}>
                     <input type="checkbox" id={option} />
                     <label htmlFor={option}>{option}</label>
@@ -702,76 +551,89 @@ const ProductDetail = () => {
               </FilterOptions>
             </FilterSection>
           ))}
-          
+
           <FilterSection>
-          <FilterTitle onClick={() => toggleFilter('price')}>
-    <h3>Price</h3>
-    {openFilters.price ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-  </FilterTitle>
+            <FilterTitle onClick={() => toggleFilter("price")}>
+              <h3>Price</h3>
+              {openFilters.price ? (
+                <ChevronUp size={16} />
+              ) : (
+                <ChevronDown size={16} />
+              )}
+            </FilterTitle>
             <PriceRangeContent isOpen={openFilters.price}>
-    <InputGroup>
-      <InputRow>
-        <div>
-          <InputLabel>Min. Amount</InputLabel>
-          <RangeInput
-            type="number"
-            value={priceRange.min}
-            onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
-            placeholder="125"
-          />
-        </div>
-        <div>
-          <InputLabel>Min. Amount</InputLabel>
-          <RangeInput
-            type="number"
-            value={priceRange.max}
-            onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
-            placeholder="125"
-          />
-        </div>
-      </InputRow>
-    </InputGroup>
-    
-    <RangeSlider>
-      <div className="track" />
-      <div className="handle" />
-      <div className="handle" />
-    </RangeSlider>
-    
-    <RangeValues>
-      <span>10245.00</span>
-      <span>10245.00</span>
-    </RangeValues>
-  </PriceRangeContent>
+              <InputGroup>
+                <InputRow>
+                  <div>
+                    <InputLabel>Min. Amount</InputLabel>
+                    <RangeInput
+                      type="number"
+                      value={priceRange.min}
+                      onChange={(e) =>
+                        setPriceRange((prev) => ({
+                          ...prev,
+                          min: e.target.value,
+                        }))
+                      }
+                      placeholder="125"
+                    />
+                  </div>
+                  <div>
+                    <InputLabel>Min. Amount</InputLabel>
+                    <RangeInput
+                      type="number"
+                      value={priceRange.max}
+                      onChange={(e) =>
+                        setPriceRange((prev) => ({
+                          ...prev,
+                          max: e.target.value,
+                        }))
+                      }
+                      placeholder="125"
+                    />
+                  </div>
+                </InputRow>
+              </InputGroup>
+
+              <RangeSlider>
+                <div className="track" />
+                <div className="handle" />
+                <div className="handle" />
+              </RangeSlider>
+
+              <RangeValues>
+                <span>10245.00</span>
+                <span>10245.00</span>
+              </RangeValues>
+            </PriceRangeContent>
           </FilterSection>
         </FilterSidebar>
 
         <ProductGrid>
-  {products.map(product => (
-    <ProductCard key={product.id}>
-      <ProductHeader>
-        <FeaturedTag>Featured Item</FeaturedTag>
-        <WishlistButton>
-          <Heart size={18} />
-        </WishlistButton>
-      </ProductHeader>
-      
-      <div className="image-container">
-        <img src={product.image} alt={product.title} />
-      </div>
-      
-      <ProductTitle>{product.title}</ProductTitle>
-      <SaleTag>Sale</SaleTag>
-      
-      <PriceInfo>
-        <span className="current-price">${product.currentPrice}</span>
-        <span className="original-price">${product.originalPrice}</span>
-        <span className="discount">{product.discount}</span>
-      </PriceInfo>
-    </ProductCard>
-  ))}
-</ProductGrid>
+          {products.map((product) => (
+            <ProductCard key={product.id}>
+              <ProductHeader>
+                <FeaturedTag>Featured Item</FeaturedTag>
+                <WishlistButton>
+                  <Heart size={18} />
+                </WishlistButton>
+              </ProductHeader>
 
+              <div className="image-container">
+                <img src={product.image} alt={product.title} />
+              </div>
+
+              <ProductTitle>{product.title}</ProductTitle>
+              <SaleTag>Sale</SaleTag>
+
+              <PriceInfo>
+                <span className="current-price">${product.currentPrice}</span>
+                <span className="original-price">${product.originalPrice}</span>
+                <span className="discount">{product.discount}</span>
+              </PriceInfo>
+            </ProductCard>
+          ))}
+        </ProductGrid>
       </MainGrid>
     </Container>
   );

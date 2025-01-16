@@ -164,48 +164,6 @@ const DiscountBanner = styled.div`
   z-index: 1;
 `;
 
-// const SalesGrid = styled.div`
-//   display: grid;
-//   grid-template-columns: 1fr 1fr;
-//   gap: 20px;
-//   padding: 0 20px;
-//   margin-bottom: 40px;
-// `;
-
-// const SalesCard = styled.div`
-//   margin-top: 20px;
-// `;
-
-// const Price = styled.div`
-//   color: #E10002;
-//   font-size: 32px;
-//   font-weight: bold;
-// `;
-
-// const ShopButton = styled.button`
-//   background: #000;
-//   color: #fff;
-//   padding: 12px 30px;
-//   border: none;
-//   margin-top: 20px;
-//   cursor: pointer;
-//   transition: background 0.3s ease;
-//   &:hover {
-//     background: #333;
-//   }
-// `;
-
-// const MariahSection = styled.div`
-//   display: grid;
-//   grid-template-columns: 1fr 1fr;
-//   margin-bottom: 60px;
-//   img {
-//     width: 100%;
-//     height: 100%;
-//     object-fit: cover;
-//   }
-// `;
-
 const MariahContent = styled.div`
   background: #000;
   color: #fff;
@@ -214,19 +172,6 @@ const MariahContent = styled.div`
   flex-direction: column;
   justify-content: center;
 `;
-
-// const OrderButton = styled.button`
-//   background: #fff;
-//   color: #000;
-//   padding: 15px 30px;
-//   border: none;
-//   width: fit-content;
-//   cursor: pointer;
-//   &:hover {
-//     background: #f0f0f0;
-//   }
-// `;
-
 const SalesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
