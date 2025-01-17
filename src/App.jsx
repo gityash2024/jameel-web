@@ -14,6 +14,7 @@ import Homepayment from './pages/Homepayment';
 import Productstwo from './pages/Productstwo';
 import Collection from './pages/Collection';
 import CollectionTwo from './pages/CollectionTwo';
+import BookingAppoiment from './pages/BookingAppoiment';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="productstwo" element={<Productstwo />} />
           <Route path="collection" element={<Collection />} />
           <Route path="collectiontwo" element={<CollectionTwo />} />
+          <Route path="booking-appoinment" element={<BookingAppoiment />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
