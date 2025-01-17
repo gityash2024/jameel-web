@@ -15,6 +15,10 @@ import Productstwo from './pages/Productstwo';
 import Collection from './pages/Collection';
 import CollectionTwo from './pages/CollectionTwo';
 import BookingAppoiment from './pages/BookingAppoiment';
+import BlogsOne from './pages/BlogsOne';
+import BlogsTwo from './pages/BlogsTwo';
+import BlogsThree from './pages/BlogsThree';
+import BlogsFour from './pages/BlogsFour';
 
 function App() {
   return (
@@ -35,6 +39,10 @@ function App() {
           <Route path="collection" element={<Collection />} />
           <Route path="collectiontwo" element={<CollectionTwo />} />
           <Route path="booking-appoinment" element={<BookingAppoiment />} />
+          <Route path="blogs-one" element={<BlogsOne />} />
+          <Route path="blogs-two" element={<BlogsTwo />} />
+          <Route path="blogs-three" element={<BlogsThree />} />
+          <Route path="blogs-four" element={<BlogsFour />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
