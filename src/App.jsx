@@ -19,6 +19,9 @@ import BlogsOne from './pages/BlogsOne';
 import BlogsTwo from './pages/BlogsTwo';
 import BlogsThree from './pages/BlogsThree';
 import BlogsFour from './pages/BlogsFour';
+import Ring from './pages/Ring';
+import CustomJewelry from './pages/CustomJewelry';
+import SignUp from './pages/SignUp';
 
 function App() {
   return (
@@ -32,6 +35,7 @@ function App() {
           <Route path="checkout" element={<Checkout />} />
           <Route path="profile" element={<Profile />} />
           <Route path="login" element={<Login />} />
+          <Route path="signup" element={<SignUp />} />
           <Route path="register" element={<Register />} />
           <Route path="home-erraring" element={<HomeErraring />} />
           <Route path="home-payment" element={<Homepayment />} />
@@ -43,6 +47,8 @@ function App() {
           <Route path="blogs-two" element={<BlogsTwo />} />
           <Route path="blogs-three" element={<BlogsThree />} />
           <Route path="blogs-four" element={<BlogsFour />} />
+          <Route path="ring" element={<Ring />} />
+          <Route path="custom-jewelry" element={<CustomJewelry />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
