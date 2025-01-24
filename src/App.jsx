@@ -4,7 +4,6 @@ import Home from './pages/Home';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
-import Checkout from './pages/Checkout';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -22,6 +21,18 @@ import BlogsFour from './pages/BlogsFour';
 import Ring from './pages/Ring';
 import CustomJewelry from './pages/CustomJewelry';
 import SignUp from './pages/SignUp';
+import HelpCenter from './pages/HelpCenter';
+import MyOrder from './pages/MyOrder';
+import MyAccount from './pages/MyAccount';
+import CardOption from './pages/CardOption';
+import CardPage from './pages/CardPage';
+import CheckOut from './pages/CheckOut';
+import SearchInStore from './pages/SearchInStore';
+import PaymentHub from './pages/PaymentHub';
+import RepairandMaintances from './pages/RepairandMaintances';
+import Privacy from './pages/Privacy';
+import Termtouse from './pages/termtouse';
+import CustomJewelryTwo from './pages/CustomJewelryTwo';
 
 function App() {
   return (
@@ -32,7 +43,7 @@ function App() {
           <Route path="products" element={<Products />} />
           <Route path="new-arrivals" element={<ProductDetail />} />
           <Route path="cart" element={<Cart />} />
-          <Route path="checkout" element={<Checkout />} />
+          <Route path="checkout" element={<CheckOut />} />
           <Route path="profile" element={<Profile />} />
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<SignUp />} />

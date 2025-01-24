@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import styled from "styled-components";
 import NumberOne from "../assets/NumberOne.svg";
 import allthinkwedding from "../assets/allthinkwedding.svg";
@@ -29,61 +28,6 @@ const Title = styled.h1`
   text-align: center;
   margin-bottom: 2rem;
 `;
-
-// const Section = styled.div`
-//   border: 1px solid #e5e7eb;
-//   border-radius: 0.5rem;
-//   overflow: hidden;
-//   margin-bottom: 1.5rem;
-// `;
-
-// const SectionHeader = styled.button`
-//   width: 100%;
-//   display: flex;
-//   align-items: center;
-//   justify-content: space-between;
-//   padding: 1rem;
-//   background: white;
-//   border: none;
-//   cursor: pointer;
-
-//   &:hover {
-//     background: #f9fafb;
-//   }
-// `;
-
-// const HeaderContent = styled.div`
-//   display: flex;
-//   align-items: center;
-//   gap: 1rem;
-// `;
-
-// const NumberCircle = styled.div`
-//   width: 2rem;
-//   height: 2rem;
-//   background: black;
-//   border-radius: 50%;
-//   color: white;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   font-size: 0.875rem;
-// `;
-
-// const HeaderText = styled.div`
-//   text-align: left;
-// `;
-
-// const HeaderTitle = styled.h2`
-//   font-weight: 600;
-//   margin: 0;
-// `;
-
-// const HeaderSubtitle = styled.p`
-//   color: #6b7280;
-//   font-size: 0.875rem;
-//   margin: 0;
-// `;
 
 const ChevronIcon = styled(ChevronDown)`
   transform: ${props => props.isOpen ? 'rotate(180deg)' : 'rotate(0)'};
