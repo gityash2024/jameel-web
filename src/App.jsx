@@ -60,6 +60,18 @@ function App() {
           <Route path="blogs-four" element={<BlogsFour />} />
           <Route path="ring" element={<Ring />} />
           <Route path="custom-jewelry" element={<CustomJewelry />} />
+          <Route path="custom-jewelrytwo" element={<CustomJewelryTwo />} />
+          <Route path="sign-up" element={<SignUp />} />
+          <Route path="help-center" element={<HelpCenter />} />
+          <Route path="my-order" element={<MyOrder />} />
+          <Route path="my-account" element={<MyAccount />} />
+          <Route path="card-option" element={<CardOption />} />
+          <Route path="card-page" element={<CardPage />} />
+          <Route path="search-in-store" element={<SearchInStore />} />
+          <Route path="payment-hub" element={<PaymentHub />} />
+          <Route path="repair-and-maintances" element={<RepairandMaintances />} />
+          <Route path="privacy" element={<Privacy />} />
+          <Route path="terms-use" element={<Termtouse />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
