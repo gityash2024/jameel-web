@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import HeroSectionimg from '../assets/HeroSectionimg.png';
+import HeroSectionimg from '../assets/HeroSectionimg.jpeg';
 import earlyblackfriday from '../assets/earlyblackfriday.svg';
 import shopnow_1 from '../assets/shopnow_1.svg';
 import shopnow_2 from '../assets/shopnow_2.svg';
@@ -9,6 +9,8 @@ import shopnow_4 from '../assets/shopnow_4.svg';
 import nowsale_1 from '../assets/nowsale_1.svg';
 import nowsale_2 from '../assets/nowsale_2.svg';
 import mariahlogoimg from '../assets/mariahlogoimg.svg';
+import HomeErraring from "../pages/HomeErraring";
+import Homepayment from "../pages/Homepayment";
 
 const Container = styled.div`
   width: 100%;
@@ -489,7 +491,10 @@ const Home = () => {
       </ContentContainer>
     </MariahSection>
 
+    <HomeErraring />
+    <Homepayment />
     </Container>
+
   );
 };
 

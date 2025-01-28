@@ -33,6 +33,8 @@ import RepairandMaintances from './pages/RepairandMaintances';
 import Privacy from './pages/Privacy';
 import Termtouse from './pages/termtouse';
 import CustomJewelryTwo from './pages/CustomJewelryTwo';
+import FAQ from './pages/FAQ';
+import ContactUs from './pages/ContactUs';
 
 function App() {
   return (
@@ -72,6 +74,8 @@ function App() {
           <Route path="repair-and-maintances" element={<RepairandMaintances />} />
           <Route path="privacy" element={<Privacy />} />
           <Route path="terms-use" element={<Termtouse />} />
+          <Route path="faq" element={<FAQ />} />
+          <Route path="contact-us" element={<ContactUs />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
