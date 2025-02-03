@@ -5,6 +5,7 @@ import ring_2 from "../assets/ring_2.svg";
 import ring_3 from "../assets/ring_3.svg";
 import {ChevronLeft, ChevronRight, Share2, Heart, Diamond, Truck, Store,} from "lucide-react";
 import labgrowndiamonds from "../assets/labgrowndiamonds.svg";
+import Productstwo from "./Productstwo";
 
 const PageContainer = styled.div`
   max-width: 1440px;
@@ -426,6 +427,7 @@ const ProductDetail = () => {
             </a>
           </div>
         </ProductDetails>
+        <Productstwo />
       </ProductLayout>
     </PageContainer>
   );

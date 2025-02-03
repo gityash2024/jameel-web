@@ -78,7 +78,7 @@ function App() {
           <Route path="search-in-store" element={<SearchInStore />} />
           <Route path="payment-hub" element={<PaymentHub />} />
           <Route path="repair-and-maintances" element={<RepairandMaintances />} />
-          <Route path="privacy" element={<Privacy />} />about
+          <Route path="privacy" element={<Privacy />} />
           <Route path="terms-use" element={<Termtouse />} />
           <Route path="faq" element={<FAQ />} />
           <Route path="contact-us" element={<ContactUs />} />

@@ -218,7 +218,7 @@ const HomeEarrings = () => {
               <img src={collection.image} alt={`Collection ${index + 1}`} />
               <DiscountText>{collection.discount}</DiscountText>
               <CollectionName>{collection.name}</CollectionName>
-              <StyledButton>SHOP NOW</StyledButton>
+              <StyledButton href="/products">SHOP NOW</StyledButton>
             </ProductCard>
           ))}
         </CollectionGrid>
@@ -238,7 +238,7 @@ const HomeEarrings = () => {
                 ))}
               </StarRating>
               <ReviewText>{review.text} - Cat223</ReviewText>
-              <ReviewLink href="#">Shop Now</ReviewLink>
+              <ReviewLink href="/products">Shop Now</ReviewLink>
             </ReviewCard>
           ))}
         </CustomerGrid>

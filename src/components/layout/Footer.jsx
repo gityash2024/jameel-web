@@ -10,18 +10,18 @@ const Footer = () => {
       items: [
         { name: 'New Arrivals', link: '/new-arrivals' },
         { name: 'Rings', link: '/ring' },
-        { name: 'Bracelet', link: '/bracelet' },
-        { name: 'Necklace', link: '/necklace' },
-        { name: 'Earrings', link: '/earrings' }
+        { name: 'Bracelet', link: '/' },
+        { name: 'Necklace', link: '/' },
+        { name: 'Earrings', link: '/home-erraring' }
       ]
     },
     personalised: {
       title: 'Personalised',
       items: [
-        { name: 'Design Your Own Jewelry', link: '/design-jewelry' },
-        { name: 'Design From Scratch', link: '/design-scratch' },
+        { name: 'Design Your Own Jewelry', link: '/' },
+        { name: 'Design From Scratch', link: '/' },
         { name: 'Personalize & Engrave', link: '/personalized' },
-        { name: 'Virtual Custom Consultations', link: '/consultations' }
+        { name: 'Virtual Custom Consultations', link: '/' }
       ]
     },
     services: {
@@ -36,7 +36,7 @@ const Footer = () => {
     about: {
       title: 'About JSK JEWELERS',
       items: [
-        { name: 'About JSK', link: '/about-us' },
+        { name: 'About JSK', link: '/' },
         { name: 'Book An Appointment', link: '/booking-appoinment' },
         { name: 'Find Your JSK', link: '/find-your-store' },
         { name: 'Blogs', link: '/blogs-one' },
@@ -46,9 +46,9 @@ const Footer = () => {
     quickLinks: {
       title: 'Quick Links',
       items: [
-        { name: 'My Order', link: '/my-order' },
-        { name: 'My Account', link: '/my-account' },
-        { name: 'Wishlist', link: '/wishlist' }
+        { name: 'My Order', link: '/' },
+        { name: 'My Account', link: '/' },
+        { name: 'Wishlist', link: '/' }
       ]
     },
     contact: {

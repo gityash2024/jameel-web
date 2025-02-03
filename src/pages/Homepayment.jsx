@@ -242,7 +242,7 @@ const Homepayment = () => {
             </ServiceCard>
           ))}
         </ServiceGrid>
-        <PromotionLink href="#">PROMOTION TERMS & CONDITIONS</PromotionLink>
+        <PromotionLink href="/terms-use">PROMOTION TERMS & CONDITIONS</PromotionLink>
       </ServiceSection> 
       </>
       )

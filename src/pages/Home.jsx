@@ -535,10 +535,10 @@ const Home = () => {
   ];
 
   const giftCategories = [
-    { title: "FOR HIM", link: "/for-him" },
-    { title: "FOR HER", link: "/for-her" },
-    { title: "GIFTS UNDER $250", link: "/gifts-under-250" },
-    { title: "GIFT GUIDE", link: "/gift-guide" }
+    { title: "FOR HIM", link: "/products" },
+    { title: "FOR HER", link: "/products" },
+    { title: "GIFTS UNDER $250", link: "/products" },
+    { title: "GIFT GUIDE", link: "/products" }
   ];
 
   return (
