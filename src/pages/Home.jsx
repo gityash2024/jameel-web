@@ -18,8 +18,11 @@ const Container = styled.div`
   margin: 0 auto;
   background: #fff;
   padding-top: 40px;
-  margin-top: 20px;
   overflow: hidden;
+
+  @media (max-width: 1200px) {
+    padding-top: 20px;
+  }
 `;
 
 const HeroContainer = styled.div`
@@ -28,10 +31,11 @@ const HeroContainer = styled.div`
   position: relative;
   margin: 0 auto;
   max-width: 1920px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 `;
-
-
-
 
 const HeroImageSection = styled.div`
   position: relative;
@@ -43,6 +47,14 @@ const HeroImageSection = styled.div`
     height: 100%;
     object-fit: cover;
     object-position: center;
+  }
+
+  @media (max-width: 1024px) {
+    height: 500px;
+  }
+
+  @media (max-width: 768px) {
+    height: 400px;
   }
 `;
 
@@ -57,8 +69,14 @@ const BlackFridayOverlay = styled.div`
     height: auto;
     object-fit: contain;
   }
-`;
 
+  @media (max-width: 768px) {
+    bottom: 60px;
+    img {
+      max-width: 160px;
+    }
+  }
+`;
 
 const OfferSection = styled.div`
   background: #E10002;
@@ -66,18 +84,36 @@ const OfferSection = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  @media (max-width: 1024px) {
+    padding: 40px 30px;
+  }
 `;
 
 const OfferContent = styled.div`
   color: white;
   margin-bottom: 60px;
+  
   h1, h2 {
     font-size: 72px;
     font-weight: 700;
     line-height: 1.1;
   }
+  
   h1 {
     margin-bottom: 20px;
+  }
+
+  @media (max-width: 1200px) {
+    h1, h2 {
+      font-size: 56px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    h1, h2 {
+      font-size: 42px;
+    }
   }
 `;
 
@@ -85,6 +121,10 @@ const CategoryGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const CategoryButton = styled.button`
@@ -97,15 +137,25 @@ const CategoryButton = styled.button`
   font-weight: 500;
   cursor: pointer;
   transition: background 0.3s ease;
+  
   &:hover {
     background: #1a1a1a;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+    padding: 12px;
   }
 `;
 
 const InspiredSection = styled.div`
-  padding: 60px 0;
+  padding: 60px 20px;
   text-align: center;
   background: #f8f8f8;
+
+  @media (max-width: 768px) {
+    padding: 40px 15px;
+  }
 `;
 
 const SectionTitle = styled.h2`
@@ -113,6 +163,11 @@ const SectionTitle = styled.h2`
   color: #333;
   margin-bottom: 40px;
   font-weight: 500;
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+    margin-bottom: 30px;
+  }
 `;
 
 const CategoryTags = styled.div`
@@ -123,6 +178,11 @@ const CategoryTags = styled.div`
   padding: 0 40px;
   max-width: 1440px;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 0 20px;
+    gap: 12px;
+  }
 `;
 
 const CategoryTag = styled.button`
@@ -133,8 +193,14 @@ const CategoryTag = styled.button`
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
+  
   &:hover {
     border-color: #999;
+  }
+
+  @media (max-width: 768px) {
+    padding: 12px 20px;
+    font-size: 12px;
   }
 `;
 
@@ -142,12 +208,25 @@ const ProductGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
-  padding: 0 20px;
-  margin: 40px 0;
+  padding: 40px 20px;
+  margin: 0 auto;
+  max-width: 1440px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
 `;
 
 const ProductCard = styled.div`
   position: relative;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
   img {
     width: 100%;
     height: auto;
@@ -164,30 +243,59 @@ const DiscountBanner = styled.div`
   color: #fff;
   padding: 20px;
   z-index: 1;
-`;
-
-const MariahContent = styled.div`
-  background: #000;
-  color: #fff;
-  padding: 60px;
+  height: auto;
+  min-height: 120px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 `;
+
+const DiscountText = styled.div`
+  color: #E10002;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 8px;
+`;
+
+const DiscountDescription = styled.div`
+  font-size: 14px;
+  margin: 8px 0;
+  line-height: 1.4;
+`;
+
+const ShopLink = styled.a`
+  color: white;
+  text-decoration: underline;
+  font-size: 14px;
+  margin-top: 8px;
+  
+  &:hover {
+    opacity: 0.9;
+  }
+`;
+
 const SalesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 30px;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 40px;
-  margin-bottom: 80px;
+  padding: 40px;
+
+  @media (max-width: 1024px) {
+    padding: 20px;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
 `;
 
 const SalesCard = styled.div`
   img {
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: contain;
     margin-bottom: 24px;
   }
@@ -209,6 +317,10 @@ const PriceText = styled.div`
     top: -0.8em;
     position: relative;
   }
+
+  @media (max-width: 768px) {
+    font-size: 28px;
+  }
 `;
 
 const PresetText = styled.div`
@@ -227,6 +339,10 @@ const SaleTitle = styled.h3`
   font-size: 24px;
   font-weight: 500;
   margin-bottom: 24px;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
 `;
 
 const ShopButton = styled.button`
@@ -242,10 +358,15 @@ const ShopButton = styled.button`
     background: #333;
   }
 `;
+
 const GiftsSection = styled.section`
   padding: 80px 40px;
   max-width: 1440px;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 40px 20px;
+  }
 `;
 
 const GiftsTitle = styled.h2`
@@ -254,12 +375,25 @@ const GiftsTitle = styled.h2`
   font-weight: 500;
   margin-bottom: 40px;
   color: #000;
+
+  @media (max-width: 768px) {
+    font-size: 28px;
+    margin-bottom: 30px;
+  }
 `;
 
 const GiftsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const GiftButton = styled.button`
@@ -278,6 +412,11 @@ const GiftButton = styled.button`
   &:hover {
     background: #cc0002;
   }
+
+  @media (max-width: 768px) {
+    padding: 16px 40px;
+    font-size: 14px;
+  }
 `;
 
 const MariahSection = styled.section`
@@ -288,6 +427,14 @@ const MariahSection = styled.section`
   grid-template-columns: 1fr 1fr;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 1024px) {
+    margin: 40px auto;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const ImageContainer = styled.div`
@@ -300,6 +447,14 @@ const ImageContainer = styled.div`
     object-fit: cover;
     object-position: center;
   }
+
+  @media (max-width: 1024px) {
+    height: 500px;
+  }
+
+  @media (max-width: 768px) {
+    height: 400px;
+  }
 `;
 
 const ContentContainer = styled.div`
@@ -309,6 +464,10 @@ const ContentContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
+
+  @media (max-width: 1024px) {
+    padding: 40px;
+  }
 `;
 
 const Title = styled.h2`
@@ -317,6 +476,14 @@ const Title = styled.h2`
   font-weight: 500;
   line-height: 1.2;
   margin-bottom: 20px;
+
+  @media (max-width: 1024px) {
+    font-size: 36px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 32px;
+  }
 `;
 
 const Subtitle = styled.p`
@@ -325,6 +492,11 @@ const Subtitle = styled.p`
   line-height: 1.6;
   margin-bottom: 40px;
   opacity: 0.9;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+    margin-bottom: 30px;
+  }
 `;
 
 const OrderButton = styled.button`
@@ -343,8 +515,12 @@ const OrderButton = styled.button`
     background: #f0f0f0;
     transform: translateY(-2px);
   }
-`;
 
+  @media (max-width: 768px) {
+    padding: 12px 30px;
+    font-size: 14px;
+  }
+`;
 
 const Home = () => {
   const categories = [
@@ -359,33 +535,21 @@ const Home = () => {
   ];
 
   const giftCategories = [
-    {
-      title: "FOR HIM",
-      link: "/for-him"
-    },
-    {
-      title: "FOR HER",
-      link: "/for-her"
-    },
-    {
-      title: "GIFTS UNDER $250",
-      link: "/gifts-under-250"
-    },
-    {
-      title: "GIFT GUIDE",
-      link: "/gift-guide"
-    }
+    { title: "FOR HIM", link: "/for-him" },
+    { title: "FOR HER", link: "/for-her" },
+    { title: "GIFTS UNDER $250", link: "/gifts-under-250" },
+    { title: "GIFT GUIDE", link: "/gift-guide" }
   ];
 
   return (
     <Container>
       <HeroContainer>
-      <HeroImageSection>
-    <img src={HeroSectionimg} alt="Black Friday Hero" />
-    <BlackFridayOverlay>
-      <img src={earlyblackfriday} alt="Early Black Friday" />
-    </BlackFridayOverlay>
-  </HeroImageSection>
+        <HeroImageSection>
+          <img src={HeroSectionimg} alt="Black Friday Hero" />
+          <BlackFridayOverlay>
+            <img src={earlyblackfriday} alt="Early Black Friday" />
+          </BlackFridayOverlay>
+        </HeroImageSection>
 
         <OfferSection>
           <OfferContent>
@@ -413,15 +577,13 @@ const Home = () => {
         {[shopnow_1, shopnow_2, shopnow_3, shopnow_4].map((image, index) => (
           <ProductCard key={index}>
             <DiscountBanner>
-              <div style={{ color: '#E10002', fontSize: '24px', fontWeight: 'bold' }}>
-                40% OFF*
-              </div>
-              <div style={{ fontSize: '14px', margin: '8px 0' }}>
+              <DiscountText>40% OFF*</DiscountText>
+              <DiscountDescription>
                 10K & 14K Gold Jewelry & Chains
-              </div>
-              <a href="/shop" style={{ color: 'white', textDecoration: 'underline' }}>
+              </DiscountDescription>
+              <ShopLink href="/products">
                 SHOP NOW
-              </a>
+              </ShopLink>
             </DiscountBanner>
             <img src={image} alt={`Product ${index + 1}`} />
           </ProductCard>
@@ -429,72 +591,70 @@ const Home = () => {
       </ProductGrid>
 
       <SalesGrid>
-  <div>
-    <SalesCard>
-      <img src={nowsale_1} alt="Black Friday Sale" />
-      <SalesContent>
-        <PriceText>
-          NOW $2,499<sup>99t</sup>
-        </PriceText>
-        <SaveText>SAVE $2,500</SaveText>
-        <SaleTitle>Up to 60% OFF* Black Friday Sales</SaleTitle>
-        <ShopButton>SHOP NOW</ShopButton>
-      </SalesContent>
-    </SalesCard>
-  </div>
-  
-  <div>
-    <SalesCard>
-      <img src={nowsale_2} alt="Stocking Stuffers" />
-      <SalesContent>
-        <PriceText>
-          NOW $2,499<sup>99t</sup>
-        </PriceText>
-        <PresetText>PRE SET</PresetText>
-        <SaveText>SAVE $2,500</SaveText>
-        <SaleTitle>Stocking Suffers</SaleTitle>
-        <ShopButton>SHOP NOW</ShopButton>
-      </SalesContent>
-    </SalesCard>
-  </div>
-</SalesGrid>
+        <div>
+          <SalesCard>
+            <img src={nowsale_1} alt="Black Friday Sale" />
+            <SalesContent>
+              <PriceText>
+                NOW $2,499<sup>99t</sup>
+              </PriceText>
+              <SaveText>SAVE $2,500</SaveText>
+              <SaleTitle>Up to 60% OFF* Black Friday Sales</SaleTitle>
+              <ShopButton href="/products">SHOP NOW</ShopButton>
+            </SalesContent>
+          </SalesCard>
+        </div>
+        
+        <div>
+          <SalesCard>
+            <img src={nowsale_2} alt="Stocking Stuffers" />
+            <SalesContent>
+              <PriceText>
+                NOW $2,499<sup>99t</sup>
+              </PriceText>
+              <PresetText>PRE SET</PresetText>
+              <SaveText>SAVE $2,500</SaveText>
+              <SaleTitle>Stocking Stuffers</SaleTitle>
+              <ShopButton href="/products">SHOP NOW</ShopButton>
+            </SalesContent>
+          </SalesCard>
+        </div>
+      </SalesGrid>
 
-<GiftsSection>
-      <GiftsTitle>Gifts For Everyone On Your List</GiftsTitle>
-      <GiftsGrid>
-        {giftCategories.map((category, index) => (
-          <GiftButton
-            key={index}
-            onClick={() => window.location.href = category.link}
-          >
-            {category.title}
-          </GiftButton>
-        ))}
-      </GiftsGrid>
-    </GiftsSection>
+      <GiftsSection>
+        <GiftsTitle>Gifts For Everyone On Your List</GiftsTitle>
+        <GiftsGrid>
+          {giftCategories.map((category, index) => (
+            <GiftButton
+              key={index}
+              onClick={() => window.location.href = category.link}
+            >
+              {category.title}
+            </GiftButton>
+          ))}
+        </GiftsGrid>
+      </GiftsSection>
 
+      <MariahSection>
+        <ImageContainer>
+          <img src={mariahlogoimg} alt="Mariah's Holiday Collection" />
+        </ImageContainer>
+        
+        <ContentContainer>
+          <Title>
+            Mariah's Holiday<br />
+            Gift Picks
+          </Title>
+          <Subtitle>
+            Unwrap Mariah's handpicked holiday favorites at JSK.
+          </Subtitle>
+          <OrderButton>Order Now</OrderButton>
+        </ContentContainer>
+      </MariahSection>
 
-    <MariahSection>
-      <ImageContainer>
-        <img src={mariahlogoimg} alt="Mariah's Holiday Collection" />
-      </ImageContainer>
-      
-      <ContentContainer>
-        <Title>
-          Mariah's Holiday<br />
-          Gift Picks
-        </Title>
-        <Subtitle>
-          Unwrap Mariah's handpicked holiday favorites at JSK.
-        </Subtitle>
-        <OrderButton>Order Now</OrderButton>
-      </ContentContainer>
-    </MariahSection>
-
-    <HomeErraring />
-    <Homepayment />
+      <HomeErraring />
+      <Homepayment />
     </Container>
-
   );
 };
 
