@@ -20,16 +20,16 @@ const Footer = () => {
       items: [
         { name: 'Design Your Own Jewelry', link: '/design-jewelry' },
         { name: 'Design From Scratch', link: '/design-scratch' },
-        { name: 'Personalize & Engrave', link: '/personalize' },
+        { name: 'Personalize & Engrave', link: '/personalized' },
         { name: 'Virtual Custom Consultations', link: '/consultations' }
       ]
     },
     services: {
       title: 'Our Services',
       items: [
-        { name: 'Payment Options', link: '/payment' },
+        { name: 'Payment Options', link: '/payment-hub' },
         { name: 'Repairs & Maintenance', link: '/repair-and-maintances' },
-        { name: 'JSK Gold Exchange', link: '/gold-exchange' },
+        { name: 'JSK Gold Exchange', link: '/learn-more-about' },
         { name: 'In-Store Appraisals', link: '/appraisals' }
       ]
     },
@@ -38,7 +38,7 @@ const Footer = () => {
       items: [
         { name: 'About JSK', link: '/about-us' },
         { name: 'Book An Appointment', link: '/booking-appoinment' },
-        { name: 'Find Your JSK', link: '/locations' },
+        { name: 'Find Your JSK', link: '/find-your-store' },
         { name: 'Blogs', link: '/blogs-one' },
         { name: "FAQ's", link: '/faq' }
       ]

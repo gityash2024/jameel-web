@@ -40,6 +40,7 @@ import Appraisal from './pages/Appraisal';
 import LearnMoreAbout from './pages/LearnMoreAbout';
 import Findyourstore from './pages/Findyourstore';
 import Personalized from './pages/personalized';
+import Layawaypayment from './pages/Layawaypayment';
 
 function App() {
   return (
@@ -86,6 +87,7 @@ function App() {
           <Route path="learn-more-about" element={<LearnMoreAbout />} />
           <Route path="find-your-store" element={<Findyourstore />} />
           <Route path="personalized" element={<Personalized />} />
+          <Route path="layawaypayment" element={<Layawaypayment />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
