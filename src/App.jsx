@@ -35,6 +35,11 @@ import Termtouse from './pages/termtouse';
 import CustomJewelryTwo from './pages/CustomJewelryTwo';
 import FAQ from './pages/FAQ';
 import ContactUs from './pages/ContactUs';
+import AboutUs from './pages/AboutUs';
+import Appraisal from './pages/Appraisal';
+import LearnMoreAbout from './pages/LearnMoreAbout';
+import Findyourstore from './pages/Findyourstore';
+import Personalized from './pages/personalized';
 
 function App() {
   return (
@@ -72,10 +77,15 @@ function App() {
           <Route path="search-in-store" element={<SearchInStore />} />
           <Route path="payment-hub" element={<PaymentHub />} />
           <Route path="repair-and-maintances" element={<RepairandMaintances />} />
-          <Route path="privacy" element={<Privacy />} />
+          <Route path="privacy" element={<Privacy />} />about
           <Route path="terms-use" element={<Termtouse />} />
           <Route path="faq" element={<FAQ />} />
           <Route path="contact-us" element={<ContactUs />} />
+          <Route path="about-us" element={<AboutUs />} />
+          <Route path="appraisals" element={<Appraisal />} />
+          <Route path="learn-more-about" element={<LearnMoreAbout />} />
+          <Route path="find-your-store" element={<Findyourstore />} />
+          <Route path="personalized" element={<Personalized />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

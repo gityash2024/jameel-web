@@ -9,7 +9,7 @@ const Footer = () => {
       title: 'Our Collections',
       items: [
         { name: 'New Arrivals', link: '/new-arrivals' },
-        { name: 'Rings', link: '/rings' },
+        { name: 'Rings', link: '/ring' },
         { name: 'Bracelet', link: '/bracelet' },
         { name: 'Necklace', link: '/necklace' },
         { name: 'Earrings', link: '/earrings' }
@@ -28,7 +28,7 @@ const Footer = () => {
       title: 'Our Services',
       items: [
         { name: 'Payment Options', link: '/payment' },
-        { name: 'Repairs & Maintenance', link: '/repairs' },
+        { name: 'Repairs & Maintenance', link: '/repair-and-maintances' },
         { name: 'JSK Gold Exchange', link: '/gold-exchange' },
         { name: 'In-Store Appraisals', link: '/appraisals' }
       ]
@@ -36,18 +36,18 @@ const Footer = () => {
     about: {
       title: 'About JSK JEWELERS',
       items: [
-        { name: 'About JSK', link: '/about' },
-        { name: 'Book An Appointment', link: '/appointment' },
+        { name: 'About JSK', link: '/about-us' },
+        { name: 'Book An Appointment', link: '/booking-appoinment' },
         { name: 'Find Your JSK', link: '/locations' },
-        { name: 'Blogs', link: '/blogs' },
-        { name: "FAQ's", link: '/faqs' }
+        { name: 'Blogs', link: '/blogs-one' },
+        { name: "FAQ's", link: '/faq' }
       ]
     },
     quickLinks: {
       title: 'Quick Links',
       items: [
-        { name: 'My Order', link: '/orders' },
-        { name: 'My Account', link: '/account' },
+        { name: 'My Order', link: '/my-order' },
+        { name: 'My Account', link: '/my-account' },
         { name: 'Wishlist', link: '/wishlist' }
       ]
     },
