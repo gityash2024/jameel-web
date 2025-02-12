@@ -41,6 +41,15 @@ import LearnMoreAbout from './pages/LearnMoreAbout';
 import Findyourstore from './pages/Findyourstore';
 import Personalized from './pages/personalized';
 import Layawaypayment from './pages/Layawaypayment';
+import CheckoutPage from './pages/CheckOut';
+import PersonalizedJewelry from './pages/personalized';
+import Favorites from './pages/Favorites';
+import FavoritesRemove from './pages/FavoritesRemove';
+import TrackOrder from './pages/TrackOrder';
+import SavedOrder from './pages/SavedOrder';
+import AddAddress from './pages/AddAddress';
+import AboutUsTwo from './pages/AboutUsTwo';
+
 
 function App() {
   return (
@@ -74,6 +83,8 @@ function App() {
           <Route path="my-order" element={<MyOrder />} />
           <Route path="my-account" element={<MyAccount />} />
           <Route path="card-option" element={<CardOption />} />
+          <Route path="checkout-page" element={<CheckoutPage />} />
+          <Route path="personalized-jewelry" element={<PersonalizedJewelry />} />
           <Route path="card-page" element={<CardPage />} />
           <Route path="search-in-store" element={<SearchInStore />} />
           <Route path="payment-hub" element={<PaymentHub />} />
@@ -88,6 +99,12 @@ function App() {
           <Route path="find-your-store" element={<Findyourstore />} />
           <Route path="personalized" element={<Personalized />} />
           <Route path="layawaypayment" element={<Layawaypayment />} />
+          <Route path="saved-order" element={<SavedOrder />} />
+          <Route path="favorites" element={<Favorites />} />
+          <Route path="favorites-remove" element={<FavoritesRemove />} />
+          <Route path="track-order" element={<TrackOrder />} />
+          <Route path="add-address" element={<AddAddress />} />
+          <Route path="about-us-two" element={<AboutUsTwo />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
