@@ -19,9 +19,13 @@ const Container = styled.div`
   background: #fff;
   padding-top: 40px;
   overflow: hidden;
-
+  
   @media (max-width: 1200px) {
     padding-top: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    padding-top: 16px;
   }
 `;
 
@@ -56,6 +60,10 @@ const HeroImageSection = styled.div`
   @media (max-width: 768px) {
     height: 400px;
   }
+  
+  @media (max-width: 480px) {
+    height: 300px;
+  }
 `;
 
 const BlackFridayOverlay = styled.div`
@@ -72,8 +80,17 @@ const BlackFridayOverlay = styled.div`
 
   @media (max-width: 768px) {
     bottom: 60px;
+    right: 10px;
     img {
       max-width: 160px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    bottom: 40px;
+    right: 5px;
+    img {
+      max-width: 120px;
     }
   }
 `;
@@ -87,6 +104,14 @@ const OfferSection = styled.div`
 
   @media (max-width: 1024px) {
     padding: 40px 30px;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 30px 20px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 24px 16px;
   }
 `;
 
@@ -111,8 +136,16 @@ const OfferContent = styled.div`
   }
 
   @media (max-width: 768px) {
+    margin-bottom: 40px;
     h1, h2 {
       font-size: 42px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 30px;
+    h1, h2 {
+      font-size: 36px;
     }
   }
 `;
@@ -124,6 +157,7 @@ const CategoryGrid = styled.div`
 
   @media (max-width: 480px) {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 `;
 
@@ -144,6 +178,11 @@ const CategoryButton = styled.button`
 
   @media (max-width: 768px) {
     font-size: 16px;
+    padding: 14px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 14px;
     padding: 12px;
   }
 `;
@@ -156,6 +195,10 @@ const InspiredSection = styled.div`
   @media (max-width: 768px) {
     padding: 40px 15px;
   }
+  
+  @media (max-width: 480px) {
+    padding: 30px 12px;
+  }
 `;
 
 const SectionTitle = styled.h2`
@@ -167,6 +210,11 @@ const SectionTitle = styled.h2`
   @media (max-width: 768px) {
     font-size: 24px;
     margin-bottom: 30px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 20px;
+    margin-bottom: 24px;
   }
 `;
 
@@ -182,6 +230,11 @@ const CategoryTags = styled.div`
   @media (max-width: 768px) {
     padding: 0 20px;
     gap: 12px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0 10px;
+    gap: 8px;
   }
 `;
 
@@ -202,75 +255,10 @@ const CategoryTag = styled.button`
     padding: 12px 20px;
     font-size: 12px;
   }
-`;
-
-const ProductGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  padding: 40px 20px;
-  margin: 0 auto;
-  max-width: 1440px;
-
-  @media (max-width: 1200px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
-    padding: 20px;
-  }
-`;
-
-const ProductCard = styled.div`
-  position: relative;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   
-  img {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-`;
-
-const DiscountBanner = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: #000;
-  color: #fff;
-  padding: 20px;
-  z-index: 1;
-  height: auto;
-  min-height: 120px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
-
-const DiscountText = styled.div`
-  color: #E10002;
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 8px;
-`;
-
-const DiscountDescription = styled.div`
-  font-size: 14px;
-  margin: 8px 0;
-  line-height: 1.4;
-`;
-
-const ShopLink = styled.a`
-  color: white;
-  text-decoration: underline;
-  font-size: 14px;
-  margin-top: 8px;
-  
-  &:hover {
-    opacity: 0.9;
+  @media (max-width: 480px) {
+    padding: 10px 16px;
+    font-size: 11px;
   }
 `;
 
@@ -283,12 +271,19 @@ const SalesGrid = styled.div`
   padding: 40px;
 
   @media (max-width: 1024px) {
-    padding: 20px;
+    padding: 30px 20px;
+    gap: 24px;
   }
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     gap: 40px;
+    padding: 24px 16px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 32px;
+    padding: 20px 12px;
   }
 `;
 
@@ -299,11 +294,21 @@ const SalesCard = styled.div`
     object-fit: contain;
     margin-bottom: 24px;
   }
+  
+  @media (max-width: 480px) {
+    img {
+      margin-bottom: 16px;
+    }
+  }
 `;
 
 const SalesContent = styled.div`
   text-align: left;
   padding: 0 20px;
+  
+  @media (max-width: 480px) {
+    padding: 0 12px;
+  }
 `;
 
 const PriceText = styled.div`
@@ -321,18 +326,35 @@ const PriceText = styled.div`
   @media (max-width: 768px) {
     font-size: 28px;
   }
+  
+  @media (max-width: 480px) {
+    font-size: 24px;
+    
+    sup {
+      font-size: 14px;
+    }
+  }
 `;
 
 const PresetText = styled.div`
   font-size: 14px;
   margin-bottom: 4px;
   color: #666;
+  
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
 `;
 
 const SaveText = styled.div`
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 12px;
+  
+  @media (max-width: 480px) {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
 `;
 
 const SaleTitle = styled.h3`
@@ -342,6 +364,12 @@ const SaleTitle = styled.h3`
 
   @media (max-width: 768px) {
     font-size: 20px;
+    margin-bottom: 20px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 18px;
+    margin-bottom: 16px;
   }
 `;
 
@@ -357,6 +385,11 @@ const ShopButton = styled.button`
   &:hover {
     background: #333;
   }
+  
+  @media (max-width: 480px) {
+    padding: 10px 32px;
+    font-size: 13px;
+  }
 `;
 
 const GiftsSection = styled.section`
@@ -366,6 +399,10 @@ const GiftsSection = styled.section`
 
   @media (max-width: 768px) {
     padding: 40px 20px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 32px 16px;
   }
 `;
 
@@ -380,6 +417,11 @@ const GiftsTitle = styled.h2`
     font-size: 28px;
     margin-bottom: 30px;
   }
+  
+  @media (max-width: 480px) {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
 `;
 
 const GiftsGrid = styled.div`
@@ -389,10 +431,12 @@ const GiftsGrid = styled.div`
 
   @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
   }
 
   @media (max-width: 480px) {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 `;
 
@@ -417,6 +461,11 @@ const GiftButton = styled.button`
     padding: 16px 40px;
     font-size: 14px;
   }
+  
+  @media (max-width: 480px) {
+    padding: 14px 32px;
+    font-size: 13px;
+  }
 `;
 
 const MariahSection = styled.section`
@@ -434,6 +483,11 @@ const MariahSection = styled.section`
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
+    margin: 32px auto;
+  }
+  
+  @media (max-width: 480px) {
+    margin: 24px auto;
   }
 `;
 
@@ -455,6 +509,10 @@ const ImageContainer = styled.div`
   @media (max-width: 768px) {
     height: 400px;
   }
+  
+  @media (max-width: 480px) {
+    height: 300px;
+  }
 `;
 
 const ContentContainer = styled.div`
@@ -467,6 +525,14 @@ const ContentContainer = styled.div`
 
   @media (max-width: 1024px) {
     padding: 40px;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 32px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 24px;
   }
 `;
 
@@ -484,6 +550,11 @@ const Title = styled.h2`
   @media (max-width: 768px) {
     font-size: 32px;
   }
+  
+  @media (max-width: 480px) {
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
 `;
 
 const Subtitle = styled.p`
@@ -496,6 +567,11 @@ const Subtitle = styled.p`
   @media (max-width: 768px) {
     font-size: 16px;
     margin-bottom: 30px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 14px;
+    margin-bottom: 24px;
   }
 `;
 
@@ -517,8 +593,99 @@ const OrderButton = styled.button`
   }
 
   @media (max-width: 768px) {
-    padding: 12px 30px;
+    padding: 14px 32px;
     font-size: 14px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 12px 28px;
+    font-size: 13px;
+  }
+`;
+
+const ProductGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 40px 20px;
+  margin: 0 auto;
+  max-width: 1440px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    padding: 20px;
+    gap: 12px;
+  }
+`;
+
+const ProductCard = styled.div`
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+`;
+
+const DiscountBanner = styled.div`
+  background: #000;
+  color: #fff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  
+  @media (max-width: 480px) {
+    padding: 16px;
+    gap: 6px;
+  }
+`;
+
+const DiscountText = styled.div`
+  color: #E10002;
+  font-size: 24px;
+  font-weight: bold;
+  
+  @media (max-width: 480px) {
+    font-size: 20px;
+  }
+`;
+
+const DiscountDescription = styled.div`
+  font-size: 14px;
+  color: #fff;
+  
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
+`;
+
+const ShopLink = styled.a`
+  color: white;
+  text-decoration: underline;
+  font-size: 14px;
+  margin-top: 4px;
+  
+  &:hover {
+    opacity: 0.9;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 12px;
+    margin-top: 3px;
+  }
+`;
+
+const ProductImage = styled.div`
+  width: 100%;
+  
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
   }
 `;
 
@@ -585,7 +752,9 @@ const Home = () => {
                 SHOP NOW
               </ShopLink>
             </DiscountBanner>
-            <img src={image} alt={`Product ${index + 1}`} />
+            <ProductImage>
+              <img src={image} alt={`Product ${index + 1}`} />
+            </ProductImage>
           </ProductCard>
         ))}
       </ProductGrid>
@@ -600,7 +769,7 @@ const Home = () => {
               </PriceText>
               <SaveText>SAVE $2,500</SaveText>
               <SaleTitle>Up to 60% OFF* Black Friday Sales</SaleTitle>
-              <ShopButton href="/products">SHOP NOW</ShopButton>
+              <ShopButton>SHOP NOW</ShopButton>
             </SalesContent>
           </SalesCard>
         </div>
@@ -615,7 +784,7 @@ const Home = () => {
               <PresetText>PRE SET</PresetText>
               <SaveText>SAVE $2,500</SaveText>
               <SaleTitle>Stocking Stuffers</SaleTitle>
-              <ShopButton href="/products">SHOP NOW</ShopButton>
+              <ShopButton>SHOP NOW</ShopButton>
             </SalesContent>
           </SalesCard>
         </div>

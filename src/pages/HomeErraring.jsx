@@ -13,6 +13,10 @@ const Section = styled.section`
   padding: 80px 40px;
   max-width: 1920px;
   margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    padding: 40px 20px;
+  }
 `;
 
 const SectionHeading = styled.h2`
@@ -20,6 +24,11 @@ const SectionHeading = styled.h2`
   font-size: 32px;
   font-weight: 500;
   margin-bottom: 15px;
+  
+  @media (max-width: 768px) {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
 `;
 
 const SubHeading = styled.p`
@@ -27,6 +36,11 @@ const SubHeading = styled.p`
   font-size: 16px;
   color: #333;
   margin-bottom: 30px;
+  
+  @media (max-width: 768px) {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
 `;
 
 const ShopButton = styled.button`
@@ -44,6 +58,12 @@ const ShopButton = styled.button`
   &:hover {
     background: #333;
   }
+  
+  @media (max-width: 768px) {
+    padding: 10px 24px;
+    font-size: 13px;
+    margin-bottom: 40px;
+  }
 `;
 
 const CollectionGrid = styled.div`
@@ -52,6 +72,16 @@ const CollectionGrid = styled.div`
   gap: 30px;
   max-width: 1440px;
   margin: 0 auto;
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
 `;
 
 const CustomerGrid = styled.div`
@@ -60,6 +90,16 @@ const CustomerGrid = styled.div`
   gap: 24px;
   max-width: 1440px;
   margin: 0 auto;
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
 `;
 
 const ProductCard = styled.div`
@@ -70,18 +110,34 @@ const ProductCard = styled.div`
     height: auto;
     margin-bottom: 24px;
   }
+  
+  @media (max-width: 768px) {
+    img {
+      margin-bottom: 16px;
+    }
+  }
 `;
 
 const DiscountText = styled.div`
   font-size: 24px;
   font-weight: 500;
   margin-bottom: 12px;
+  
+  @media (max-width: 768px) {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
 `;
 
 const CollectionName = styled.div`
   font-size: 16px;
   color: #666;
   margin-bottom: 20px;
+  
+  @media (max-width: 768px) {
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
 `;
 
 const StyledButton = styled.button`
@@ -96,6 +152,11 @@ const StyledButton = styled.button`
   &:hover {
     background: #333;
   }
+  
+  @media (max-width: 768px) {
+    padding: 10px 32px;
+    font-size: 13px;
+  }
 `;
 
 const ReviewCard = styled.div`
@@ -106,6 +167,12 @@ const ReviewCard = styled.div`
     height: auto;
     margin-bottom: 20px;
   }
+  
+  @media (max-width: 768px) {
+    img {
+      margin-bottom: 16px;
+    }
+  }
 `;
 
 const StarRating = styled.div`
@@ -113,6 +180,11 @@ const StarRating = styled.div`
   justify-content: center;
   gap: 4px;
   margin-bottom: 16px;
+  
+  @media (max-width: 768px) {
+    gap: 3px;
+    margin-bottom: 12px;
+  }
 `;
 
 const ReviewText = styled.p`
@@ -121,6 +193,12 @@ const ReviewText = styled.p`
   line-height: 1.6;
   margin-bottom: 20px;
   padding: 0 20px;
+  
+  @media (max-width: 768px) {
+    font-size: 13px;
+    padding: 0 12px;
+    margin-bottom: 16px;
+  }
 `;
 
 const ReviewLink = styled.a`
@@ -132,12 +210,21 @@ const ReviewLink = styled.a`
   &:hover {
     color: #333;
   }
+  
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
 `;
+
 const ReviewSection = styled.section`
   padding: 100px 40px 80px;
   max-width: 1920px;
   margin: 0 auto;
   background: #fff;
+  
+  @media (max-width: 768px) {
+    padding: 60px 20px 40px;
+  }
 `;
 
 const ReviewHeading = styled.div`
@@ -156,6 +243,20 @@ const ReviewHeading = styled.div`
     color: #333;
     margin-bottom: 30px;
   }
+  
+  @media (max-width: 768px) {
+    margin-bottom: 40px;
+    
+    h2 {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+    
+    p {
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+  }
 `;
 
 const CustomerReviews = () => {
@@ -173,17 +274,17 @@ const CustomerReviews = () => {
 const HomeEarrings = () => {
   const collections = [
     {
-      image: holidaycollections_1,
+      image: customers_1,
       discount: "20% OFF*",
       name: "Milestones Collection"
     },
     {
-      image: holidaycollections_2,
+      image: customers_2,
       discount: "20% OFF*",
       name: "Milestones Collection"
     },
     {
-      image: holidaycollections_3,
+      image: customers_3,
       discount: "20% OFF*",
       name: "Milestones Collection"
     }

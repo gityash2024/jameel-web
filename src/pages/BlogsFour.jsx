@@ -9,20 +9,34 @@ import blogthree_7 from "../assets/blogthree_7.png";
 const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
+  
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
 `;
 
 const MainTitle = styled.h1`
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
   color: #000;
+  
+  @media (min-width: 768px) {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+  }
 `;
 
 const HeaderImage = styled.div`
   width: 100%;
-  height: 500px;
-  margin-bottom: 2rem;
+  height: 300px;
+  margin-bottom: 1.5rem;
   position: relative;
+  
+  @media (min-width: 768px) {
+    height: 500px;
+    margin-bottom: 2rem;
+  }
   
   img {
     width: 100%;
@@ -33,36 +47,53 @@ const HeaderImage = styled.div`
 
 const MetaInfo = styled.div`
   display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
   color: #666;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
+  
+  @media (min-width: 768px) {
+    gap: 1rem;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+  }
 `;
 
 const IntroSection = styled.div`
   display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 4rem;
-  margin-bottom: 3rem;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+  @media (min-width: 768px) {
+    grid-template-columns: 300px 1fr;
+    gap: 4rem;
+    margin-bottom: 3rem;
   }
 `;
 
 const IntroLinks = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
+  
+  @media (min-width: 768px) {
+    gap: 1rem;
+  }
 `;
 
 const IntroLink = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 1rem;
+  padding-bottom: 0.75rem;
   border-bottom: 1px solid #eee;
   cursor: pointer;
+  
+  @media (min-width: 768px) {
+    padding-bottom: 1rem;
+  }
 
   &:hover {
     opacity: 0.8;
@@ -71,21 +102,36 @@ const IntroLink = styled.div`
 
 const ContentSection = styled.div`
   h2 {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+    
+    @media (min-width: 768px) {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
   }
 
   p {
     color: #444;
-    line-height: 1.8;
-    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    
+    @media (min-width: 768px) {
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
   }
 `;
 
 const ContentImage = styled.div`
   width: 100%;
-  height: 400px;
-  margin: 2rem 0;
+  height: 250px;
+  margin: 1.5rem 0;
+  
+  @media (min-width: 768px) {
+    height: 400px;
+    margin: 2rem 0;
+  }
   
   img {
     width: 100%;
@@ -96,8 +142,13 @@ const ContentImage = styled.div`
 
 const Features = styled.ul`
   list-style: disc;
-  padding-left: 1.5rem;
-  margin: 1.5rem 0;
+  padding-left: 1.25rem;
+  margin: 1.25rem 0;
+  
+  @media (min-width: 768px) {
+    padding-left: 1.5rem;
+    margin: 1.5rem 0;
+  }
   
   li {
     margin-bottom: 0.5rem;
@@ -107,12 +158,17 @@ const Features = styled.ul`
 
 const CommentsButton = styled.button`
   width: 100%;
-  padding: 1rem;
+  padding: 0.875rem;
   background: #000;
   color: white;
   border: none;
-  margin: 2rem 0;
+  margin: 1.5rem 0;
   cursor: pointer;
+  
+  @media (min-width: 768px) {
+    padding: 1rem;
+    margin: 2rem 0;
+  }
 
   &:hover {
     opacity: 0.9;
@@ -120,41 +176,69 @@ const CommentsButton = styled.button`
 `;
 
 const RelatedSection = styled.div`
-  margin-top: 4rem;
+  margin-top: 3rem;
+  
+  @media (min-width: 768px) {
+    margin-top: 4rem;
+  }
 `;
 
 const RelatedTitle = styled.h2`
-  font-size: 2rem;
-  margin-bottom: 2rem;
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
   text-align: center;
+  
+  @media (min-width: 768px) {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
 `;
 
 const RelatedGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
   
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
   }
 `;
 
 const BlogCard = styled.div`
   img {
     width: 100%;
-    height: 250px;
+    height: 200px;
     object-fit: cover;
-    margin-bottom: 1rem;
+    margin-bottom: 0.875rem;
+    
+    @media (min-width: 768px) {
+      height: 250px;
+      margin-bottom: 1rem;
+    }
   }
 
   h3 {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    margin-bottom: 0.375rem;
+    
+    @media (min-width: 768px) {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
   }
 
   p {
     color: #666;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
+    
+    @media (min-width: 768px) {
+      font-size: 0.9rem;
+    }
   }
 `;
 
@@ -163,14 +247,20 @@ const TagContainer = styled.div`
   top: 1rem;
   right: 1rem;
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
 `;
 
 const Tag = styled.span`
   background: white;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   border-radius: 20px;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
+  
+  @media (min-width: 768px) {
+    padding: 0.25rem 1rem;
+    font-size: 0.875rem;
+  }
 `;
 
 const BlogsFour = () => {

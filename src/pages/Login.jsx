@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Routes, Route, Link, useNavigate } from 'react-router-dom';
-import styled from "styled-components";
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -8,11 +7,10 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add login logic here
   };
 
   return (
-    <AuthLayout>
+    <>
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Create an account</h2>
         <button className="text-gray-500 hover:text-gray-700">
@@ -78,9 +76,8 @@ const Login = () => {
           </Link>
         </p>
       </form>
-    </AuthLayout>
+    </>
   );
 };
 
-  
-  export default Login;
+export default Login;

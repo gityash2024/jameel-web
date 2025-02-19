@@ -50,11 +50,27 @@ import SavedOrder from './pages/SavedOrder';
 import AddAddress from './pages/AddAddress';
 import AboutUsTwo from './pages/AboutUsTwo';
 
+const AuthLayout = ({ children }) => {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
+        {children}
+      </div>
+    </div>
+  );
+};
+
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Auth routes without Layout */}
+        <Route path="/login" element={<AuthLayout><Login /></AuthLayout>} />
+        <Route path="/signup" element={<AuthLayout><SignUp /></AuthLayout>} />
+        <Route path="/register" element={<AuthLayout><Register /></AuthLayout>} />
+        
+        {/* Main routes with Layout */}
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="products" element={<Products />} />
@@ -62,9 +78,6 @@ function App() {
           <Route path="cart" element={<Cart />} />
           <Route path="checkout" element={<CheckOut />} />
           <Route path="profile" element={<Profile />} />
-          <Route path="login" element={<Login />} />
-          <Route path="signup" element={<SignUp />} />
-          <Route path="register" element={<Register />} />
           <Route path="home-erraring" element={<HomeErraring />} />
           <Route path="home-payment" element={<Homepayment />} />
           <Route path="productstwo" element={<Productstwo />} />
@@ -78,7 +91,6 @@ function App() {
           <Route path="ring" element={<Ring />} />
           <Route path="custom-jewelry" element={<CustomJewelry />} />
           <Route path="custom-jewelrytwo" element={<CustomJewelryTwo />} />
-          <Route path="sign-up" element={<SignUp />} />
           <Route path="help-center" element={<HelpCenter />} />
           <Route path="my-order" element={<MyOrder />} />
           <Route path="my-account" element={<MyAccount />} />

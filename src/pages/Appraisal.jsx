@@ -6,50 +6,78 @@ import justatyourservice_2 from "../assets/justatyourservice_2.svg";
 import justatyourservice_3 from "../assets/justatyourservice_3.svg";
 import justatyourservice_4 from "../assets/justatyourservice_4.svg";
 
-// Main Container Styles
 const MainWrapper = styled.div`
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
-
   background: #fff;
+  overflow-x: hidden;
 `;
 
 const Container = styled.div`
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 1rem;
+  
+  @media (min-width: 768px) {
+    padding: 0 20px;
+  }
 `;
 
-// Breadcrumb Styles
 const Breadcrumb = styled.div`
-  padding: 16px 0;
+  padding: 12px 0;
   color: #666;
-  font-size: 14px;
+  font-size: 12px;
+  
+  @media (min-width: 768px) {
+    padding: 16px 0;
+    font-size: 14px;
+  }
 `;
 
-// Header Styles
 const HeaderSection = styled.div`
   text-align: center;
-  padding: 20px 0 40px;
+  padding: 16px 0 32px;
+  
+  @media (min-width: 768px) {
+    padding: 20px 0 40px;
+  }
 `;
 
 const MainTitle = styled.h1`
-  font-size: 42px;
+  font-size: 32px;
   font-weight: 700;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  
+  @media (min-width: 768px) {
+    font-size: 42px;
+    margin-bottom: 16px;
+  }
 `;
 
 const SearchBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 40px;
+  gap: 6px;
+  margin-bottom: 32px;
+  padding: 0 1rem;
+  flex-wrap: wrap;
   
   span {
-    font-size: 15px;
+    font-size: 14px;
     color: #333;
+  }
+  
+  @media (min-width: 768px) {
+    gap: 8px;
+    margin-bottom: 40px;
+    padding: 0;
+    
+    span {
+      font-size: 15px;
+    }
   }
 `;
 
@@ -58,17 +86,23 @@ const SearchLink = styled.span`
   cursor: pointer;
 `;
 
-// Appraisal Section Styles
 const AppraisalSection = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  padding: 40px 0;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  padding: 32px 0;
   background: #f8f9fa;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    padding: 40px 0;
+  }
 `;
 
 const ImageContainer = styled.div`
   width: 100%;
+  
   img {
     width: 100%;
     height: 100%;
@@ -80,26 +114,47 @@ const ContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 24px;
-  padding: 20px;
+  gap: 20px;
+  padding: 16px;
+  
+  @media (min-width: 768px) {
+    gap: 24px;
+    padding: 20px;
+  }
 `;
 
 const SectionTitle = styled.h2`
-  font-size: 42px;
+  font-size: 32px;
   font-weight: 700;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  
+  @media (min-width: 768px) {
+    font-size: 42px;
+    margin-bottom: 16px;
+  }
 `;
 
 const Description = styled.p`
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.6;
   color: #333;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  
+  @media (min-width: 768px) {
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
-  gap: 16px;
+  gap: 12px;
+  flex-direction: column;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    gap: 16px;
+  }
 `;
 
 const Button = styled.button`
@@ -109,59 +164,104 @@ const Button = styled.button`
   border: none;
   font-size: 14px;
   cursor: pointer;
+  width: 100%;
   
   &:hover {
     background: #333;
   }
+  
+  @media (min-width: 768px) {
+    width: auto;
+  }
 `;
 
-// Pricing Section Styles
 const PricingSection = styled.div`
-  padding: 80px 0;
+  padding: 60px 0;
   background: #fff;
+  
+  @media (min-width: 768px) {
+    padding: 80px 0;
+  }
 `;
 
 const PricingTitle = styled.h2`
-  font-size: 36px;
+  font-size: 28px;
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 40px;
+  
+  @media (min-width: 768px) {
+    font-size: 36px;
+    margin-bottom: 60px;
+  }
 `;
 
 const PricingGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  
+  @media (min-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
 `;
 
 const PriceCard = styled.div`
   background: #f9fafb;
-  padding: 32px;
+  padding: 24px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  
+  @media (min-width: 768px) {
+    padding: 32px;
+    gap: 16px;
+  }
 `;
 
 const DiamondIcon = styled.div`
-  font-size: 32px;
-  margin-bottom: 8px;
+  font-size: 28px;
+  margin-bottom: 6px;
+  
+  @media (min-width: 768px) {
+    font-size: 32px;
+    margin-bottom: 8px;
+  }
 `;
 
 const Price = styled.div`
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
-  margin: 8px 0;
+  margin: 6px 0;
+  
+  @media (min-width: 768px) {
+    font-size: 24px;
+    margin: 8px 0;
+  }
 `;
 
 const ServiceType = styled.div`
-  font-size: 18px;
+  font-size: 16px;
   color: #333;
+  
+  @media (min-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 const LoremSection = styled.div`
-  padding: 40px 0;
+  padding: 32px 0;
   background: #fff;
+  
+  @media (min-width: 768px) {
+    padding: 40px 0;
+  }
 `;
 
 const Appraisal = () => {
@@ -175,10 +275,8 @@ const Appraisal = () => {
   return (
     <MainWrapper>
       <Container>
-        {/* Breadcrumb */}
         <Breadcrumb>Home/ Appraisals</Breadcrumb>
 
-        {/* Header Section */}
         <HeaderSection>
           <MainTitle>Appraisals</MainTitle>
           <SearchBar>
@@ -191,7 +289,6 @@ const Appraisal = () => {
         </HeaderSection>
       </Container>
 
-      {/* Appraisal Section with Background */}
       <div style={{ background: "#f8f9fa" }}>
         <Container>
           <AppraisalSection>
@@ -213,7 +310,6 @@ const Appraisal = () => {
         </Container>
       </div>
 
-      {/* Lorem Ipsum Section */}
       <Container>
         <LoremSection>
           <SectionTitle>What is Lorem Ipsum?</SectionTitle>
@@ -230,7 +326,6 @@ const Appraisal = () => {
         </LoremSection>
       </Container>
 
-      {/* Pricing Section */}
       <Container>
         <PricingSection>
           <PricingTitle>Easy, Simplified Pricing</PricingTitle>

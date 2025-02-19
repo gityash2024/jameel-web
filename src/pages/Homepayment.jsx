@@ -12,6 +12,10 @@ const PaymentSection = styled.section`
   padding: 80px 20px;
   max-width: 1920px;
   margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    padding: 40px 16px;
+  }
 `;
 
 const SectionHeading = styled.h2`
@@ -19,6 +23,16 @@ const SectionHeading = styled.h2`
   font-size: 36px;
   font-weight: 500;
   margin-bottom: 60px;
+  
+  @media (max-width: 768px) {
+    font-size: 28px;
+    margin-bottom: 40px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 24px;
+    margin-bottom: 32px;
+  }
 `;
 
 const PaymentGrid = styled.div`
@@ -27,6 +41,16 @@ const PaymentGrid = styled.div`
   gap: 40px;
   max-width: 1440px;
   margin: 0 auto;
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+  
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 `;
 
 const PaymentCard = styled.div`
@@ -35,6 +59,10 @@ const PaymentCard = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  
+  @media (max-width: 768px) {
+    padding: 24px 16px;
+  }
 `;
 
 const PaymentLogo = styled.div`
@@ -49,12 +77,26 @@ const PaymentLogo = styled.div`
     max-height: 100%;
     object-fit: contain;
   }
+  
+  @media (max-width: 768px) {
+    height: 50px;
+    margin-bottom: 24px;
+    
+    img {
+      max-width: 160px;
+    }
+  }
 `;
 
 const PaymentTitle = styled.h3`
   font-size: 24px;
   margin-bottom: 20px;
   font-weight: 500;
+  
+  @media (max-width: 768px) {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
 `;
 
 const PaymentDescription = styled.p`
@@ -65,6 +107,11 @@ const PaymentDescription = styled.p`
   max-width: 300px;
   margin-left: auto;
   margin-right: auto;
+  
+  @media (max-width: 768px) {
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
 `;
 
 const ActionButton = styled.button`
@@ -79,12 +126,21 @@ const ActionButton = styled.button`
   &:hover {
     background: #333;
   }
+  
+  @media (max-width: 768px) {
+    padding: 10px 24px;
+    font-size: 13px;
+  }
 `;
 
 const ServiceSection = styled.section`
   padding: 80px 40px;
   max-width: 1920px;
   margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    padding: 40px 20px;
+  }
 `;
 
 const ServiceHeading = styled.h2`
@@ -92,6 +148,16 @@ const ServiceHeading = styled.h2`
   font-size: 32px;
   font-weight: 500;
   margin-bottom: 60px;
+  
+  @media (max-width: 768px) {
+    font-size: 28px;
+    margin-bottom: 40px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 24px;
+    margin-bottom: 32px;
+  }
 `;
 
 const ServiceGrid = styled.div`
@@ -100,6 +166,16 @@ const ServiceGrid = styled.div`
   gap: 24px;
   max-width: 1440px;
   margin: 0 auto;
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 `;
 
 const ServiceCard = styled.div`
@@ -109,6 +185,10 @@ const ServiceCard = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  
+  @media (max-width: 768px) {
+    padding: 30px 20px;
+  }
 `;
 
 const DiamondIcon = styled.div`
@@ -118,6 +198,15 @@ const DiamondIcon = styled.div`
     width: 48px;
     height: 48px;
   }
+  
+  @media (max-width: 768px) {
+    margin-bottom: 16px;
+    
+    img {
+      width: 40px;
+      height: 40px;
+    }
+  }
 `;
 
 const VaultTitle = styled.div`
@@ -126,12 +215,22 @@ const VaultTitle = styled.div`
   text-transform: uppercase;
   margin-bottom: 16px;
   letter-spacing: 0.5px;
+  
+  @media (max-width: 768px) {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
 `;
 
 const ServiceTitle = styled.h3`
   font-size: 24px;
   font-weight: 500;
   margin-bottom: 16px;
+  
+  @media (max-width: 768px) {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
 `;
 
 const ServiceDescription = styled.p`
@@ -140,6 +239,11 @@ const ServiceDescription = styled.p`
   line-height: 1.6;
   margin-bottom: 20px;
   max-width: 280px;
+  
+  @media (max-width: 768px) {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
 `;
 
 const LearnMoreLink = styled.a`
@@ -151,6 +255,10 @@ const LearnMoreLink = styled.a`
   
   &:hover {
     color: #333;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 13px;
   }
 `;
 
@@ -165,6 +273,11 @@ const PromotionLink = styled.a`
   
   &:hover {
     color: #333;
+  }
+  
+  @media (max-width: 768px) {
+    margin-top: 40px;
+    font-size: 13px;
   }
 `;
 
@@ -185,7 +298,8 @@ const Homepayment = () => {
           title: 'Zero Down Special Financing',
           description: 'This was one of the first rings I had looked at in person. After looking at hundreds'
         }
-      ];
+    ];
+    
     const services = [
         {
           icon: justatyourservice_1,
@@ -207,45 +321,44 @@ const Homepayment = () => {
           title: 'Join Vault Rewards',
           description: 'This was one of the first rings I had looked at in person. After looking at hundreds'
         }
-      ];
+    ];
     
-      return (
+    return (
         <>
         <PaymentSection>
-      <SectionHeading>Flexible Payment Options</SectionHeading>
-      <PaymentGrid>
-        {paymentOptions.map((option, index) => (
-          <PaymentCard key={index}>
-            <PaymentLogo>
-              <img src={option.image} alt={option.title} />
-            </PaymentLogo>
-            <PaymentTitle>{option.title}</PaymentTitle>
-            <PaymentDescription>{option.description}</PaymentDescription>
-            <ActionButton>SEE DETAILS</ActionButton>
-          </PaymentCard>
-        ))}
-      </PaymentGrid>
-    </PaymentSection>
+            <SectionHeading>Flexible Payment Options</SectionHeading>
+            <PaymentGrid>
+                {paymentOptions.map((option, index) => (
+                    <PaymentCard key={index}>
+                        <PaymentLogo>
+                            <img src={option.image} alt={option.title} />
+                        </PaymentLogo>
+                        <PaymentTitle>{option.title}</PaymentTitle>
+                        <PaymentDescription>{option.description}</PaymentDescription>
+                        <ActionButton>SEE DETAILS</ActionButton>
+                    </PaymentCard>
+                ))}
+            </PaymentGrid>
+        </PaymentSection>
 
         <ServiceSection>
-        <ServiceHeading>JSK At Your Service</ServiceHeading>
-        <ServiceGrid>
-          {services.map((service, index) => (
-            <ServiceCard key={index}>
-              <DiamondIcon>
-                <img src={service.icon} alt="Vault Rewards" />
-              </DiamondIcon>
-              {/* <VaultTitle>VAULT REWARDS</VaultTitle> */}
-              <ServiceTitle>{service.title}</ServiceTitle>
-              <ServiceDescription>{service.description}</ServiceDescription>
-              <LearnMoreLink href="#">LEARN MORE</LearnMoreLink>
-            </ServiceCard>
-          ))}
-        </ServiceGrid>
-        <PromotionLink href="/terms-use">PROMOTION TERMS & CONDITIONS</PromotionLink>
-      </ServiceSection> 
-      </>
-      )
+            <ServiceHeading>JSK At Your Service</ServiceHeading>
+            <ServiceGrid>
+                {services.map((service, index) => (
+                    <ServiceCard key={index}>
+                        <DiamondIcon>
+                            <img src={service.icon} alt="Vault Rewards" />
+                        </DiamondIcon>
+                        <ServiceTitle>{service.title}</ServiceTitle>
+                        <ServiceDescription>{service.description}</ServiceDescription>
+                        <LearnMoreLink href="#">LEARN MORE</LearnMoreLink>
+                    </ServiceCard>
+                ))}
+            </ServiceGrid>
+            <PromotionLink href="/terms-use">PROMOTION TERMS & CONDITIONS</PromotionLink>
+        </ServiceSection> 
+        </>
+    )
 };
 
 export default Homepayment;
