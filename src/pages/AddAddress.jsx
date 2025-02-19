@@ -158,7 +158,6 @@ const AddAddress = () => {
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -170,7 +169,6 @@ const AddAddress = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      // Handle form submission
       console.log('Form submitted:', formData);
       navigate('/saved-address');
     }
