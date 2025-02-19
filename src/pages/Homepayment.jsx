@@ -235,7 +235,7 @@ const Homepayment = () => {
               <DiamondIcon>
                 <img src={service.icon} alt="Vault Rewards" />
               </DiamondIcon>
-              <VaultTitle>VAULT REWARDS</VaultTitle>
+              {/* <VaultTitle>VAULT REWARDS</VaultTitle> */}
               <ServiceTitle>{service.title}</ServiceTitle>
               <ServiceDescription>{service.description}</ServiceDescription>
               <LearnMoreLink href="#">LEARN MORE</LearnMoreLink>

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import styled from "styled-components";
+import React, { useState, useEffect } from 'react';
+import styled, { keyframes } from "styled-components";
 import desginyourown from "../assets/desginyourown.svg";
 import engagementring_1 from "../assets/engagementring_1.svg";
 import engagementring_2 from "../assets/engagementring_2.svg";
@@ -11,22 +11,72 @@ import createaneil from "../assets/createaneil.svg";
 import diamondband from "../assets/diamondband.svg";
 import customizejewlry from "../assets/customizejewlry.svg";
 
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+const slideIn = keyframes`
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+`;
+
+const scaleIn = keyframes`
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+`;
+
+const shimmer = keyframes`
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+`;
 
 const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 20px;
+  
+  @media (max-width: 768px) {
+    padding: 15px;
+  }
 `;
 
 const Header = styled.div`
   text-align: center;
   margin-bottom: 30px;
+  animation: ${fadeIn} 0.8s ease-out;
 `;
 
 const Title = styled.h1`
   font-size: 40px;
   font-weight: 600;
   margin-bottom: 20px;
+  
+  @media (max-width: 768px) {
+    font-size: 28px;
+  }
 `;
 
 const SearchBox = styled.div`
@@ -35,95 +85,165 @@ const SearchBox = styled.div`
   justify-content: center;
   gap: 10px;
   margin-bottom: 40px;
+  flex-wrap: wrap;
+  padding: 0 10px;
 
   svg {
     width: 24px;
     height: 24px;
   }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 15px;
+  }
 `;
 
 const SearchText = styled.span`
   color: #666;
+  text-align: center;
   
   a {
     color: #000;
     text-decoration: underline;
     margin-left: 5px;
+    display: inline-block;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    a {
+      display: block;
+      margin-top: 5px;
+    }
   }
 `;
 
 const MainContent = styled.div`
+  animation: ${scaleIn} 1s ease-out;
   display: flex;
   gap: 40px;
   align-items: center;
   background: #f8f8f8;
   border-radius: 12px;
   overflow: hidden;
-  margin-top : 84px
+  margin-top: 84px;
 
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 40px;
+  }
 `;
 
 const ImageSection = styled.div`
   flex: 1;
+  
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `;
 
 const ContentSection = styled.div`
   flex: 1;
   padding: 40px;
+
+  @media (max-width: 768px) {
+    padding: 20px;
+  }
 `;
 
 const ContentTitle = styled.h2`
   font-size: 36px;
   font-weight: 600;
   margin-bottom: 20px;
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+  }
 `;
 
 const Description = styled.p`
   color: #666;
   margin-bottom: 30px;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
   gap: 16px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 10px;
+  }
 `;
 
 const Button = styled.button`
+  position: relative;
+  overflow: hidden;
+  
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    animation: ${shimmer} 2s infinite;
+  }
   background: #000;
   color: white;
   padding: 12px 24px;
   border: none;
   cursor: pointer;
   transition: opacity 0.3s;
+  white-space: nowrap;
 
   &:hover {
     opacity: 0.8;
   }
-`;
-const HeroSection = styled.div`
-  display: flex;
-  gap: 40px;
-  align-items: center;
-  margin-bottom: 60px;
-  
+
   @media (max-width: 768px) {
-    flex-direction: column;
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 14px;
   }
 `;
+
 const CollectionGrid = styled.div`
   text-align: center;
   margin-top: 60px;
+
+  @media (max-width: 768px) {
+    margin-top: 40px;
+  }
 `;
 
 const GridTitle = styled.h2`
   font-size: 36px;
   font-weight: bold;
   margin-bottom: 40px;
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+    margin-bottom: 30px;
+  }
 `;
 
 const Grid = styled.div`
@@ -133,10 +253,20 @@ const Grid = styled.div`
   
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 `;
 
 const GridItem = styled.div`
+  transform: translateY(50px);
+  opacity: 0;
+  animation: ${fadeIn} 0.8s ease-out forwards;
+  animation-delay: ${props => props.$index * 0.2}s;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
   text-align: center;
   
   img {
@@ -150,14 +280,26 @@ const ItemTitle = styled.h3`
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 8px;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 const ItemSubtitle = styled.p`
   color: #666;
   margin-bottom: 16px;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
 `;
 
 const Section = styled.div`
+  opacity: 0;
+  transform: translateX(-50px);
+  animation: ${slideIn} 0.8s ease-out forwards;
+  animation-delay: ${props => props.$index * 0.3}s;
   display: flex;
   align-items: center;
   background: #F7F7F7;
@@ -166,61 +308,66 @@ const Section = styled.div`
   border-radius: 12px;
   overflow: hidden;
 
-   
   &:nth-child(even) {
     flex-direction: row-reverse;
   }
   
   @media (max-width: 768px) {
     flex-direction: column;
+    margin-top: 40px;
+    
     &:nth-child(even) {
       flex-direction: column;
     }
   }
 `;
 
-// const Container = styled.div`
-//   max-width: 1200px;
-//   margin: 0 auto;
-//   padding: 60px 20px;
-// `;
-
-// const Header = styled.div`
-//   text-align: center;
-//   margin-bottom: 40px;
-// `;
-
-// const Title = styled.h2`
-//   font-size: 36px;
-//   font-weight: 600;
-//   margin-bottom: 16px;
-// `;
-
 const Subtitle = styled.p`
   color: #666;
   max-width: 800px;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    padding: 0 15px;
+  }
 `;
 
 const SliderContainer = styled.div`
   position: relative;
   overflow: hidden;
+  margin: 0 -20px;
+  padding: 0 20px;
+
+  @media (max-width: 768px) {
+    margin: 0 -15px;
+    padding: 0 15px;
+  }
 `;
 
 const SliderTrack = styled.div`
   display: flex;
   gap: 20px;
   transition: transform 0.5s ease;
-  transform: translateX(${props => props.$offset}px);
+  transform: translateX(${props => props.$offset}%);
+
+  @media (max-width: 768px) {
+    gap: 15px;
+  }
 `;
 
 const Slide = styled.div`
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
   min-width: calc(33.333% - 14px);
   flex: 1;
   text-align: center;
   
   @media (max-width: 768px) {
-    min-width: calc(100% - 20px);
+    min-width: calc(100% - 30px);
   }
 `;
 
@@ -246,6 +393,10 @@ const CategoryName = styled.h3`
   font-size: 24px;
   font-weight: 500;
   margin: 0;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
 `;
 
 const SliderButton = styled.button`
@@ -265,55 +416,80 @@ const SliderButton = styled.button`
   &:hover {
     background: rgba(255, 255, 255, 1);
   }
+
+  @media (max-width: 768px) {
+    width: 32px;
+    height: 32px;
+  }
 `;
+
 const Ring = () => {
-    const [searchQuery, setSearchQuery] = useState("");
+  const [isVisible, setIsVisible] = useState(false);
 
-    const handleSearch = (query) => {
-      setSearchQuery(query);
-    };
-  
-    const sections = [
-        {
-          image: createaneil,
-          title: "Create A Neil Lane Ring Set",
-          description: "Design your own Neil Lane engagement ring and matching wedding band online.",
-          buttonText: "ORDER NOW"
-        },
-        {
-          image: diamondband,
-          title: "Design A Diamond Band",
-          description: "Explore both natural diamond and lab-grown diamond options to create your perfect diamond band.",
-          buttonText: "Create Now"
-        },
-        {
-          image: customizejewlry,
-          title: "Customize Your Jewelry",
-          description: "Create a meaningful gift they'll treasure with personalized jewelry available in lab-created or natural gemstone designs.",
-          buttonText: "Shop All Styles"
+  useEffect(() => {
+    setIsVisible(true);
+    
+    const handleScroll = () => {
+      const elements = document.querySelectorAll('.animate-on-scroll');
+      elements.forEach(element => {
+        const rect = element.getBoundingClientRect();
+        const isInView = rect.top <= window.innerHeight * 0.75;
+        if (isInView) {
+          element.style.opacity = '1';
+          element.style.transform = 'translateY(0)';
         }
-      ];
+      });
+    };
 
-      const handleButtonClick = (section) => {
-        console.log(`Clicked ${section.buttonText}`);
-      };
-    
-      const [currentSlide, setCurrentSlide] = useState(0);
-  
-      const items = [
-        { image: trendethat_1, title: 'Rings' },
-        { image: trendethat_2, title: 'Bracelets' },
-        { image: trendethat_3, title: 'Earrings' },
-      ];
-    
-      const handlePrev = () => {
-        setCurrentSlide(current => Math.max(current - 1, 0));
-      };
-    
-      const handleNext = () => {
-        setCurrentSlide(current => Math.min(current + 1, items.length - 1));
-      };
-    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+
+  const sections = [
+    {
+      image: createaneil,
+      title: "Create A Neil Lane Ring Set",
+      description: "Design your own Neil Lane engagement ring and matching wedding band online.",
+      buttonText: "ORDER NOW"
+    },
+    {
+      image: diamondband,
+      title: "Design A Diamond Band",
+      description: "Explore both natural diamond and lab-grown diamond options to create your perfect diamond band.",
+      buttonText: "Create Now"
+    },
+    {
+      image: customizejewlry,
+      title: "Customize Your Jewelry",
+      description: "Create a meaningful gift they'll treasure with personalized jewelry available in lab-created or natural gemstone designs.",
+      buttonText: "Shop All Styles"
+    }
+  ];
+
+  const handleButtonClick = (section) => {
+    console.log(`Clicked ${section.buttonText}`);
+  };
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const items = [
+    { image: trendethat_1, title: 'Rings' },
+    { image: trendethat_2, title: 'Bracelets' },
+    { image: trendethat_3, title: 'Earrings' },
+  ];
+
+  const handlePrev = () => {
+    setCurrentSlide(current => Math.max(current - 1, 0));
+  };
+
+  const handleNext = () => {
+    setCurrentSlide(current => Math.min(current + 1, items.length - 1));
+  };
 
   return (
     <Container>
@@ -346,25 +522,24 @@ const Ring = () => {
         </ContentSection>
       </MainContent>
 
-
       <CollectionGrid>
         <GridTitle>Design Your Own Engagement Ring Online</GridTitle>
         <Grid>
-          <GridItem>
+          <GridItem $index={0}>
             <img src={engagementring_1} alt="Find Your Ideal Diamond" />
             <ItemTitle>Find Your Ideal Diamond</ItemTitle>
             <ItemSubtitle>Milestones Collection</ItemSubtitle>
             <Button>Create Now</Button>
           </GridItem>
           
-          <GridItem>
+          <GridItem $index={1}>
             <img src={engagementring_2} alt="Select A Setting" />
             <ItemTitle>Select A Setting</ItemTitle>
             <ItemSubtitle>Milestones Collection</ItemSubtitle>
             <Button>Create Now</Button>
           </GridItem>
           
-          <GridItem>
+          <GridItem $index={2}>
             <img src={engagementring_3} alt="Create Your Ring" />
             <ItemTitle>Create Your Ring</ItemTitle>
             <ItemSubtitle>Milestones Collection</ItemSubtitle>
@@ -373,7 +548,6 @@ const Ring = () => {
         </Grid>
       </CollectionGrid>
       
-       
       <Header>
         <Title>Explore Loose Diamonds by Shape</Title>
         <Subtitle>
@@ -383,13 +557,13 @@ const Ring = () => {
       
       <SliderContainer>
         <SliderButton $position="left" onClick={handlePrev}>←</SliderButton>
-        <SliderTrack $offset={-currentSlide * (100 / 3)}>
+        <SliderTrack $offset={-currentSlide * (window.innerWidth <= 768 ? 100 : 33.333)}>
           {items.map((item, index) => (
-            <Slide key={index}>
-              <ImageContainer>
+            <Slide key={index} $index={index}>
+              <ImageContainer $index={index}>
                 <Image src={item.image} alt={item.title} />
               </ImageContainer>
-              <CategoryName>{item.title}</CategoryName>
+              <CategoryName $index={index}>{item.title}</CategoryName>
             </Slide>
           ))}
         </SliderTrack>
@@ -397,7 +571,7 @@ const Ring = () => {
       </SliderContainer>
 
       {sections.map((section, index) => (
-        <Section key={index}>
+        <Section key={index} $index={index}>
           <ImageSection>
             <img src={section.image} alt={section.title} />
           </ImageSection>
@@ -410,7 +584,6 @@ const Ring = () => {
           </ContentSection>
         </Section>
       ))}
-     
     </Container>
   );
 };

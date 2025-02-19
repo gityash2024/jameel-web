@@ -36,7 +36,7 @@ const Footer = () => {
     about: {
       title: 'About JSK JEWELERS',
       items: [
-        { name: 'About JSK', link: '/' },
+        { name: 'About JSK', link: '/about-us' },
         { name: 'Book An Appointment', link: '/booking-appoinment' },
         { name: 'Find Your JSK', link: '/find-your-store' },
         { name: 'Blogs', link: '/blogs-one' },
@@ -46,9 +46,9 @@ const Footer = () => {
     quickLinks: {
       title: 'Quick Links',
       items: [
-        { name: 'My Order', link: '/' },
-        { name: 'My Account', link: '/' },
-        { name: 'Wishlist', link: '/' }
+        { name: 'My Order', link: '/my-order' },
+        { name: 'My Account', link: '/my-account' },
+        { name: 'Wishlist', link: '/wishlist' }
       ]
     },
     contact: {
@@ -61,22 +61,20 @@ const Footer = () => {
 
   const handleSubscribe = (e) => {
     e.preventDefault();
-    // Handle subscription logic here
     console.log('Subscribing email:', email);
     setEmail('');
   };
 
   return (
-    <footer className="bg-white py-16 border-t">
-      <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
-          {/* Our Collections */}
-          <div>
-            <h3 className="font-semibold mb-4">{footerData.collections.title}</h3>
+    <footer className="bg-white py-8 md:py-16 border-t">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+          <div className="w-full">
+            <h3 className="font-semibold mb-4 text-base">{footerData.collections.title}</h3>
             <ul className="space-y-2">
               {footerData.collections.items.map((item, index) => (
                 <li key={index}>
-                  <a href={item.link} className="text-gray-600 hover:text-gray-900 text-sm">
+                  <a href={item.link} className="text-gray-600 hover:text-gray-900 text-sm block">
                     {item.name}
                   </a>
                 </li>
@@ -84,13 +82,12 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Personalised */}
-          <div>
-            <h3 className="font-semibold mb-4">{footerData.personalised.title}</h3>
+          <div className="w-full">
+            <h3 className="font-semibold mb-4 text-base">{footerData.personalised.title}</h3>
             <ul className="space-y-2">
               {footerData.personalised.items.map((item, index) => (
                 <li key={index}>
-                  <a href={item.link} className="text-gray-600 hover:text-gray-900 text-sm">
+                  <a href={item.link} className="text-gray-600 hover:text-gray-900 text-sm block">
                     {item.name}
                   </a>
                 </li>
@@ -98,13 +95,12 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Our Services */}
-          <div>
-            <h3 className="font-semibold mb-4">{footerData.services.title}</h3>
+          <div className="w-full">
+            <h3 className="font-semibold mb-4 text-base">{footerData.services.title}</h3>
             <ul className="space-y-2">
               {footerData.services.items.map((item, index) => (
                 <li key={index}>
-                  <a href={item.link} className="text-gray-600 hover:text-gray-900 text-sm">
+                  <a href={item.link} className="text-gray-600 hover:text-gray-900 text-sm block">
                     {item.name}
                   </a>
                 </li>
@@ -112,13 +108,12 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* About JSK */}
-          <div>
-            <h3 className="font-semibold mb-4">{footerData.about.title}</h3>
+          <div className="w-full">
+            <h3 className="font-semibold mb-4 text-base">{footerData.about.title}</h3>
             <ul className="space-y-2">
               {footerData.about.items.map((item, index) => (
                 <li key={index}>
-                  <a href={item.link} className="text-gray-600 hover:text-gray-900 text-sm">
+                  <a href={item.link} className="text-gray-600 hover:text-gray-900 text-sm block">
                     {item.name}
                   </a>
                 </li>
@@ -126,13 +121,12 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="font-semibold mb-4">{footerData.quickLinks.title}</h3>
+          <div className="w-full">
+            <h3 className="font-semibold mb-4 text-base">{footerData.quickLinks.title}</h3>
             <ul className="space-y-2">
               {footerData.quickLinks.items.map((item, index) => (
                 <li key={index}>
-                  <a href={item.link} className="text-gray-600 hover:text-gray-900 text-sm">
+                  <a href={item.link} className="text-gray-600 hover:text-gray-900 text-sm block">
                     {item.name}
                   </a>
                 </li>
@@ -140,57 +134,55 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact Us */}
-          <div>
-            <h3 className="font-semibold mb-4">{footerData.contact.title}</h3>
+          <div className="w-full">
+            <h3 className="font-semibold mb-4 text-base">{footerData.contact.title}</h3>
             <div className="space-y-4">
               <div className="space-y-2">
                 {footerData.contact.email.map((email, index) => (
                   <p key={index} className="flex items-center text-gray-600 text-sm">
-                    <Mail className="w-4 h-4 mr-2" />
-                    {email}
+                    <Mail className="w-4 h-4 mr-2 flex-shrink-0" />
+                    <span className="break-all">{email}</span>
                   </p>
                 ))}
               </div>
               <div className="space-y-2">
                 {footerData.contact.phone.map((phone, index) => (
                   <p key={index} className="flex items-center text-gray-600 text-sm">
-                    <Phone className="w-4 h-4 mr-2" />
-                    {phone}
+                    <Phone className="w-4 h-4 mr-2 flex-shrink-0" />
+                    <span>{phone}</span>
                   </p>
                 ))}
               </div>
               <p className="flex items-start text-gray-600 text-sm">
-                <MapPin className="w-4 h-4 mr-2 mt-1" />
-                {footerData.contact.address}
+                <MapPin className="w-4 h-4 mr-2 mt-1 flex-shrink-0" />
+                <span>{footerData.contact.address}</span>
               </p>
             </div>
           </div>
         </div>
 
-        {/* Newsletter and Social Media */}
-        <div className="mt-12 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-6 md:mb-0">
-              <h4 className="font-semibold mb-4">FOLLOW US</h4>
-              <form onSubmit={handleSubscribe} className="flex">
+        <div className="mt-12 pt-8 border-t">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
+            <div className="w-full md:w-auto">
+              <h4 className="font-semibold mb-4 text-center md:text-left">FOLLOW US</h4>
+              <form onSubmit={handleSubscribe} className="flex max-w-md mx-auto md:mx-0">
                 <input
                   type="email"
                   placeholder="Enter Your Email"
-                  className="px-4 py-2 border border-gray-300 rounded-l focus:outline-none focus:border-gray-400"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-l focus:outline-none focus:border-gray-400 text-sm"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-gray-900 text-white rounded-r hover:bg-gray-800"
+                  className="px-6 py-2 bg-gray-900 text-white rounded-r hover:bg-gray-800 text-sm whitespace-nowrap"
                 >
                   SIGN UP
                 </button>
               </form>
             </div>
-            <div className="flex items-center space-x-6">
+            <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
               <h4 className="font-semibold">FOLLOW US</h4>
               <div className="flex space-x-4">
                 <a href="#" className="text-gray-600 hover:text-gray-900">

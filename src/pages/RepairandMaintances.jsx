@@ -114,13 +114,6 @@ const FormContent = styled.div`
   max-width: 500px;
 `;
 
-// const Title = styled.h2`
-//   font-size: 48px;
-//   font-weight: 600;
-//   margin-bottom: 40px;
-//   line-height: 1.2;
-// `;
-
 const Form = styled.form`
   display: flex;
   flex-direction: column;
@@ -199,7 +192,6 @@ const ImageContainer = styled.div`
   }
 `;
 
-// Rewards Section Styles
 const RewardsSection = styled.div`
   padding: 80px 0;
   background: #fff;
@@ -301,7 +293,6 @@ const RepairandMaintances = () => {
   ];
   return (
     <Container>
-      {/* Search Bar Section */}
       <MainTitle>Jewelry Services</MainTitle>
       <SearchSection>
         <DiamondIcons>💎</DiamondIcons>
@@ -313,7 +304,6 @@ const RepairandMaintances = () => {
         </SearchText>
       </SearchSection>
 
-      {/* In-Store Services Section */}
       <Section reverse>
         <ContentArea>
           <Title>In-Store Services</Title>
@@ -331,7 +321,6 @@ const RepairandMaintances = () => {
         </ImageArea>
       </Section>
 
-      {/* Full Service Jeweler Section */}
       <Section>
         <ContentArea>
           <Title>Your Full Service Jeweler</Title>
@@ -344,7 +333,6 @@ const RepairandMaintances = () => {
         </ImageArea>
       </Section>
 
-      {/* Lorem Ipsum Section */}
       <LoremSection>
         <Title>What is Lorem Ipsum?</Title>
         <Description>
