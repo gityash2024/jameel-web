@@ -12,29 +12,44 @@ const Container = styled.div`
   max-width: 1440px;
   margin: 0 auto;
   padding: 20px;
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
 `;
+
 const BreadCrumb = styled.div`
   margin-bottom: 30px;
   font-size: 14px;
   color: #666;
-
+  @media (max-width: 768px) {
+    margin-bottom: 20px;
+    font-size: 12px;
+  }
   a {
     color: inherit;
     text-decoration: none;
-
     &:hover {
       text-decoration: underline;
     }
   }
 `;
+
 const PageHeader = styled.div`
   text-align: center;
   margin-bottom: 40px;
+  @media (max-width: 768px) {
+    margin-bottom: 24px;
+  }
 `;
+
 const Title = styled.h1`
   font-size: 32px;
   font-weight: 500;
   margin-bottom: 20px;
+  @media (max-width: 768px) {
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
 `;
 
 const SearchHelp = styled.div`
@@ -44,20 +59,36 @@ const SearchHelp = styled.div`
   gap: 8px;
   color: #666;
   font-size: 14px;
-
+  @media (max-width: 768px) {
+    font-size: 12px;
+    flex-wrap: wrap;
+    text-align: center;
+  }
   a {
     color: #000;
     text-decoration: underline;
   }
 `;
+
 const MainGrid = styled.div`
   display: grid;
   grid-template-columns: 300px 1fr;
   gap: 40px;
+  @media (max-width: 1024px) {
+    grid-template-columns: 250px 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
 `;
 
 const FilterSidebar = styled.div`
   padding-right: 20px;
+  @media (max-width: 768px) {
+    padding-right: 0;
+  }
 `;
 
 const FilterHeader = styled.div`
@@ -65,12 +96,13 @@ const FilterHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
-
   h2 {
     font-size: 20px;
     font-weight: 500;
+    @media (max-width: 768px) {
+      font-size: 18px;
+    }
   }
-
   button {
     background: none;
     border: none;
@@ -82,12 +114,23 @@ const FilterHeader = styled.div`
     }
   }
 `;
+
 const ProductGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
   padding: 0 10px;
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    padding: 0;
+  }
+  @media (max-width: 580px) {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
 `;
+
 const ProductCard = styled.div`
   border: 1px solid #eee;
   padding: 16px;
@@ -95,13 +138,14 @@ const ProductCard = styled.div`
   display: flex;
   flex-direction: column;
   background: white;
-
+  @media (max-width: 768px) {
+    padding: 12px;
+  }
   .image-container {
     position: relative;
     width: 100%;
     padding-bottom: 100%;
     margin-bottom: 12px;
-
     img {
       position: absolute;
       top: 0;
@@ -123,6 +167,9 @@ const ProductHeader = styled.div`
 const FeaturedTag = styled.div`
   font-size: 12px;
   color: #666;
+  @media (max-width: 768px) {
+    font-size: 11px;
+  }
 `;
 
 const WishlistButton = styled.button`
@@ -133,7 +180,6 @@ const WishlistButton = styled.button`
   display: flex;
   align-items: center;
   color: #666;
-
   &:hover {
     color: #000;
   }
@@ -144,78 +190,52 @@ const ProductTitle = styled.h3`
   line-height: 1.4;
   margin-bottom: 8px;
   color: #333;
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
 `;
 
 const SaleTag = styled.div`
   font-size: 14px;
   color: #666;
   margin-bottom: 4px;
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
 `;
 
 const PriceInfo = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-
+  flex-wrap: wrap;
   .current-price {
     font-size: 16px;
     font-weight: bold;
     color: #000;
+    @media (max-width: 768px) {
+      font-size: 15px;
+    }
   }
-
   .original-price {
     text-decoration: line-through;
     color: #666;
     font-size: 14px;
+    @media (max-width: 768px) {
+      font-size: 13px;
+    }
   }
-
   .discount {
     background: #e8f4f0;
     padding: 2px 8px;
     border-radius: 4px;
     font-size: 12px;
+    @media (max-width: 768px) {
+      font-size: 11px;
+    }
   }
 `;
 
-const PriceRange = styled.div`
-  margin: 15px 0;
-
-  .slider-container {
-    margin: 20px 0;
-    position: relative;
-  }
-
-  .range-inputs {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
-  }
-
-  input[type="number"] {
-    width: 100px;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-
-  .range-track {
-    height: 2px;
-    background: #ddd;
-    position: relative;
-    margin: 10px 0;
-  }
-
-  .range-handle {
-    width: 16px;
-    height: 16px;
-    background: white;
-    border: 2px solid #000;
-    border-radius: 50%;
-    position: absolute;
-    top: -7px;
-    cursor: pointer;
-  }
-`;
 const FilterOptions = styled.div`
   padding: 8px 0;
   display: ${(props) => (props.isOpen ? "block" : "none")};
@@ -227,19 +247,25 @@ const FilterOption = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-
   input[type="checkbox"] {
     width: 16px;
     height: 16px;
     cursor: pointer;
+    @media (max-width: 768px) {
+      width: 14px;
+      height: 14px;
+    }
   }
-
   label {
     font-size: 14px;
     color: #666;
     cursor: pointer;
+    @media (max-width: 768px) {
+      font-size: 13px;
+    }
   }
 `;
+
 const FilterSection = styled.div`
   border-bottom: 1px solid #eee;
   padding: 12px 0;
@@ -251,12 +277,13 @@ const FilterTitle = styled.div`
   align-items: center;
   cursor: pointer;
   padding: 4px 0;
-
   h3 {
     font-size: 16px;
     color: #333;
+    @media (max-width: 768px) {
+      font-size: 15px;
+    }
   }
-
   svg {
     color: #666;
   }
@@ -275,12 +302,18 @@ const InputLabel = styled.div`
   font-size: 16px;
   color: #333;
   margin-bottom: 8px;
+  @media (max-width: 768px) {
+    font-size: 15px;
+  }
 `;
 
 const InputRow = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+  @media (max-width: 768px) {
+    gap: 12px;
+  }
 `;
 
 const RangeInput = styled.input`
@@ -289,7 +322,10 @@ const RangeInput = styled.input`
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   font-size: 16px;
-
+  @media (max-width: 768px) {
+    padding: 10px;
+    font-size: 14px;
+  }
   &:focus {
     outline: none;
     border-color: #999;
@@ -302,7 +338,6 @@ const RangeSlider = styled.div`
   height: 2px;
   background: #e0e0e0;
   margin: 40px 0 20px;
-
   .track {
     position: absolute;
     height: 100%;
@@ -310,7 +345,6 @@ const RangeSlider = styled.div`
     left: 0;
     right: 50%;
   }
-
   .handle {
     width: 16px;
     height: 16px;
@@ -320,13 +354,16 @@ const RangeSlider = styled.div`
     position: absolute;
     top: -7px;
     cursor: pointer;
-
     &:first-of-type {
       left: 0;
     }
-
     &:last-of-type {
       right: 0;
+    }
+    @media (max-width: 768px) {
+      width: 14px;
+      height: 14px;
+      top: -6px;
     }
   }
 `;
@@ -336,6 +373,9 @@ const RangeValues = styled.div`
   justify-content: space-between;
   font-size: 14px;
   color: #666;
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
 `;
 
 const ProductDetail = () => {

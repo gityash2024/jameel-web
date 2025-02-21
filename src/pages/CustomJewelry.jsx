@@ -13,17 +13,30 @@ import justatyourservice_2 from "../assets/justatyourservice_2.svg";
 import justatyourservice_3 from "../assets/justatyourservice_3.svg";
 import justatyourservice_4 from "../assets/justatyourservice_4.svg";
 const Container = styled.div`
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 20px;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 20px 15px;
+  }
 `;
 
 const SearchHeader = styled.div`
   text-align: center;
   margin-bottom: 40px;
+  width: 100%;
+
   h1 {
-    font-size: 42px;
+    font-size: clamp(28px, 5vw, 42px);
     margin-bottom: 20px;
+    line-height: 1.2;
+  }
+
+  @media (max-width: 768px) {
+    margin-bottom: 30px;
   }
 `;
 
@@ -33,9 +46,18 @@ const SearchInfo = styled.div`
   justify-content: center;
   gap: 8px;
   color: #666;
+  flex-wrap: wrap;
+  font-size: clamp(14px, 2.5vw, 16px);
+
   a {
     color: #000;
     text-decoration: underline;
+    word-break: break-word;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 5px;
   }
 `;
 
@@ -46,18 +68,27 @@ const HeroSection = styled.div`
   background: #f8f8f8;
   border-radius: 12px;
   overflow: hidden;
+  width: 100%;
   
   @media (max-width: 768px) {
     flex-direction: column;
+    gap: 20px;
+    margin-bottom: 40px;
   }
 `;
 
 const ImageSection = styled.div`
   flex: 1;
+  min-height: 300px;
+
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  @media (max-width: 768px) {
+    min-height: 200px;
   }
 `;
 
@@ -66,41 +97,64 @@ const ContentSection = styled.div`
   padding: 60px;
   
   h2 {
-    font-size: 36px;
+    font-size: clamp(24px, 4vw, 36px);
     margin-bottom: 20px;
+    line-height: 1.2;
   }
   
   p {
     color: #666;
     margin-bottom: 30px;
     line-height: 1.6;
+    font-size: clamp(14px, 2.5vw, 16px);
+  }
+
+  @media (max-width: 768px) {
+    padding: 30px 20px;
   }
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
   gap: 16px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    gap: 10px;
+  }
 `;
 
 const Button = styled.button`
   background: ${props => props.$primary ? '#000' : '#e60023'};
   color: white;
-  padding: 23px 24px;
+  padding: clamp(16px, 3vw, 23px) clamp(20px, 3vw, 24px);
   border: none;
   cursor: pointer;
   transition: opacity 0.3s;
+  font-size: clamp(14px, 2.5vw, 16px);
+  width: ${props => props.$fullWidth ? '100%' : 'auto'};
   
   &:hover {
     opacity: 0.9;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `;
 
 const ProcessSection = styled.div`
   margin-bottom: 80px;
   text-align: center;
+  width: 100%;
   
   h2 {
-    font-size: 36px;
+    font-size: clamp(24px, 4vw, 36px);
+    margin-bottom: 40px;
+    line-height: 1.2;
+  }
+
+  @media (max-width: 768px) {
     margin-bottom: 40px;
   }
 `;
@@ -110,8 +164,13 @@ const ProcessGrid = styled.div`
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 640px) {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 `;
 
@@ -125,25 +184,37 @@ const ProcessCard = styled.div`
   }
   
   h3 {
-    font-size: 20px;
+    font-size: clamp(18px, 3vw, 20px);
     margin-bottom: 12px;
+    line-height: 1.2;
   }
   
   p {
     color: #666;
-    font-size: 14px;
+    font-size: clamp(14px, 2.5vw, 16px);
     line-height: 1.6;
+  }
+
+  @media (max-width: 768px) {
+    img {
+      margin-bottom: 15px;
+    }
   }
 `;
 
 const StartDesignSection = styled.div`
   margin-bottom: 80px;
+  width: 100%;
 
-    h2 {
-    font-size: 36px;
+  h2 {
+    font-size: clamp(24px, 4vw, 36px);
     margin-bottom: 40px;
     text-align: center;
+    line-height: 1.2;
+  }
 
+  @media (max-width: 768px) {
+    margin-bottom: 40px;
   }
 `;
 
@@ -153,8 +224,13 @@ const CategoryButtons = styled.div`
   gap: 16px;
   margin-bottom: 40px;
   
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 640px) {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
 `;
 
@@ -165,11 +241,14 @@ const LookbookSection = styled.div`
   background: #f8f8f8;
   border-radius: 12px;
   overflow: hidden;
+  width: 100%;
   
   @media (max-width: 768px) {
     flex-direction: column;
+    gap: 20px;
   }
 `;
+
 const ServiceSection = styled.div`
   display: flex;
   gap: 40px;
@@ -178,6 +257,7 @@ const ServiceSection = styled.div`
   background: #F7F7F7;
   border-radius: 12px;
   overflow: hidden;
+  width: 100%;
   
   &:nth-child(even) {
     flex-direction: row-reverse;
@@ -185,6 +265,13 @@ const ServiceSection = styled.div`
   
   @media (max-width: 768px) {
     flex-direction: column;
+    gap: 20px;
+    margin-bottom: 40px;
+    margin-top: 40px;
+    
+    &:nth-child(even) {
+      flex-direction: column;
+    }
   }
 `;
 
@@ -193,41 +280,65 @@ const ContentSide = styled.div`
   padding: 60px;
   
   h2 {
-    font-size: 36px;
+    font-size: clamp(24px, 4vw, 36px);
     margin-bottom: 16px;
+    line-height: 1.2;
   }
   
   p {
     color: #666;
     margin-bottom: 24px;
     line-height: 1.6;
+    font-size: clamp(14px, 2.5vw, 16px);
+  }
+
+  @media (max-width: 768px) {
+    padding: 30px 20px;
   }
 `;
 
 const ImageSide = styled.div`
   flex: 1;
+  min-height: 300px;
+
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  @media (max-width: 768px) {
+    min-height: 200px;
   }
 `;
 
 const Buttons = styled.button`
   background: #000;
   color: white;
-  padding: 12px 24px;
+  padding: clamp(10px, 2vw, 12px) clamp(20px, 3vw, 24px);
   border: none;
   cursor: pointer;
+  font-size: clamp(14px, 2.5vw, 16px);
+  width: 100%;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const FAQSection = styled.div`
   margin: 60px 0;
+  width: 100%;
   
   h2 {
     text-align: center;
-    font-size: 36px;
+    font-size: clamp(24px, 4vw, 36px);
     margin-bottom: 40px;
+    line-height: 1.2;
+  }
+
+  @media (max-width: 768px) {
+    margin: 40px 0;
   }
 `;
 
@@ -243,20 +354,30 @@ const Question = styled.div`
   padding: 20px 0;
   cursor: pointer;
   font-weight: 500;
+  font-size: clamp(14px, 2.5vw, 16px);
 `;
 
 const Answer = styled.div`
   color: #666;
   padding-bottom: 20px;
   display: ${props => props.$isOpen ? 'block' : 'none'};
+  font-size: clamp(14px, 2.5vw, 16px);
+  line-height: 1.6;
 `;
+
 const RewardsSection = styled.div`
   text-align: center;
   margin: 60px 0;
+  width: 100%;
   
   h2 {
-    font-size: 36px;
+    font-size: clamp(24px, 4vw, 36px);
     margin-bottom: 40px;
+    line-height: 1.2;
+  }
+
+  @media (max-width: 768px) {
+    margin: 40px 0;
   }
 `;
 
@@ -265,8 +386,13 @@ const RewardsGrid = styled.div`
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 640px) {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 `;
 
@@ -275,24 +401,34 @@ const RewardCard = styled.div`
   padding: 24px;
   text-align: center;
   
-  svg {
+  img {
     margin-bottom: 16px;
+    width: 100%;
+    max-width: 200px;
   }
   
   h3 {
     margin-bottom: 12px;
+    font-size: clamp(16px, 3vw, 18px);
+    line-height: 1.2;
   }
   
   p {
     color: #666;
     margin-bottom: 16px;
-    font-size: 14px;
+    font-size: clamp(14px, 2.5vw, 16px);
+    line-height: 1.6;
   }
   
   a {
     color: #000;
     text-decoration: none;
     font-weight: 500;
+    font-size: clamp(14px, 2.5vw, 16px);
+  }
+
+  @media (max-width: 768px) {
+    padding: 20px;
   }
 `;
 
@@ -302,14 +438,48 @@ const HelpBox = styled.div`
   border-radius: 8px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin: 40px 0;
   transition: all 0.3s ease;
+  gap: 20px;
+  flex-wrap: wrap;
+
+  h3 {
+    font-size: clamp(18px, 3vw, 20px);
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+
+  p {
+    font-size: clamp(14px, 2.5vw, 16px);
+    line-height: 1.6;
+    margin-bottom: 15px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 20px;
+    flex-direction: column;
+  }
 `;
 
 const ContactForm = styled.div`
   display: ${props => props.$show ? 'block' : 'none'};
   margin-top: 20px;
+  width: 100%;
+
+  input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: clamp(14px, 2.5vw, 16px);
+  }
+
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
 `;
 
 const CustomJewelry = () => {
@@ -369,7 +539,6 @@ const CustomJewelry = () => {
 
 const handleGetInTouch = () => {
   setShowContact(true);
-  // Add additional contact form logic here
 };
   return (
     <Container>

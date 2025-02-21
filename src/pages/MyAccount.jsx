@@ -161,74 +161,76 @@ const SaveButton = styled.button`
     opacity: 0.9;
   }
 `;
-const ServiceGrid = styled.div`
+
+const RewardsSection = styled.div`
+  text-align: center;
+  margin: 60px 0;
+  
+  h2 {
+    font-size: 36px;
+    margin-bottom: 40px;
+  }
+`;
+
+const RewardsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 640px) {
+  gap: 24px;
+  
+  @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
 `;
 
-const ServiceCard = styled.div`
-  background-color: #f8f9fc;
-  padding: 30px 20px;
-  border-radius: 8px;
+const RewardCard = styled.div`
+  background: #F7F7F7;
+  padding: 24px;
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-`;
-
-const IconWrapper = styled.div`
-  width: 60px;
-  height: 60px;
-  margin-bottom: 10px;
   
-  img {
-    width: 100%;
-    height: 100%;
+  svg {
+    margin-bottom: 16px;
+  }
+  
+  h3 {
+    margin-bottom: 12px;
+  }
+  
+  p {
+    color: #666;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  
+  a {
+    color: #000;
+    text-decoration: none;
+    font-weight: 500;
   }
 `;
 
-// const Title = styled.h3`
-//   font-size: 20px;
-//   font-weight: 500;
-//   margin: 0;
-// `;
-
-const Description = styled.p`
-  color: #666;
-  font-size: 14px;
-  line-height: 1.5;
-  margin: 0;
-`;
-
-const LearnMore = styled.a`
+const PromotionLink = styled.a`
+  display: inline-block;
+  margin-top: 40px;
   color: #000;
-  text-decoration: underline;
+  text-decoration: none;
+  font-weight: 600;
+  text-transform: uppercase;
   font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  
+  letter-spacing: 0.5px;
+
   &:hover {
-    opacity: 0.8;
+    text-decoration: underline;
   }
 `;
-
 
 const Layout = () => {
   const location = useLocation();
-
+  const rewardsData = [
+        { icon: justatyourservice_1, title: "VAULT REWARDS" },
+        { icon: justatyourservice_2, title: "VAULT REWARDS" },
+        { icon: justatyourservice_3, title: "VAULT REWARDS" },
+        { icon: justatyourservice_4, title: "VAULT REWARDS" }
+      ];
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -249,32 +251,7 @@ const Layout = () => {
     e.preventDefault();
     console.log('Form submitted:', formData);
   };
-  const services = [
-    {
-      icon: justatyourservice_1,
-      title: "VAULT REWARDS",
-      description: "This was one of the first rings I had looked at in person. After looking at hundreds",
-      link: "#"
-    },
-    {
-      icon: justatyourservice_2,
-      title: "VAULT REWARDS",
-      description: "This was one of the first rings I had looked at in person. After looking at hundreds",
-      link: "#"
-    },
-    {
-      icon: justatyourservice_3,
-      title: "VAULT REWARDS",
-      description: "This was one of the first rings I had looked at in person. After looking at hundreds",
-      link: "#"
-    },
-    {
-      icon: justatyourservice_4,
-      title: "VAULT REWARDS",
-      description: "This was one of the first rings I had looked at in person. After looking at hundreds",
-      link: "#"
-    }
-  ];
+  
 
   return (
     <Container>
@@ -325,7 +302,7 @@ const Layout = () => {
             Saved Address
           </SidebarLink>
         </Sidebar>
-
+       
         <Outlet />
         <FormSection>
       <form onSubmit={handleSubmit}>
@@ -400,21 +377,23 @@ const Layout = () => {
         <SaveButton type="submit">Save</SaveButton>
       </form>
     </FormSection>
+    </Content>
+   
+    <RewardsSection>
+        <h2>JSK At Your Service</h2>
+        <RewardsGrid>
+          {rewardsData.map((reward, index) => (
+            <RewardCard key={index}>
+              <img src={reward.icon} alt={reward.title} />
+              <h3>VAULT REWARDS</h3>
+              <p>"This was one of the first rings I had looked at in person. After looking at hundreds"</p>
+              <a href="#">LEARN MORE</a>
+            </RewardCard>
+          ))}
+        </RewardsGrid>
+        <PromotionLink href="#">PROMOTION TERMS & CONDITIONS</PromotionLink>
+      </RewardsSection>
 
-    <ServiceGrid>
-      {services.map((service, index) => (
-        <ServiceCard key={index}>
-          <IconWrapper>
-            <img src={service.icon} alt={service.title} />
-          </IconWrapper>
-          <Title>{service.title}</Title>
-          <Description>{service.description}</Description>
-          <LearnMore href={service.link}>LEARN MORE</LearnMore>
-        </ServiceCard>
-      ))}
-    </ServiceGrid>
-
-      </Content>
     </Container>
   );
 };

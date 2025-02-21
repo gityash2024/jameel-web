@@ -54,9 +54,11 @@ const shimmer = keyframes`
 `;
 
 const Container = styled.div`
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  box-sizing: border-box;
   
   @media (max-width: 768px) {
     padding: 15px;
@@ -67,16 +69,14 @@ const Header = styled.div`
   text-align: center;
   margin-bottom: 30px;
   animation: ${fadeIn} 0.8s ease-out;
+  width: 100%;
 `;
 
 const Title = styled.h1`
-  font-size: 40px;
+  font-size: clamp(28px, 5vw, 40px);
   font-weight: 600;
   margin-bottom: 20px;
-  
-  @media (max-width: 768px) {
-    font-size: 28px;
-  }
+  line-height: 1.2;
 `;
 
 const SearchBox = styled.div`
@@ -91,30 +91,34 @@ const SearchBox = styled.div`
   svg {
     width: 24px;
     height: 24px;
+    flex-shrink: 0;
   }
 
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 15px;
+    width: 100%;
   }
 `;
 
 const SearchText = styled.span`
   color: #666;
   text-align: center;
+  font-size: clamp(14px, 3vw, 16px);
   
   a {
     color: #000;
     text-decoration: underline;
     margin-left: 5px;
     display: inline-block;
+    word-wrap: break-word;
   }
 
   @media (max-width: 768px) {
-    font-size: 14px;
+    width: 100%;
     a {
       display: block;
-      margin-top: 5px;
+      margin: 5px 0 0;
     }
   }
 `;
@@ -128,6 +132,7 @@ const MainContent = styled.div`
   border-radius: 12px;
   overflow: hidden;
   margin-top: 84px;
+  width: 100%;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -138,6 +143,7 @@ const MainContent = styled.div`
 
 const ImageSection = styled.div`
   flex: 1;
+  min-height: 300px;
   
   img {
     width: 100%;
@@ -147,12 +153,15 @@ const ImageSection = styled.div`
 
   @media (max-width: 768px) {
     width: 100%;
+    min-height: 200px;
   }
 `;
 
 const ContentSection = styled.div`
   flex: 1;
   padding: 40px;
+  width: 100%;
+  box-sizing: border-box;
 
   @media (max-width: 768px) {
     padding: 20px;
@@ -160,27 +169,23 @@ const ContentSection = styled.div`
 `;
 
 const ContentTitle = styled.h2`
-  font-size: 36px;
+  font-size: clamp(24px, 4vw, 36px);
   font-weight: 600;
   margin-bottom: 20px;
-
-  @media (max-width: 768px) {
-    font-size: 24px;
-  }
+  line-height: 1.2;
 `;
 
 const Description = styled.p`
   color: #666;
   margin-bottom: 30px;
-
-  @media (max-width: 768px) {
-    font-size: 14px;
-  }
+  font-size: clamp(14px, 3vw, 16px);
+  line-height: 1.5;
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
   gap: 16px;
+  width: 100%;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -191,6 +196,16 @@ const ButtonGroup = styled.div`
 const Button = styled.button`
   position: relative;
   overflow: hidden;
+  background: #000;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  white-space: nowrap;
+  font-size: clamp(14px, 2.5vw, 16px);
+  width: ${props => props.$fullWidth ? '100%' : 'auto'};
   
   &:before {
     content: '';
@@ -199,21 +214,9 @@ const Button = styled.button`
     left: -100%;
     width: 200%;
     height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.2),
-      transparent
-    );
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     animation: ${shimmer} 2s infinite;
   }
-  background: #000;
-  color: white;
-  padding: 12px 24px;
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.3s;
-  white-space: nowrap;
 
   &:hover {
     opacity: 0.8;
@@ -222,13 +225,13 @@ const Button = styled.button`
   @media (max-width: 768px) {
     width: 100%;
     padding: 10px 20px;
-    font-size: 14px;
   }
 `;
 
 const CollectionGrid = styled.div`
   text-align: center;
   margin-top: 60px;
+  width: 100%;
 
   @media (max-width: 768px) {
     margin-top: 40px;
@@ -236,20 +239,17 @@ const CollectionGrid = styled.div`
 `;
 
 const GridTitle = styled.h2`
-  font-size: 36px;
+  font-size: clamp(24px, 4vw, 36px);
   font-weight: bold;
   margin-bottom: 40px;
-
-  @media (max-width: 768px) {
-    font-size: 24px;
-    margin-bottom: 30px;
-  }
+  line-height: 1.2;
 `;
 
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
+  width: 100%;
   
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -263,12 +263,12 @@ const GridItem = styled.div`
   animation: ${fadeIn} 0.8s ease-out forwards;
   animation-delay: ${props => props.$index * 0.2}s;
   transition: transform 0.3s ease;
+  width: 100%;
 
   &:hover {
     transform: translateY(-5px);
   }
-  text-align: center;
-  
+
   img {
     width: 100%;
     border-radius: 8px;
@@ -277,22 +277,16 @@ const GridItem = styled.div`
 `;
 
 const ItemTitle = styled.h3`
-  font-size: 20px;
+  font-size: clamp(18px, 3vw, 20px);
   font-weight: 600;
   margin-bottom: 8px;
-
-  @media (max-width: 768px) {
-    font-size: 18px;
-  }
+  line-height: 1.2;
 `;
 
 const ItemSubtitle = styled.p`
   color: #666;
   margin-bottom: 16px;
-
-  @media (max-width: 768px) {
-    font-size: 14px;
-  }
+  font-size: clamp(14px, 2.5vw, 16px);
 `;
 
 const Section = styled.div`
@@ -307,6 +301,7 @@ const Section = styled.div`
   margin-top: 85px;
   border-radius: 12px;
   overflow: hidden;
+  width: 100%;
 
   &:nth-child(even) {
     flex-direction: row-reverse;
@@ -326,9 +321,10 @@ const Subtitle = styled.p`
   color: #666;
   max-width: 800px;
   margin: 0 auto;
+  font-size: clamp(14px, 2.5vw, 16px);
+  line-height: 1.5;
 
   @media (max-width: 768px) {
-    font-size: 14px;
     padding: 0 15px;
   }
 `;
@@ -338,10 +334,12 @@ const SliderContainer = styled.div`
   overflow: hidden;
   margin: 0 -20px;
   padding: 0 20px;
+  width: calc(100% + 40px);
 
   @media (max-width: 768px) {
     margin: 0 -15px;
     padding: 0 15px;
+    width: calc(100% + 30px);
   }
 `;
 
@@ -350,6 +348,7 @@ const SliderTrack = styled.div`
   gap: 20px;
   transition: transform 0.5s ease;
   transform: translateX(${props => props.$offset}%);
+  width: 100%;
 
   @media (max-width: 768px) {
     gap: 15px;
@@ -358,14 +357,14 @@ const SliderTrack = styled.div`
 
 const Slide = styled.div`
   transition: transform 0.3s ease;
-  
-  &:hover {
-    transform: scale(1.05);
-  }
   min-width: calc(33.333% - 14px);
   flex: 1;
   text-align: center;
   
+  &:hover {
+    transform: scale(1.05);
+  }
+
   @media (max-width: 768px) {
     min-width: calc(100% - 30px);
   }
@@ -378,6 +377,7 @@ const ImageContainer = styled.div`
   border-radius: 8px;
   overflow: hidden;
   background: #f0f0f0;
+  width: 100%;
 `;
 
 const Image = styled.img`
@@ -390,13 +390,10 @@ const Image = styled.img`
 `;
 
 const CategoryName = styled.h3`
-  font-size: 24px;
+  font-size: clamp(20px, 3.5vw, 24px);
   font-weight: 500;
   margin: 0;
-
-  @media (max-width: 768px) {
-    font-size: 20px;
-  }
+  line-height: 1.2;
 `;
 
 const SliderButton = styled.button`
@@ -410,7 +407,6 @@ const SliderButton = styled.button`
   border-radius: 50%;
   cursor: pointer;
   z-index: 2;
-  
   ${props => props.$position === 'left' ? 'left: 10px;' : 'right: 10px;'}
   
   &:hover {
@@ -422,7 +418,6 @@ const SliderButton = styled.button`
     height: 32px;
   }
 `;
-
 const Ring = () => {
   const [isVisible, setIsVisible] = useState(false);
 

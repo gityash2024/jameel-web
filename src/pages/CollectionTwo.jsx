@@ -17,21 +17,34 @@ import justatyourservice_4 from "../assets/justatyourservice_4.svg";
 const TrendsSection = styled.section`
   padding: 80px 0;
   background: #fff;
+  @media (max-width: 768px) {
+    padding: 40px 0;
+  }
 `;
 
 const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+  @media (max-width: 768px) {
+    padding: 0 16px;
+  }
 `;
 
 const TrendsHeader = styled.div`
   text-align: center;
   margin-bottom: 60px;
+  @media (max-width: 768px) {
+    margin-bottom: 40px;
+  }
 `;
+
 const Subtitle = styled.p`
   font-size: 18px;
   color: #666;
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
 `;
 
 const SliderContainer = styled.div`
@@ -49,6 +62,12 @@ const SliderTrack = styled.div`
 const SlideItem = styled.div`
   flex: 0 0 calc(33.333%);
   padding: 0 12px;
+  @media (max-width: 1024px) {
+    flex: 0 0 50%;
+  }
+  @media (max-width: 640px) {
+    flex: 0 0 100%;
+  }
 `;
 
 const TrendImage = styled.img`
@@ -58,7 +77,9 @@ const TrendImage = styled.img`
   border-radius: 4px;
   margin-bottom: 20px;
   transition: transform 0.3s ease;
-
+  @media (max-width: 768px) {
+    height: 280px;
+  }
   &:hover {
     transform: scale(1.02);
   }
@@ -69,6 +90,9 @@ const CardTitle = styled.h3`
   text-align: center;
   color: #000;
   margin-top: 16px;
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
 `;
 
 const SliderButton = styled.button`
@@ -88,17 +112,25 @@ const SliderButton = styled.button`
   justify-content: center;
   z-index: 2;
   transition: all 0.3s ease;
-
+  @media (max-width: 768px) {
+    width: 36px;
+    height: 36px;
+    ${(props) => (props.position === "left" ? "left: -10px;" : "right: -10px;")}
+  }
   &:hover {
     background: #f8f8f8;
     transform: translateY(-50%) scale(1.05);
   }
 `;
+
 const CollectionTitle = styled.h2`
   font-size: 48px;
   font-weight: 700;
   margin-bottom: 24px;
   color: #000;
+  @media (max-width: 768px) {
+    font-size: 32px;
+  }
 `;
 
 const Button = styled.button`
@@ -110,7 +142,9 @@ const Button = styled.button`
   text-transform: uppercase;
   cursor: pointer;
   transition: all 0.3s ease;
-
+  @media (max-width: 768px) {
+    padding: 12px 24px;
+  }
   &:hover {
     background: #333;
     transform: translateY(-2px);
@@ -123,6 +157,10 @@ const MainTitle = styled.h1`
   padding: 40px 0;
   margin: 0;
   color: #000;
+  @media (max-width: 768px) {
+    font-size: 32px;
+    padding: 30px 0;
+  }
 `;
 
 const BannerSection = styled.section`
@@ -135,12 +173,23 @@ const BannerSection = styled.section`
   display: flex;
   align-items: center;
   padding-left: 120px;
+  @media (max-width: 768px) {
+    height: 400px;
+    padding-left: 40px;
+  }
+  @media (max-width: 480px) {
+    padding-left: 20px;
+  }
 `;
 
 const ContentWrapper = styled.div`
   max-width: 500px;
   position: relative;
   z-index: 2;
+  @media (max-width: 768px) {
+    max-width: 100%;
+    padding-right: 20px;
+  }
 `;
 
 const Title = styled.h2`
@@ -149,6 +198,10 @@ const Title = styled.h2`
   color: #000;
   margin-bottom: 24px;
   line-height: 1.2;
+  @media (max-width: 768px) {
+    font-size: 36px;
+    margin-bottom: 16px;
+  }
 `;
 
 const Description = styled.p`
@@ -157,6 +210,10 @@ const Description = styled.p`
   color: #333;
   margin-bottom: 40px;
   max-width: 440px;
+  @media (max-width: 768px) {
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
 `;
 
 const NewArrivalButton = styled.button`
@@ -169,11 +226,14 @@ const NewArrivalButton = styled.button`
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-
+  @media (max-width: 768px) {
+    padding: 12px 24px;
+  }
   &:hover {
     background: #333;
   }
 `;
+
 const CollectionBanner = styled.div`
   position: relative;
   height: 600px;
@@ -185,13 +245,24 @@ const CollectionBanner = styled.div`
   align-items: center;
   padding: 0 80px;
   background-color: #f5f5f5;
+  @media (max-width: 768px) {
+    height: 400px;
+    padding: 0 40px;
+  }
+  @media (max-width: 480px) {
+    padding: 0 20px;
+  }
 `;
 
 const BannerContent = styled.div`
   max-width: 500px;
   color: #000;
   z-index: 1;
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 `;
+
 const ShopGrid = styled.div`
   max-width: 1200px;
   margin: 80px auto;
@@ -199,6 +270,16 @@ const ShopGrid = styled.div`
   grid-template-columns: repeat(4, 1fr);
   gap: 40px;
   padding: 0 40px;
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 0 20px;
+    margin: 40px auto;
+  }
 `;
 
 const ShopCard = styled.div`
@@ -209,17 +290,24 @@ const ShopCard = styled.div`
   text-align: center;
   padding: 20px;
   transition: transform 0.3s ease;
-
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
   &:hover {
     transform: translateY(-5px);
   }
 `;
 
 const ShopImage = styled.img`
-  width: 180px; // Fixed medium size
-  height: 180px; // Fixed medium size
+  width: 180px;
+  height: 180px;
   margin-bottom: 30px;
   object-fit: contain;
+  @media (max-width: 768px) {
+    width: 140px;
+    height: 140px;
+    margin-bottom: 20px;
+  }
 `;
 
 const ShopTitle = styled.h4`
@@ -230,7 +318,9 @@ const ShopTitle = styled.h4`
   display: inline-block;
   padding-bottom: 5px;
   font-weight: 500;
-
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
   &:after {
     content: "";
     position: absolute;
@@ -245,6 +335,9 @@ const ShopTitle = styled.h4`
 const ServiceSection = styled.section`
   padding: 80px 0;
   background: #fff;
+  @media (max-width: 768px) {
+    padding: 40px 0;
+  }
 `;
 
 const ServiceTitle = styled.h2`
@@ -252,6 +345,10 @@ const ServiceTitle = styled.h2`
   text-align: center;
   margin-bottom: 60px;
   color: #000;
+  @media (max-width: 768px) {
+    font-size: 32px;
+    margin-bottom: 40px;
+  }
 `;
 
 const ServiceGrid = styled.div`
@@ -261,6 +358,14 @@ const ServiceGrid = styled.div`
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   padding: 0 40px;
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 20px;
+  }
 `;
 
 const ServiceCard = styled.div`
@@ -272,7 +377,9 @@ const ServiceCard = styled.div`
   flex-direction: column;
   align-items: center;
   transition: transform 0.3s ease;
-
+  @media (max-width: 768px) {
+    padding: 30px 20px;
+  }
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
@@ -281,10 +388,13 @@ const ServiceCard = styled.div`
 
 const ServiceIcon = styled.div`
   margin-bottom: 24px;
-
   img {
     width: 80px;
     height: 80px;
+    @media (max-width: 768px) {
+      width: 60px;
+      height: 60px;
+    }
   }
 `;
 
@@ -294,6 +404,9 @@ const VaultTitle = styled.h3`
   margin-bottom: 16px;
   color: #000;
   text-transform: uppercase;
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 const VaultSubtitle = styled.h4`
@@ -301,6 +414,9 @@ const VaultSubtitle = styled.h4`
   font-weight: 500;
   margin-bottom: 16px;
   color: #333;
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
 `;
 
 const ServiceDescription = styled.p`
@@ -308,6 +424,9 @@ const ServiceDescription = styled.p`
   color: #666;
   line-height: 1.6;
   margin-bottom: 24px;
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
 `;
 
 const LearnMoreButton = styled.button`
@@ -320,12 +439,13 @@ const LearnMoreButton = styled.button`
   cursor: pointer;
   padding: 8px 0;
   text-transform: uppercase;
-
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
   &:hover {
     color: #333;
   }
 `;
-
 const CollectionTwo = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);

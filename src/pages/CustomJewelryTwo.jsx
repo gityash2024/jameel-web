@@ -18,27 +18,44 @@ const Container = styled.div`
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
+  
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
 `;
 
 const BreadcrumbNav = styled.nav`
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+  
+  @media (min-width: 768px) {
+    margin-bottom: 2rem;
+  }
 `;
 
 const BreadcrumbList = styled.ol`
   display: flex;
   gap: 0.5rem;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: #666;
+  flex-wrap: wrap;
+  
+  @media (min-width: 768px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const PageTitle = styled.h1`
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: bold;
   text-align: center;
   margin-bottom: 1rem;
-
+  
   @media (min-width: 768px) {
+    font-size: 3rem;
+  }
+  
+  @media (min-width: 1024px) {
     font-size: 3.5rem;
   }
 `;
@@ -48,26 +65,39 @@ const SearchAssistant = styled.div`
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   color: #666;
+  padding: 0 1rem;
+  text-align: center;
+  flex-wrap: wrap;
+  
+  @media (min-width: 768px) {
+    margin-bottom: 2rem;
+    padding: 0;
+  }
 `;
 
 const HeroSection = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
-  margin-bottom: 4rem;
-
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  
   @media (min-width: 768px) {
     grid-template-columns: 1fr 1fr;
-    align-items: center;
+    gap: 2rem;
+    margin-bottom: 4rem;
   }
 `;
 
 const ImageContainer = styled.div`
   width: 100%;
-  height: 500px;
+  height: 300px;
   position: relative;
+  
+  @media (min-width: 768px) {
+    height: 500px;
+  }
 
   img {
     width: 100%;
@@ -80,22 +110,38 @@ const ImageContainer = styled.div`
 const ContentSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
+  
+  @media (min-width: 768px) {
+    gap: 1.5rem;
+  }
 `;
+
 const Description = styled.p`
-  font-size: 1.125rem;
+  font-size: 1rem;
   color: #666;
   line-height: 1.6;
+  
+  @media (min-width: 768px) {
+    font-size: 1.125rem;
+  }
 `;
+
 const StyledButton = styled(Link)`
   display: block;
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 1rem;
   background-color: #000;
   color: white;
   text-align: center;
   font-weight: 500;
   border-radius: 0.25rem;
   transition: background-color 0.3s ease;
+  font-size: 0.875rem;
+
+  @media (min-width: 768px) {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
 
   &:hover {
     background-color: #333;
@@ -103,28 +149,38 @@ const StyledButton = styled(Link)`
 `;
 
 const HowItWorksSection = styled.div`
-  padding: 4rem 0;
+  padding: 2rem 0;
+  
+  @media (min-width: 768px) {
+    padding: 4rem 0;
+  }
 `;
 
 const ProcessGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
-  margin-top: 3rem;
-
-  @media (min-width: 768px) {
+  gap: 1.5rem;
+  margin-top: 2rem;
+  
+  @media (min-width: 640px) {
     grid-template-columns: repeat(2, 1fr);
   }
-
+  
   @media (min-width: 1024px) {
     grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    margin-top: 3rem;
   }
 `;
 
 const ProcessStep = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
+  
+  @media (min-width: 768px) {
+    gap: 1rem;
+  }
 `;
 
 const ProcessImage = styled.img`
@@ -135,53 +191,76 @@ const ProcessImage = styled.img`
 `;
 
 const StepTitle = styled.h3`
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: bold;
   color: #000;
+  
+  @media (min-width: 768px) {
+    font-size: 1.25rem;
+  }
 `;
 
 const StepDescription = styled.p`
   color: #666;
   line-height: 1.5;
+  font-size: 0.875rem;
+  
+  @media (min-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 
 const DiamondIcon = styled.span`
   display: inline-block;
   svg {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    
+    @media (min-width: 768px) {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
   }
 `;
-const GetStartedSection = styled.section`
-  padding: 4rem 0;
-  text-align: center;
-`;
 
-// const SectionTitle = styled.h2`
-//   font-size: 2.5rem;
-//   font-weight: 600;
-//   margin-bottom: 2rem;
-//   text-align: center;
-// `;
+const GetStartedSection = styled.section`
+  padding: 2rem 0;
+  text-align: center;
+  
+  @media (min-width: 768px) {
+    padding: 4rem 0;
+  }
+`;
 
 const ButtonGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1fr;
   gap: 1rem;
-  margin-bottom: 3rem;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+  margin-bottom: 2rem;
+  
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
+    margin-bottom: 3rem;
   }
 `;
 
 const ActionButton = styled(Link)`
   background-color: #E31837;
   color: white;
-  padding: 1rem;
+  padding: 0.75rem;
   text-align: center;
   font-weight: 500;
   transition: background-color 0.3s ease;
+  font-size: 0.875rem;
+  
+  @media (min-width: 768px) {
+    padding: 1rem;
+    font-size: 1rem;
+  }
 
   &:hover {
     background-color: #C61530;
@@ -190,13 +269,15 @@ const ActionButton = styled(Link)`
 
 const LookbookSection = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-bottom: 4rem;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
   background-color: #F8F8F8;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 4rem;
   }
 `;
 
@@ -209,37 +290,32 @@ const LookbookImage = styled.div`
 `;
 
 const LookbookContent = styled.div`
-  padding: 4rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 1.5rem;
-
-  @media (max-width: 768px) {
-    padding: 2rem;
+  gap: 1rem;
+  
+  @media (min-width: 768px) {
+    padding: 4rem;
+    gap: 1.5rem;
   }
 `;
-
-// const ContentTitle = styled.h2`
-//   font-size: 2.5rem;
-//   font-weight: 600;
-//   margin-bottom: 1rem;
-// `;
-
-// const ContentDescription = styled.p`
-//   color: #333;
-//   line-height: 1.6;
-//   margin-bottom: 1.5rem;
-// `;
 
 const ExploreButton = styled(Link)`
   display: inline-block;
   background-color: #000;
   color: white;
-  padding: 1rem 2rem;
+  padding: 0.75rem 1.5rem;
   font-weight: 500;
   width: fit-content;
   transition: background-color 0.3s ease;
+  font-size: 0.875rem;
+  
+  @media (min-width: 768px) {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
 
   &:hover {
     background-color: #333;
@@ -248,32 +324,38 @@ const ExploreButton = styled(Link)`
 
 const EngravingSection = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
   background-color: #F8F8F8;
-  margin-bottom: 4rem;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+  margin-bottom: 3rem;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 4rem;
   }
 `;
 
 const EngravingContent = styled.div`
-  padding: 4rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 1.5rem;
-
-  @media (max-width: 768px) {
-    padding: 2rem;
-    order: 2;
+  gap: 1rem;
+  order: 2;
+  
+  @media (min-width: 768px) {
+    padding: 4rem;
+    gap: 1.5rem;
+    order: 1;
   }
 `;
 
 const EngravingImage = styled.div`
-  @media (max-width: 768px) {
-    order: 1;
+  order: 1;
+  
+  @media (min-width: 768px) {
+    order: 2;
   }
 
   img {
@@ -282,15 +364,18 @@ const EngravingImage = styled.div`
     object-fit: cover;
   }
 `;
+
 const ServicesSection = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-bottom: 4rem;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
   background-color: #F8F8F8;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 4rem;
   }
 `;
 
@@ -303,58 +388,89 @@ const ServiceImage = styled.div`
 `;
 
 const ServiceContent = styled.div`
-  padding: 4rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 1.5rem;
-
-  @media (max-width: 768px) {
-    padding: 2rem;
+  gap: 1rem;
+  
+  @media (min-width: 768px) {
+    padding: 4rem;
+    gap: 1.5rem;
   }
 `;
 
 const ContentTitle = styled.h2`
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+  
+  @media (min-width: 768px) {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 const ContentDescription = styled.p`
   color: #333;
   line-height: 1.6;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  
+  @media (min-width: 768px) {
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+  }
 `;
 
 const AppointmentButton = styled(Link)`
   display: inline-block;
   background-color: #000;
   color: white;
-  padding: 1rem 2rem;
+  padding: 0.75rem 1.5rem;
   font-weight: 500;
   width: fit-content;
   transition: background-color 0.3s ease;
+  font-size: 0.875rem;
+  
+  @media (min-width: 768px) {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
 
   &:hover {
     background-color: #333;
   }
 `;
 
-// FAQ Section Styles
 const FAQSection = styled.div`
-  padding: 4rem 0;
+  padding: 2rem 0;
+  
+  @media (min-width: 768px) {
+    padding: 4rem 0;
+  }
 `;
 
 const FAQTitle = styled.h2`
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 600;
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
+  
+  @media (min-width: 768px) {
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+  }
 `;
 
 const AccordionContainer = styled.div`
   max-width: 900px;
   margin: 0 auto;
+  padding: 0 1rem;
+  
+  @media (min-width: 768px) {
+    padding: 0;
+  }
 `;
 
 const AccordionItem = styled.div`
@@ -371,17 +487,26 @@ const AccordionHeader = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 500;
   text-align: left;
   color: #000;
+  
+  @media (min-width: 768px) {
+    font-size: 1.125rem;
+  }
 
   svg {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     transition: transform 0.3s ease;
     transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'};
     color: ${props => props.$isOpen ? '#E31837' : '#000'};
+    
+    @media (min-width: 768px) {
+      width: 24px;
+      height: 24px;
+    }
   }
 `;
 
@@ -391,16 +516,31 @@ const AccordionContent = styled.div`
   transition: max-height 0.3s ease;
   color: #666;
   padding-bottom: ${props => props.$isOpen ? '1rem' : '0'};
+  font-size: 0.875rem;
+  
+  @media (min-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 
 const QuestionBox = styled.div`
   background-color: #FAF7F2;
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 4px;
-  margin-top: 3rem;
+  margin-top: 2rem;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 1rem;
   align-items: center;
+  text-align: center;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 2rem;
+    margin-top: 3rem;
+    text-align: left;
+  }
 `;
 
 const QuestionText = styled.div`
@@ -408,45 +548,68 @@ const QuestionText = styled.div`
     color: #666;
     font-weight: 500;
     margin-bottom: 0.5rem;
+    font-size: 1rem;
+    
+    @media (min-width: 768px) {
+      font-size: 1.125rem;
+    }
   }
 
   p {
     color: #666;
+    font-size: 0.875rem;
+    
+    @media (min-width: 768px) {
+      font-size: 1rem;
+    }
   }
 `;
 
 const GetInTouchButton = styled.button`
   background-color: #000;
   color: white;
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 1.25rem;
   border: none;
   cursor: pointer;
   font-weight: 500;
   transition: background-color 0.3s ease;
+  font-size: 0.875rem;
+  
+  @media (min-width: 768px) {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
 
   &:hover {
     background-color: #333;
   }
 `;
+
 const SectionTitle = styled.h2`
-  font-size: 2.5rem;
+  font-size: 2rem;
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   font-weight: 500;
+  
+  @media (min-width: 768px) {
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+  }
 `;
 
 const CardGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
   margin-bottom: 2rem;
-
-  @media (max-width: 1024px) {
+  
+  @media (min-width: 640px) {
     grid-template-columns: repeat(2, 1fr);
   }
-
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
   }
 `;
 
@@ -455,9 +618,13 @@ const ServiceCard = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 2rem;
+  padding: 1.5rem;
   background-color: #F8F8F8;
   transition: transform 0.3s ease;
+  
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
 
   &:hover {
     transform: translateY(-5px);
@@ -465,30 +632,50 @@ const ServiceCard = styled.div`
 `;
 
 const ServiceIcon = styled.img`
-  width: 48px;
-  height: 48px;
-  margin-bottom: 1.5rem;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 1.25rem;
+  
+  @media (min-width: 768px) {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const CardTitle = styled.h3`
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 500;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+  
+  @media (min-width: 768px) {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 const CardDescription = styled.p`
   color: #666;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   line-height: 1.6;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+  
+  @media (min-width: 768px) {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 const LearnMoreButton = styled(Link)`
   color: #000;
   text-decoration: underline;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 500;
   transition: color 0.3s ease;
+  
+  @media (min-width: 768px) {
+    font-size: 0.875rem;
+  }
 
   &:hover {
     color: #666;
@@ -500,13 +687,19 @@ const TermsLink = styled(Link)`
   text-align: center;
   color: #000;
   text-decoration: underline;
-  font-size: 0.875rem;
-  margin-top: 2rem;
+  font-size: 0.75rem;
+  margin-top: 1.5rem;
+  
+  @media (min-width: 768px) {
+    font-size: 0.875rem;
+    margin-top: 2rem;
+  }
 
   &:hover {
     color: #666;
   }
 `;
+
 
 const  CustomJewelryTwo = () => {   
     const [openIndex, setOpenIndex] = useState(0);
@@ -561,7 +754,6 @@ const  CustomJewelryTwo = () => {
       };
     
       const handleGetInTouch = () => {
-        // Add your get in touch functionality here
         console.log("Get in touch clicked");
       };    
     return (

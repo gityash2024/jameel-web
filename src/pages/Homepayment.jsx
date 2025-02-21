@@ -280,7 +280,51 @@ const PromotionLink = styled.a`
     font-size: 13px;
   }
 `;
+const RewardsSection = styled.div`
+  text-align: center;
+  margin: 60px 0;
+  
+  h2 {
+    font-size: 36px;
+    margin-bottom: 40px;
+  }
+`;
 
+const RewardsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const RewardCard = styled.div`
+  background: #F7F7F7;
+  padding: 24px;
+  text-align: center;
+  
+  svg {
+    margin-bottom: 16px;
+  }
+  
+  h3 {
+    margin-bottom: 12px;
+  }
+  
+  p {
+    color: #666;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  
+  a {
+    color: #000;
+    text-decoration: none;
+    font-weight: 500;
+  }
+`;
 const Homepayment = () => {
     const paymentOptions = [
         {
@@ -300,28 +344,12 @@ const Homepayment = () => {
         }
     ];
     
-    const services = [
-        {
-          icon: justatyourservice_1,
-          title: 'Join Vault Rewards',
-          description: 'This was one of the first rings I had looked at in person. After looking at hundreds'
-        },
-        {
-          icon: justatyourservice_2,
-          title: 'Join Vault Rewards',
-          description: 'This was one of the first rings I had looked at in person. After looking at hundreds'
-        },
-        {
-          icon: justatyourservice_3,
-          title: 'Join Vault Rewards',
-          description: 'This was one of the first rings I had looked at in person. After looking at hundreds'
-        },
-        {
-          icon: justatyourservice_4,
-          title: 'Join Vault Rewards',
-          description: 'This was one of the first rings I had looked at in person. After looking at hundreds'
-        }
-    ];
+  const rewardsData = [
+          { icon: justatyourservice_1, title: "VAULT REWARDS" },
+          { icon: justatyourservice_2, title: "VAULT REWARDS" },
+          { icon: justatyourservice_3, title: "VAULT REWARDS" },
+          { icon: justatyourservice_4, title: "VAULT REWARDS" }
+        ];
     
     return (
         <>
@@ -343,18 +371,16 @@ const Homepayment = () => {
 
         <ServiceSection>
             <ServiceHeading>JSK At Your Service</ServiceHeading>
-            <ServiceGrid>
-                {services.map((service, index) => (
-                    <ServiceCard key={index}>
-                        <DiamondIcon>
-                            <img src={service.icon} alt="Vault Rewards" />
-                        </DiamondIcon>
-                        <ServiceTitle>{service.title}</ServiceTitle>
-                        <ServiceDescription>{service.description}</ServiceDescription>
-                        <LearnMoreLink href="#">LEARN MORE</LearnMoreLink>
-                    </ServiceCard>
-                ))}
-            </ServiceGrid>
+            <RewardsGrid>
+          {rewardsData.map((reward, index) => (
+            <RewardCard key={index}>
+              <img src={reward.icon} alt={reward.title} />
+              <h3>Join Vault Rewards</h3>
+              <p>"This was one of the first rings I had looked at in person. After looking at hundreds"</p>
+              <a href="#">LEARN MORE</a>
+            </RewardCard>
+          ))}
+        </RewardsGrid>
             <PromotionLink href="/terms-use">PROMOTION TERMS & CONDITIONS</PromotionLink>
         </ServiceSection> 
         </>

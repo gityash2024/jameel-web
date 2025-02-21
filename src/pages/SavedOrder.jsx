@@ -147,42 +147,87 @@ const ActionButton = styled.button`
   }
 `;
 
-const ServiceSection = styled.div`
-  margin-top: 3rem;
-  text-align: center;
-`;
+// const ServiceSection = styled.div`
+//   margin-top: 3rem;
+//   text-align: center;
+// `;
 
-const ServiceTitle = styled.h2`
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 2rem;
-`;
+// const ServiceTitle = styled.h2`
+//   font-size: 2rem;
+//   font-weight: bold;
+//   margin-bottom: 2rem;
+// `;
 
-const ServiceGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
-`;
+// const ServiceGrid = styled.div`
+//   display: grid;
+//   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+//   gap: 2rem;
+//   margin-top: 2rem;
+// `;
 
-const ServiceImage = styled.img`
-  width: 100%;
-  height: auto;
-`;
-const SidebarLink = styled(Link)`
-  display: block;
-  padding: 12px 15px;
-  text-decoration: none;
-  color: #333;
-  border-radius: 4px;
-  margin-bottom: 5px;
+// const ServiceImage = styled.img`
+//   width: 100%;
+//   height: auto;
+// `;
+// const SidebarLink = styled(Link)`
+//   display: block;
+//   padding: 12px 15px;
+//   text-decoration: none;
+//   color: #333;
+//   border-radius: 4px;
+//   margin-bottom: 5px;
   
-  &:hover {
-    background: #f5f5f5;
+//   &:hover {
+//     background: #f5f5f5;
+//   }
+  
+//   &.active {
+//     background: #f0f0f0;
+//     font-weight: 500;
+//   }
+// `;
+const RewardsSection = styled.div`
+  text-align: center;
+  margin: 60px 0;
+  
+  h2 {
+    font-size: 36px;
+    margin-bottom: 40px;
+  }
+`;
+
+const RewardsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const RewardCard = styled.div`
+  background: #F7F7F7;
+  padding: 24px;
+  text-align: center;
+  
+  svg {
+    margin-bottom: 16px;
   }
   
-  &.active {
-    background: #f0f0f0;
+  h3 {
+    margin-bottom: 12px;
+  }
+  
+  p {
+    color: #666;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  
+  a {
+    color: #000;
+    text-decoration: none;
     font-weight: 500;
   }
 `;
@@ -205,6 +250,13 @@ const SavedAddress = () => {
     }
   ]);
 
+  const rewardsData = [
+          { icon: justatyourservice_1, title: "VAULT REWARDS" },
+          { icon: justatyourservice_2, title: "VAULT REWARDS" },
+          { icon: justatyourservice_3, title: "VAULT REWARDS" },
+          { icon: justatyourservice_4, title: "VAULT REWARDS" }
+        ];
+        
   const handleAddAddress = () => {
     navigate('/add-address');
   };
@@ -265,15 +317,22 @@ const SavedAddress = () => {
         ))}
       </Grid>
 
-      <ServiceSection>
-        <ServiceTitle>JSK At Your Service</ServiceTitle>
-        <ServiceGrid>
-          <ServiceImage src={justatyourservice_1} alt="Service 1" />
-          <ServiceImage src={justatyourservice_2} alt="Service 2" />
-          <ServiceImage src={justatyourservice_3} alt="Service 3" />
-          <ServiceImage src={justatyourservice_4} alt="Service 4" />
-        </ServiceGrid>
-      </ServiceSection>
+      <RewardsSection>
+        <h2>JSK At Your Service</h2>
+        <RewardsGrid>
+          {rewardsData.map((reward, index) => (
+            <RewardCard key={index}>
+              <img src={reward.icon} alt={reward.title} />
+              <h3>Join Vault Rewards</h3>
+              <p>"This was one of the first rings I had looked at in person. After looking at hundreds"</p>
+              <a href="#">LEARN MORE</a>
+            </RewardCard>
+          ))}
+        </RewardsGrid>
+        <p style={{ marginTop: '40px' }}>
+          <a href="#">PROMOTION TERMS & CONDITIONS</a>
+        </p>
+      </RewardsSection>
     </Container>
   );
 };

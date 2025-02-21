@@ -474,72 +474,116 @@ const SectionTitle = styled.h2`
   font-weight: 500;
 `;
 
-const CardGrid = styled.div`
+// const CardGrid = styled.div`
+//   display: grid;
+//   grid-template-columns: repeat(4, 1fr);
+//   gap: 2rem;
+//   margin-bottom: 2rem;
+
+//   @media (max-width: 1024px) {
+//     grid-template-columns: repeat(2, 1fr);
+//   }
+
+//   @media (max-width: 640px) {
+//     grid-template-columns: 1fr;
+//   }
+// `;
+
+// const ServiceCard = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   text-align: center;
+//   padding: 2rem;
+//   background-color: #F8F8F8;
+//   transition: transform 0.3s ease;
+
+//   &:hover {
+//     transform: translateY(-5px);
+//   }
+// `;
+
+// const ServiceIcon = styled.img`
+//   width: 48px;
+//   height: 48px;
+//   margin-bottom: 1.5rem;
+// `;
+// const CardDescription = styled.p`
+//   color: #666;
+//   font-size: 0.875rem;
+//   line-height: 1.6;
+//   margin-bottom: 1rem;
+// `;
+
+// const LearnMoreButton = styled(Link)`
+//   color: #000;
+//   text-decoration: underline;
+//   font-size: 0.875rem;
+//   font-weight: 500;
+//   transition: color 0.3s ease;
+
+//   &:hover {
+//     color: #666;
+//   }
+// `;
+
+// const TermsLink = styled(Link)`
+//   display: block;
+//   text-align: center;
+//   color: #000;
+//   text-decoration: underline;
+//   font-size: 0.875rem;
+//   margin-top: 2rem;
+
+//   &:hover {
+//     color: #666;
+//   }
+// `;
+const RewardsSection = styled.div`
+  text-align: center;
+  margin: 60px 0;
+  
+  h2 {
+    font-size: 36px;
+    margin-bottom: 40px;
+  }
+`;
+
+const RewardsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
-  margin-bottom: 2rem;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 640px) {
+  gap: 24px;
+  
+  @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
 `;
 
-const ServiceCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+const RewardCard = styled.div`
+  background: #F7F7F7;
+  padding: 24px;
   text-align: center;
-  padding: 2rem;
-  background-color: #F8F8F8;
-  transition: transform 0.3s ease;
-
-  &:hover {
-    transform: translateY(-5px);
+  
+  svg {
+    margin-bottom: 16px;
   }
-`;
-
-const ServiceIcon = styled.img`
-  width: 48px;
-  height: 48px;
-  margin-bottom: 1.5rem;
-`;
-const CardDescription = styled.p`
-  color: #666;
-  font-size: 0.875rem;
-  line-height: 1.6;
-  margin-bottom: 1rem;
-`;
-
-const LearnMoreButton = styled(Link)`
-  color: #000;
-  text-decoration: underline;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: color 0.3s ease;
-
-  &:hover {
+  
+  h3 {
+    margin-bottom: 12px;
+  }
+  
+  p {
     color: #666;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  
+  a {
+    color: #000;
+    text-decoration: none;
+    font-weight: 500;
   }
 `;
-
-const TermsLink = styled(Link)`
-  display: block;
-  text-align: center;
-  color: #000;
-  text-decoration: underline;
-  font-size: 0.875rem;
-  margin-top: 2rem;
-
-  &:hover {
-    color: #666;
-  }
-`;
-
 const PersonalizedJewelry = () => {
     const [openIndex, setOpenIndex] = useState(0);
 
@@ -550,6 +594,13 @@ const PersonalizedJewelry = () => {
     // Add more categories as needed
   ];
 
+  const rewardsData = [
+          { icon: justatyourservice_1, title: "VAULT REWARDS" },
+          { icon: justatyourservice_2, title: "VAULT REWARDS" },
+          { icon: justatyourservice_3, title: "VAULT REWARDS" },
+          { icon: justatyourservice_4, title: "VAULT REWARDS" }
+        ];
+        
   const engagementSteps = [
     {
       image: engagementring_1,
@@ -791,20 +842,22 @@ const PersonalizedJewelry = () => {
        
       <SectionTitle>JSK At Your Service</SectionTitle>
       
-      <CardGrid>
-        {services.map((service, index) => (
-          <ServiceCard key={index}>
-            <ServiceIcon src={service.icon} alt={service.title} />
-            <CardTitle>{service.title}</CardTitle>
-            <CardDescription>{service.description}</CardDescription>
-            <LearnMoreButton to={service.link}>LEARN MORE</LearnMoreButton>
-          </ServiceCard>
-        ))}
-      </CardGrid>
-
-      <TermsLink to="/terms">
-        PROMOTION TERMS & CONDITIONS
-      </TermsLink>
+      <RewardsSection>
+        <h2>JSK At Your Service</h2>
+        <RewardsGrid>
+          {rewardsData.map((reward, index) => (
+            <RewardCard key={index}>
+              <img src={reward.icon} alt={reward.title} />
+              <h3>Join Vault Rewards</h3>
+              <p>"This was one of the first rings I had looked at in person. After looking at hundreds"</p>
+              <a href="#">LEARN MORE</a>
+            </RewardCard>
+          ))}
+        </RewardsGrid>
+        <p style={{ marginTop: '40px' }}>
+          <a href="#">PROMOTION TERMS & CONDITIONS</a>
+        </p>
+      </RewardsSection>
 
 
       </StylesSection>

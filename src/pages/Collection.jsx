@@ -11,7 +11,6 @@ import trendingnow_3 from "../assets/trendingnow_3.png";
 import trendingnow_4 from "../assets/trendingnow_4.png";
 import CollectionTwo from "./CollectionTwo";
 
-// Main container that wraps all sections
 const MainContainer = styled.div`
   width: 100%;
   display: flex;
@@ -19,13 +18,18 @@ const MainContainer = styled.div`
   background: #fff;
 `;
 
-// Hero Section Styles
 const HeroSection = styled.section`
   display: grid;
   grid-template-columns: 1fr 1fr;
   min-height: 100vh;
   overflow: hidden;
   background: #fff;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding: 40px 0;
+  }
 `;
 
 const ContentSection = styled.div`
@@ -34,17 +38,35 @@ const ContentSection = styled.div`
   flex-direction: column;
   justify-content: center;
   max-width: 600px;
+
+  @media (max-width: 768px) {
+    padding: 0 20px;
+    max-width: 100%;
+    text-align: center;
+    align-items: center;
+  }
 `;
 
 const ImageSection = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
+  
   img {
     width: 97%;
     height: 80%;
     margin-top: 30px;
     object-fit: cover;
+  }
+
+  @media (max-width: 768px) {
+    height: auto;
+    
+    img {
+      width: 100%;
+      height: auto;
+      margin-top: 20px;
+    }
   }
 `;
 
@@ -52,6 +74,10 @@ const HeroTitle = styled.h1`
   font-size: 42px;
   font-weight: 600;
   margin-bottom: 24px;
+
+  @media (max-width: 768px) {
+    font-size: 32px;
+  }
 `;
 
 const Description = styled.p`
@@ -60,11 +86,22 @@ const Description = styled.p`
   color: #666;
   margin-bottom: 40px;
   max-width: 480px;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    max-width: 100%;
+  }
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   gap: 16px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
 `;
 
 const Button = styled.button`
@@ -87,13 +124,21 @@ const Button = styled.button`
   &:active {
     transform: translateY(0);
   }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 12px 24px;
+  }
 `;
 
-// Fresh Finds Section Styles
 const FreshFindsSection = styled.section`
   width: 100%;
   padding: 100px 0;
   background: #fff;
+
+  @media (max-width: 768px) {
+    padding: 60px 0;
+  }
 `;
 
 const FreshFindsContainer = styled.div`
@@ -108,6 +153,10 @@ const SectionTitle = styled.h2`
   text-align: center;
   margin-bottom: 16px;
   color: #000;
+
+  @media (max-width: 768px) {
+    font-size: 32px;
+  }
 `;
 
 const Subtitle = styled.p`
@@ -115,6 +164,11 @@ const Subtitle = styled.p`
   color: #666;
   text-align: center;
   margin-bottom: 60px;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+    margin-bottom: 40px;
+  }
 `;
 
 const SliderContainer = styled.div`
@@ -122,6 +176,10 @@ const SliderContainer = styled.div`
   width: 100%;
   overflow: hidden;
   padding: 0 40px;
+
+  @media (max-width: 768px) {
+    padding: 0 20px;
+  }
 `;
 
 const SlideWrapper = styled.div`
@@ -129,6 +187,10 @@ const SlideWrapper = styled.div`
   transform: translateX(-${(props) => props.translate}%);
   transition: transform 0.5s ease-in-out;
   gap: 30px;
+
+  @media (max-width: 768px) {
+    gap: 15px;
+  }
 `;
 
 const Slide = styled.div`
@@ -137,6 +199,10 @@ const Slide = styled.div`
 
   &:hover {
     transform: translateY(-5px);
+  }
+
+  @media (max-width: 768px) {
+    flex: 0 0 calc(100% - 30px);
   }
 `;
 
@@ -152,6 +218,10 @@ const ImageContainer = styled.div`
     height: 100%;
     object-fit: cover;
   }
+
+  @media (max-width: 768px) {
+    height: 300px;
+  }
 `;
 
 const SlideTitle = styled.h3`
@@ -160,6 +230,10 @@ const SlideTitle = styled.h3`
   color: #000;
   margin-top: 20px;
   text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 const NavButton = styled.button`
@@ -190,13 +264,26 @@ const NavButton = styled.button`
     height: 28px;
     color: #333;
   }
+
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
 `;
 
-// Trending Section Styles
 const TrendingSection = styled.section`
   width: 100%;
   padding: 100px 0;
   background: #fff;
+
+  @media (max-width: 768px) {
+    padding: 60px 0;
+  }
 `;
 
 const TrendingContainer = styled.div`
@@ -210,6 +297,11 @@ const GridContainer = styled.div`
   grid-template-columns: repeat(2, 1fr);
   gap: 40px;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
 `;
 
 const Card = styled.div`
@@ -228,6 +320,10 @@ const CardTitle = styled.h3`
   font-weight: 500;
   margin-bottom: 16px;
   color: #000;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
 `;
 
 const NewArrivalButton = styled.button`
@@ -243,6 +339,11 @@ const NewArrivalButton = styled.button`
 
   &:hover {
     background: #333;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 10px 20px;
   }
 `;
 
@@ -288,7 +389,7 @@ const Collection = () => {
   ];
 
   const totalSlides = freshFindsData.length;
-  const slidesToShow = 3;
+  const slidesToShow = window.innerWidth <= 768 ? 1 : 3;
   const maxIndex = Math.ceil(totalSlides / slidesToShow) - 1;
 
   const handlePrev = () => {
@@ -309,7 +410,6 @@ const Collection = () => {
 
   return (
     <MainContainer>
-      {/* Hero Section */}
       <HeroSection>
         <ContentSection>
           <HeroTitle>Beneath the Glitter an evening full of shine</HeroTitle>
@@ -339,7 +439,6 @@ const Collection = () => {
         </ImageSection>
       </HeroSection>
 
-      {/* Fresh Finds Section */}
       <FreshFindsSection>
         <FreshFindsContainer>
           <SectionTitle>Fresh Finds</SectionTitle>
@@ -368,7 +467,6 @@ const Collection = () => {
         </FreshFindsContainer>
       </FreshFindsSection>
 
-      {/* Trending Section */}
       <TrendingSection>
         <TrendingContainer>
           <SectionTitle>Trending Now</SectionTitle>
@@ -390,7 +488,6 @@ const Collection = () => {
         </TrendingContainer>
       </TrendingSection>
 
-      {/* Collection Two Component */}
       <CollectionTwo />
     </MainContainer>
   );
