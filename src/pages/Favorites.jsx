@@ -224,32 +224,10 @@ const Favorites = () => {
 
   return (
     <Container>
-      <Sidebar>
-        <MenuLink href="/my-account">My Account</MenuLink>
-        <MenuLink href="/my-orders">My Orders</MenuLink>
-        <MenuLink href="/favourites" active>Favourites</MenuLink>
-        <MenuLink href="/track-order">Track Order</MenuLink>
-        <MenuLink href="/saved-address">Saved Address</MenuLink>
-      </Sidebar>
+      
 
       <MainContent hasSidebar>
-        <Navigation>
-          <NavLink href="/">Home</NavLink>
-          {" / "}
-          <NavLink href="/custom-jewelry">Custom Jewelry</NavLink>
-        </Navigation>
-
-        <Header>
-          <Title>Favorites</Title>
-          <SubHeader>
-            <img src={daimond_logo} alt="Diamond Logo" />
-            <SearchText>
-              506 results too many?{" "}
-              <Link>Describe what you're looking for?</Link>
-            </SearchText>
-          </SubHeader>
-        </Header>
-
+        
         <ProductGrid>
           {products.map((product) => (
             <ProductCard key={product.id}>

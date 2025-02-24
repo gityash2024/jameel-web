@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import Products from './pages/Products';
@@ -31,6 +32,7 @@ import SearchInStore from './pages/SearchInStore';
 import PaymentHub from './pages/PaymentHub';
 import RepairandMaintances from './pages/RepairandMaintances';
 import Privacy from './pages/Privacy';
+import MyAccountLayout from './pages/MyAccountLayout';
 import Termtouse from './pages/termtouse';
 import CustomJewelryTwo from './pages/CustomJewelryTwo';
 import FAQ from './pages/FAQ';
@@ -49,6 +51,8 @@ import TrackOrder from './pages/TrackOrder';
 import SavedOrder from './pages/SavedOrder';
 import AddAddress from './pages/AddAddress';
 import AboutUsTwo from './pages/AboutUsTwo';
+import AuthGuard from './components/guards/AuthGuard';
+import SavedAddress from './pages/SavedOrder';
 
 const AuthLayout = ({ children }) => {
   return (
@@ -60,30 +64,51 @@ const AuthLayout = ({ children }) => {
   );
 };
 
-
 function App() {
   return (
     <BrowserRouter>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: '#333',
+            color: '#fff',
+          },
+          success: {
+            duration: 3000,
+            theme: {
+              primary: '#059669',
+              secondary: '#white',
+            },
+          },
+          error: {
+            duration: 3000,
+            theme: {
+              primary: '#DC2626',
+              secondary: '#white',
+            },
+          },
+        }}
+      />
       <Routes>
-        {/* Auth routes without Layout */}
         <Route path="/login" element={<AuthLayout><Login /></AuthLayout>} />
         <Route path="/signup" element={<AuthLayout><SignUp /></AuthLayout>} />
         <Route path="/register" element={<AuthLayout><Register /></AuthLayout>} />
         
-        {/* Main routes with Layout */}
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="products" element={<Products />} />
           <Route path="new-arrivals" element={<ProductDetail />} />
-          <Route path="cart" element={<Cart />} />
-          <Route path="checkout" element={<CheckOut />} />
-          <Route path="profile" element={<Profile />} />
+          <Route path="cart" element={<AuthGuard><Cart /></AuthGuard>} />
+          <Route path="checkout" element={<AuthGuard><CheckOut /></AuthGuard>} />
+          <Route path="profile" element={<AuthGuard><Profile /></AuthGuard>} />
           <Route path="home-erraring" element={<HomeErraring />} />
           <Route path="home-payment" element={<Homepayment />} />
           <Route path="productstwo" element={<Productstwo />} />
           <Route path="collection" element={<Collection />} />
           <Route path="collectiontwo" element={<CollectionTwo />} />
-          <Route path="booking-appoinment" element={<BookingAppoiment />} />
+          <Route path="booking-appoinment" element={<AuthGuard><BookingAppoiment /></AuthGuard>} />
           <Route path="blogs-one" element={<BlogsOne />} />
           <Route path="blogs-two" element={<BlogsTwo />} />
           <Route path="blogs-three" element={<BlogsThree />} />
@@ -92,14 +117,12 @@ function App() {
           <Route path="custom-jewelry" element={<CustomJewelry />} />
           <Route path="custom-jewelrytwo" element={<CustomJewelryTwo />} />
           <Route path="help-center" element={<HelpCenter />} />
-          <Route path="my-order" element={<MyOrder />} />
-          <Route path="my-account" element={<MyAccount />} />
-          <Route path="card-option" element={<CardOption />} />
-          <Route path="checkout-page" element={<CheckoutPage />} />
+          <Route path="card-option" element={<AuthGuard><CardOption /></AuthGuard>} />
+          <Route path="checkout-page" element={<AuthGuard><CheckoutPage /></AuthGuard>} />
           <Route path="personalized-jewelry" element={<PersonalizedJewelry />} />
-          <Route path="card-page" element={<CardPage />} />
+          <Route path="card-page" element={<AuthGuard><CardPage /></AuthGuard>} />
           <Route path="search-in-store" element={<SearchInStore />} />
-          <Route path="payment-hub" element={<PaymentHub />} />
+          <Route path="payment-hub" element={<AuthGuard><PaymentHub /></AuthGuard>} />
           <Route path="repair-and-maintances" element={<RepairandMaintances />} />
           <Route path="privacy" element={<Privacy />} />
           <Route path="terms-use" element={<Termtouse />} />
@@ -110,13 +133,21 @@ function App() {
           <Route path="learn-more-about" element={<LearnMoreAbout />} />
           <Route path="find-your-store" element={<Findyourstore />} />
           <Route path="personalized" element={<Personalized />} />
-          <Route path="layawaypayment" element={<Layawaypayment />} />
-          <Route path="saved-order" element={<SavedOrder />} />
-          <Route path="favorites" element={<Favorites />} />
-          <Route path="favorites-remove" element={<FavoritesRemove />} />
-          <Route path="track-order" element={<TrackOrder />} />
-          <Route path="add-address" element={<AddAddress />} />
+          <Route path="layawaypayment" element={<AuthGuard><Layawaypayment /></AuthGuard>} />
+          <Route path="saved-order" element={<AuthGuard><SavedOrder /></AuthGuard>} />
+          <Route path="favorites-remove" element={<AuthGuard><FavoritesRemove /></AuthGuard>} />
+          <Route path="add-address" element={<AuthGuard><AddAddress /></AuthGuard>} />
           <Route path="about-us-two" element={<AboutUsTwo />} />
+
+          <Route path="/" element={<AuthGuard><MyAccountLayout /></AuthGuard>}>
+            <Route path="my-account" element={<MyAccount />} />
+            <Route path="my-order" element={<MyOrder />} />
+            <Route path="saved-address" element={<SavedAddress />} />
+            <Route path="add-address" element={<AddAddress />} />
+            <Route path="favorites" element={<Favorites />} />
+            <Route path="track-order" element={<TrackOrder />} />
+          </Route>
+
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

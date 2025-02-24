@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { MapPin, HelpCircle, User, Search, ShoppingCart, Heart, ChevronDown, Camera, Menu, X } from 'lucide-react';
+import { MapPin, HelpCircle, User, Search, ShoppingCart, Heart, ChevronDown, Camera, Menu, X, LogOut } from 'lucide-react';
 
 const HeaderContext = createContext();
 
@@ -11,6 +11,25 @@ export const HeaderProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [jammelUser, setUserData] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userDataStr = localStorage.getItem('jammelUser');
+    if (token && userDataStr) {
+      setIsLoggedIn(true);
+      setUserData(JSON.parse(userDataStr));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('jammelUser');
+    setIsLoggedIn(false);
+    setUserData(null);
+    setShowProfileModal(false);
+  };
 
   const headerData = {
     topBanner: {
@@ -105,7 +124,11 @@ export const HeaderProvider = ({ children }) => {
       isMobileMenuOpen,
       setIsMobileMenuOpen,
       isMobileSearchOpen,
-      setIsMobileSearchOpen
+      setIsMobileSearchOpen,
+      showProfileModal,
+      setShowProfileModal,
+      jammelUser,
+      handleLogout
     }}>
       {children}
     </HeaderContext.Provider>
@@ -120,9 +143,36 @@ const TopBanner = () => {
     </div>
   );
 };
+const ProfileModal = () => {
+  const { jammelUser, showProfileModal, setShowProfileModal, handleLogout } = useContext(HeaderContext);
+
+  if (!showProfileModal || !jammelUser) return null;
+
+  return (
+    <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-[100]">
+      <div className="p-4 border-b">
+        <div className="font-semibold">{jammelUser.data.user.firstName} {jammelUser.data.user.lastName}</div>
+        <div className="text-sm text-gray-600">{jammelUser.data.user.email}</div>
+      </div>
+      <div className="p-2">
+        <Link to="/profile" className="block px-4 py-2 text-sm hover:bg-gray-100 rounded">My Profile</Link>
+        <Link to="/my-order" className="block px-4 py-2 text-sm hover:bg-gray-100 rounded">My Orders</Link>
+        <button
+          onClick={handleLogout}
+          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 rounded flex items-center gap-2"
+        >
+          <LogOut className="w-4 h-4" />
+          Logout
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const UtilityNav = () => {
-  const { headerData } = useContext(HeaderContext);
+  const { headerData, isLoggedIn, jammelUser } = useContext(HeaderContext);
+  const navigate = useNavigate();
+
   return (
     <div className="border-b hidden md:block">
       <div className="container mx-auto px-4 md:px-6">
@@ -140,23 +190,39 @@ const UtilityNav = () => {
             ))}
           </div>
           <div className="flex items-center gap-4 md:gap-8">
-            {headerData.userActions.map((item, index) => (
+            <Link
+              to="/booking-appoinment"
+              className="flex items-center text-sm hover:text-gray-600"
+            >
+              Book an Appointment
+            </Link>
+            {isLoggedIn ? (
+              <div 
+                className="relative"
+                onClick={() => navigate('/my-account')}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="flex items-center text-sm hover:text-gray-600">
+                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                    {jammelUser?.data.user.firstName.charAt(0).toUpperCase()}
+                  </div>
+                </div>
+              </div>
+            ) : (
               <Link
-                key={index}
-                to={item.link}
+                to="/login"
                 className="flex items-center text-sm hover:text-gray-600"
               >
-                {item.icon && <item.icon className="w-4 h-4 mr-2" />}
-                {item.text}
+                <User className="w-4 h-4 mr-2" />
+                Sign In / Create Account
               </Link>
-            ))}
+            )}
           </div>
         </div>
       </div>
     </div>
   );
 };
-
 const MainHeader = () => {
   const { 
     headerData, 
@@ -167,7 +233,8 @@ const MainHeader = () => {
     isMobileMenuOpen,
     setIsMobileMenuOpen,
     isMobileSearchOpen,
-    setIsMobileSearchOpen
+    setIsMobileSearchOpen,
+    showProfileModal
   } = useContext(HeaderContext);
   const navigate = useNavigate();
   
@@ -199,9 +266,7 @@ const MainHeader = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <div className="absolute right-2 flex items-center gap-2">
-                <button type="button" className="p-1 hover:text-gray-600">
-                  <Camera className="w-5 h-5 text-gray-400" />
-                </button>
+               
                 <button type="submit" className="p-1 hover:text-gray-600">
                   <Search className="w-5 h-5 text-gray-400" />
                 </button>
@@ -301,7 +366,7 @@ const MobileNavigation = () => {
                 </button>
               )}
             </div>
-            {item.hasDropdown && expandedItems.includes(index) && item.dropdownItems && (
+            {item.hasDropdown && expandedItems?.includes(index) && item.dropdownItems && (
               <div className="bg-gray-50 px-4 py-2">
                 {item.dropdownItems.map((dropItem, dropIndex) => (
                   <Link

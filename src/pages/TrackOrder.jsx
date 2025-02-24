@@ -103,14 +103,7 @@ const TrackOrder = () => {
 
   return (
     <Container>
-      <Title>Track Order</Title>
-
-      <AssistantBox>
-        <img src={daimond_logo} alt="Diamond" />
-        <span>506 results too many? Our Jewelry Assistant can help!</span>
-        <a href="#">Describe what you're looking for?</a>
-      </AssistantBox>
-
+     
       <TrackingForm onSubmit={handleSubmit}>
         <FormGroup>
           <label>Order Number</label>

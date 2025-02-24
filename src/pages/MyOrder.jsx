@@ -136,19 +136,7 @@ const MyOrder = () => {
 
   return (
     <Container>
-         <BreadCrumb>
-        <Link to="/">Home</Link>
-        <span>/</span>
-        <span>Terms of Use</span>
-      </BreadCrumb>
-
-      <Title>My Oder</Title>
-
-      <AssistantBox>
-        <img src={daimond_logo  } alt="Diamond" />
-        <span>506 results too many? Our Jewelry Assistant can help!</span>
-        <Link to="#">Describe what you're looking for?</Link>
-      </AssistantBox>
+    
       <OrderTable>
         <TableHeader>
           <div>Order NO</div>

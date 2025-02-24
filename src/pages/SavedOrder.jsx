@@ -271,19 +271,7 @@ const SavedAddress = () => {
 
   return (
     <Container>
-        <BreadCrumb>
-        <Link to="/">Home</Link>
-        <span>/</span>
-        <span>Terms of Use</span>
-      </BreadCrumb>
-
-      <Title>My Account</Title>
-
-      <AssistantBox>
-        <img src={daimond_logo  } alt="Diamond" />
-        <span>506 results too many? Our Jewelry Assistant can help!</span>
-        <Link to="#">Describe what you're looking for?</Link>
-      </AssistantBox>
+      
       <Header>
         <AddButton onClick={handleAddAddress}>
           Add Address
@@ -317,22 +305,7 @@ const SavedAddress = () => {
         ))}
       </Grid>
 
-      <RewardsSection>
-        <h2>JSK At Your Service</h2>
-        <RewardsGrid>
-          {rewardsData.map((reward, index) => (
-            <RewardCard key={index}>
-              <img src={reward.icon} alt={reward.title} />
-              <h3>Join Vault Rewards</h3>
-              <p>"This was one of the first rings I had looked at in person. After looking at hundreds"</p>
-              <a href="#">LEARN MORE</a>
-            </RewardCard>
-          ))}
-        </RewardsGrid>
-        <p style={{ marginTop: '40px' }}>
-          <a href="#">PROMOTION TERMS & CONDITIONS</a>
-        </p>
-      </RewardsSection>
+   
     </Container>
   );
 };
