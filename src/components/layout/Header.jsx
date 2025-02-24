@@ -18,7 +18,7 @@ export const HeaderProvider = ({ children }) => {
       backgroundColor: "#E10002"
     },
     utilities: [
-      { icon: MapPin, text: "Find a Store", link: "/search-in-store" },
+      { icon: MapPin, text: "Find a Store", link: "/find-your-store" },
       { icon: HelpCircle, text: "Help Centre", link: "/help-center" }
     ],
     userActions: [
@@ -221,7 +221,7 @@ const MainHeader = () => {
             >
               <Search className="w-6 h-6" />
             </button>
-            <Link to="/cart" className="relative hover:text-gray-600">
+            <Link to="/card-option" className="relative hover:text-gray-600">
               <ShoppingCart className="w-6 h-6" />
               {cartItems.length > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
@@ -229,7 +229,7 @@ const MainHeader = () => {
                 </span>
               )}
             </Link>
-            <Link to="/my-account" className="relative hover:text-gray-600">
+            <Link to="/favorites" className="relative hover:text-gray-600">
               <Heart className="w-6 h-6" />
               {wishlistItems.length > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
