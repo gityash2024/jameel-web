@@ -19,6 +19,7 @@ const ModalOverlay = styled.div`
 
   @media (max-width: 480px) {
     width: 100%;
+    padding: 16px;
   }
 `;
 
@@ -31,6 +32,10 @@ const ModalHeader = styled.div`
   h2 {
     font-size: 24px;
     font-weight: 500;
+
+    @media (max-width: 480px) {
+      font-size: 20px;
+    }
   }
 `;
 
@@ -40,6 +45,10 @@ const CloseButton = styled.button`
   font-size: 24px;
   cursor: pointer;
   padding: 5px;
+
+  @media (max-width: 480px) {
+    font-size: 20px;
+  }
 `;
 
 const ProgressBar = styled.div`
@@ -64,11 +73,27 @@ const ShippingMessage = styled.p`
   text-align: center;
   margin-bottom: 20px;
   color: #333;
+  font-size: 14px;
+
+  @media (max-width: 480px) {
+    font-size: 13px;
+  }
 `;
 
 const CartItems = styled.div`
   flex: 1;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 5px;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #ddd;
+    border-radius: 2px;
+  }
 `;
 
 const CartItem = styled.div`
@@ -78,12 +103,22 @@ const CartItem = styled.div`
   padding: 15px 0;
   border-bottom: 1px solid #eee;
   align-items: center;
+
+  @media (max-width: 480px) {
+    gap: 10px;
+    padding: 12px 0;
+  }
 `;
 
 const ProductImage = styled.img`
   width: 80px;
   height: 80px;
   object-fit: contain;
+
+  @media (max-width: 480px) {
+    width: 70px;
+    height: 70px;
+  }
 `;
 
 const ProductInfo = styled.div`
@@ -91,10 +126,18 @@ const ProductInfo = styled.div`
     margin: 0 0 5px;
     font-size: 16px;
     font-weight: normal;
+
+    @media (max-width: 480px) {
+      font-size: 14px;
+    }
   }
   
   .price {
     font-weight: 500;
+    
+    @media (max-width: 480px) {
+      font-size: 14px;
+    }
   }
 `;
 
@@ -113,6 +156,17 @@ const QuantityControl = styled.div`
     cursor: pointer;
     padding: 0 5px;
     font-size: 16px;
+    
+    @media (max-width: 480px) {
+      font-size: 14px;
+      padding: 0 3px;
+    }
+  }
+
+  span {
+    @media (max-width: 480px) {
+      font-size: 14px;
+    }
   }
 `;
 
@@ -126,12 +180,20 @@ const DeleteButton = styled.button`
   &:hover {
     color: #000;
   }
+
+  @media (max-width: 480px) {
+    padding: 3px;
+  }
 `;
 
 const CartFooter = styled.div`
   margin-top: auto;
   padding-top: 20px;
   border-top: 1px solid #eee;
+
+  @media (max-width: 480px) {
+    padding-top: 16px;
+  }
 `;
 
 const SubTotal = styled.div`
@@ -139,12 +201,21 @@ const SubTotal = styled.div`
   justify-content: space-between;
   margin-bottom: 20px;
   font-weight: 500;
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
 `;
 
 const ButtonGroup = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
+
+  @media (max-width: 480px) {
+    gap: 8px;
+  }
 `;
 
 const Button = styled.button`
@@ -162,6 +233,11 @@ const Button = styled.button`
     background: black;
     color: white;
   }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+    font-size: 14px;
+  }
 `;
 
 const ClearCartButton = styled.button`
@@ -174,9 +250,15 @@ const ClearCartButton = styled.button`
   gap: 5px;
   margin-left: auto;
   padding: 5px;
+  font-size: 14px;
   
   &:hover {
     color: #000;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 13px;
+    padding: 4px;
   }
 `;
 

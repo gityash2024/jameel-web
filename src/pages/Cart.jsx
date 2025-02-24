@@ -8,10 +8,18 @@ const Container = styled.div`
   max-width: 1280px;
   margin: 0 auto;
   padding: 1rem;
+  overflow-x: auto;
 `;
 
 const Navigation = styled.nav`
   margin-bottom: 2rem;
+  white-space: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const NavLink = styled.a`
@@ -25,12 +33,20 @@ const NavLink = styled.a`
 const Header = styled.div`
   text-align: center;
   margin-bottom: 2rem;
+  
+  @media (max-width: 768px) {
+    padding: 0 1rem;
+  }
 `;
 
 const Title = styled.h1`
   font-size: 2rem;
   font-weight: bold;
   margin-bottom: 1rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
 `;
 
 const SearchText = styled.div`
@@ -39,6 +55,11 @@ const SearchText = styled.div`
   justify-content: center;
   gap: 0.5rem;
   color: #666;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const Link = styled.a`
@@ -51,6 +72,7 @@ const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 2rem;
+  min-width: 600px;
 `;
 
 const Th = styled.th`
@@ -58,23 +80,42 @@ const Th = styled.th`
   padding: 1rem;
   text-align: left;
   font-weight: 500;
+  white-space: nowrap;
+  
+  @media (max-width: 768px) {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
 `;
 
 const Td = styled.td`
   padding: 1rem;
   border-bottom: 1px solid #e5e7eb;
   vertical-align: middle;
+  
+  @media (max-width: 768px) {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
 `;
 
 const ProductImage = styled.img`
   width: 80px;
   height: auto;
+  
+  @media (max-width: 768px) {
+    width: 60px;
+  }
 `;
 
 const QuantityControl = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
+  
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+  }
 `;
 
 const QuantityButton = styled.button`
@@ -113,6 +154,10 @@ const Summary = styled.div`
   align-items: flex-end;
   gap: 1rem;
   margin-top: 2rem;
+  
+  @media (max-width: 768px) {
+    padding: 0 1rem;
+  }
 `;
 
 const SubTotal = styled.div`
@@ -121,16 +166,22 @@ const SubTotal = styled.div`
   width: 100%;
   max-width: 300px;
   font-weight: 500;
+  
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
   gap: 1rem;
   margin-top: 1rem;
+  width: 100%;
+  max-width: 300px;
 
-  @media (max-width: 640px) {
+  @media (max-width: 768px) {
     flex-direction: column;
-    width: 100%;
+    gap: 0.5rem;
   }
 `;
 
@@ -140,6 +191,7 @@ const Button = styled.button`
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  width: 100%;
   
   ${props => props.primary ? `
     background: black;
@@ -156,8 +208,9 @@ const Button = styled.button`
     }
   `}
 
-  @media (max-width: 640px) {
-    width: 100%;
+  @media (max-width: 768px) {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
   }
 `;
 
@@ -165,12 +218,17 @@ const Price = styled.div`
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  white-space: nowrap;
 `;
 
 const OriginalPrice = styled.span`
   text-decoration: line-through;
   color: #666;
   font-size: 0.875rem;
+  
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
 `;
 
 const Cart = () => {
