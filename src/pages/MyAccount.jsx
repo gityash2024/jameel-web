@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { userAPI } from '../services/api';
+import { authAPI, userAPI } from '../services/api';
 import { toast } from 'react-hot-toast';
 
 const MyAccount = () => {
@@ -36,7 +36,7 @@ const MyAccount = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await userAPI.updateProfile(formData);
+      await authAPI.updateProfile(formData);
       toast.success('Profile updated successfully');
     } catch (error) {
       console.error('Error updating profile:', error);
