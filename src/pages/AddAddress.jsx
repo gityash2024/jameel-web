@@ -1,105 +1,13 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
-
-const Container = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-`;
-
-const Title = styled.h1`
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 2rem;
-  text-align: center;
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`;
-
-const Label = styled.label`
-  font-weight: 500;
-  color: #333;
-`;
-
-const Input = styled.input`
-  padding: 0.75rem;
-  border: 1px solid ${props => props.error ? '#dc2626' : '#d1d5db'};
-  border-radius: 4px;
-  font-size: 1rem;
-  transition: border-color 0.2s;
-
-  &:focus {
-    outline: none;
-    border-color: #000;
-  }
-`;
-
-const Select = styled.select`
-  padding: 0.75rem;
-  border: 1px solid ${props => props.error ? '#dc2626' : '#d1d5db'};
-  border-radius: 4px;
-  font-size: 1rem;
-  background-color: white;
-
-  &:focus {
-    outline: none;
-    border-color: #000;
-  }
-`;
-
-const ErrorMessage = styled.span`
-  color: #dc2626;
-  font-size: 0.875rem;
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-
-  @media (max-width: 640px) {
-    flex-direction: column;
-  }
-`;
-
-const Button = styled.button`
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  flex: 1;
-  
-  ${props => props.primary ? `
-    background: black;
-    color: white;
-    border: none;
-    &:hover {
-      background: #333;
-    }
-  ` : `
-    background: white;
-    color: black;
-    border: 1px solid #ddd;
-    &:hover {
-      background: #f5f5f5;
-    }
-  `}
-`;
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { userAPI } from '../services/api';
+import { toast } from 'react-hot-toast';
+import Loader from '../components/common/Loader';
 
 const AddAddress = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
     phoneNumber: '',
@@ -113,41 +21,54 @@ const AddAddress = () => {
 
   const [errors, setErrors] = useState({});
 
+  useEffect(() => {
+    if (id) {
+      fetchAddress();
+    }
+  }, [id]);
+
+  const fetchAddress = async () => {
+    setLoading(true);
+    try {
+      const response = await userAPI.getAddresses();
+      const address = response.data.data.find(addr => addr._id === id);
+      if (address) {
+        setFormData({
+          fullName: address.fullName || '',
+          phoneNumber: address.phoneNumber || '',
+          address: address.address || '',
+          city: address.city || '',
+          state: address.state || '',
+          country: address.country || '',
+          zipCode: address.zipCode || '',
+          addressType: address.addressType || 'home'
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching address:', error);
+      toast.error('Failed to load address details');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const validateForm = () => {
     const newErrors = {};
-
-    if (!formData.fullName) {
-      newErrors.fullName = 'Full name is required';
-    }
-
+    if (!formData.fullName) newErrors.fullName = 'Full name is required';
     if (!formData.phoneNumber) {
       newErrors.phoneNumber = 'Phone number is required';
     } else if (!/^\+?[\d\s-]{10,}$/.test(formData.phoneNumber)) {
       newErrors.phoneNumber = 'Please enter a valid phone number';
     }
-
-    if (!formData.address) {
-      newErrors.address = 'Address is required';
-    }
-
-    if (!formData.city) {
-      newErrors.city = 'City is required';
-    }
-
-    if (!formData.state) {
-      newErrors.state = 'State is required';
-    }
-
-    if (!formData.country) {
-      newErrors.country = 'Country is required';
-    }
-
+    if (!formData.address) newErrors.address = 'Address is required';
+    if (!formData.city) newErrors.city = 'City is required';
+    if (!formData.state) newErrors.state = 'State is required';
+    if (!formData.country) newErrors.country = 'Country is required';
     if (!formData.zipCode) {
       newErrors.zipCode = 'ZIP code is required';
     } else if (!/^\d{5}(-\d{4})?$/.test(formData.zipCode)) {
       newErrors.zipCode = 'Please enter a valid ZIP code';
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -166,145 +87,163 @@ const AddAddress = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      console.log('Form submitted:', formData);
+    if (!validateForm()) return;
+
+    setLoading(true);
+    try {
+      if (id) {
+        await userAPI.updateAddress(id, formData);
+        toast.success('Address updated successfully');
+      } else {
+        await userAPI.addAddress(formData);
+        toast.success('Address added successfully');
+      }
       navigate('/saved-address');
+    } catch (error) {
+      console.error('Error saving address:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleCancel = () => {
-    navigate('/saved-address');
-  };
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
-    <Container>
-      <Title>Add New Address</Title>
-      <Form onSubmit={handleSubmit}>
-        <FormGroup>
-          <Label htmlFor="fullName">Full Name*</Label>
-          <Input
-            type="text"
-            id="fullName"
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleInputChange}
-            error={errors.fullName}
-            placeholder="Enter your full name"
-          />
-          {errors.fullName && <ErrorMessage>{errors.fullName}</ErrorMessage>}
-        </FormGroup>
+    <div>
+      <h2 className="text-2xl font-bold mb-6">Add New Address</h2>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium">Full Name*</label>
+            <input
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleInputChange}
+              placeholder="Enter your full name"
+              className={`mt-1 block w-full rounded border ${errors.fullName ? 'border-red-500' : 'border-gray-300'} p-2`}
+            />
+            {errors.fullName && <p className="mt-1 text-sm text-red-500">{errors.fullName}</p>}
+          </div>
 
-        <FormGroup>
-          <Label htmlFor="phoneNumber">Phone Number*</Label>
-          <Input
-            type="tel"
-            id="phoneNumber"
-            name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={handleInputChange}
-            error={errors.phoneNumber}
-            placeholder="Enter your phone number"
-          />
-          {errors.phoneNumber && <ErrorMessage>{errors.phoneNumber}</ErrorMessage>}
-        </FormGroup>
+          <div>
+            <label className="block text-sm font-medium">Phone Number*</label>
+            <input
+              type="tel"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleInputChange}
+              placeholder="Enter phone number"
+              className={`mt-1 block w-full rounded border ${errors.phoneNumber ? 'border-red-500' : 'border-gray-300'} p-2`}
+            />
+            {errors.phoneNumber && <p className="mt-1 text-sm text-red-500">{errors.phoneNumber}</p>}
+          </div>
+        </div>
 
-        <FormGroup>
-          <Label htmlFor="address">Address*</Label>
-          <Input
+        <div>
+          <label className="block text-sm font-medium">Address*</label>
+          <input
             type="text"
-            id="address"
             name="address"
             value={formData.address}
             onChange={handleInputChange}
-            error={errors.address}
             placeholder="Enter your street address"
+            className={`mt-1 block w-full rounded border ${errors.address ? 'border-red-500' : 'border-gray-300'} p-2`}
           />
-          {errors.address && <ErrorMessage>{errors.address}</ErrorMessage>}
-        </FormGroup>
+          {errors.address && <p className="mt-1 text-sm text-red-500">{errors.address}</p>}
+        </div>
 
-        <FormGroup>
-          <Label htmlFor="city">City*</Label>
-          <Input
-            type="text"
-            id="city"
-            name="city"
-            value={formData.city}
-            onChange={handleInputChange}
-            error={errors.city}
-            placeholder="Enter your city"
-          />
-          {errors.city && <ErrorMessage>{errors.city}</ErrorMessage>}
-        </FormGroup>
+        <div className="grid grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium">City*</label>
+            <input
+              type="text"
+              name="city"
+              value={formData.city}
+              onChange={handleInputChange}
+              placeholder="Enter your city"
+              className={`mt-1 block w-full rounded border ${errors.city ? 'border-red-500' : 'border-gray-300'} p-2`}
+            />
+            {errors.city && <p className="mt-1 text-sm text-red-500">{errors.city}</p>}
+          </div>
 
-        <FormGroup>
-          <Label htmlFor="state">State*</Label>
-          <Input
-            type="text"
-            id="state"
-            name="state"
-            value={formData.state}
-            onChange={handleInputChange}
-            error={errors.state}
-            placeholder="Enter your state"
-          />
-          {errors.state && <ErrorMessage>{errors.state}</ErrorMessage>}
-        </FormGroup>
+          <div>
+            <label className="block text-sm font-medium">State*</label>
+            <input
+              type="text"
+              name="state"
+              value={formData.state}
+              onChange={handleInputChange}
+              placeholder="Enter your state"
+              className={`mt-1 block w-full rounded border ${errors.state ? 'border-red-500' : 'border-gray-300'} p-2`}
+            />
+            {errors.state && <p className="mt-1 text-sm text-red-500">{errors.state}</p>}
+          </div>
+        </div>
 
-        <FormGroup>
-          <Label htmlFor="country">Country*</Label>
-          <Input
-            type="text"
-            id="country"
-            name="country"
-            value={formData.country}
-            onChange={handleInputChange}
-            error={errors.country}
-            placeholder="Enter your country"
-          />
-          {errors.country && <ErrorMessage>{errors.country}</ErrorMessage>}
-        </FormGroup>
+        <div className="grid grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium">Country*</label>
+            <input
+              type="text"
+              name="country"
+              value={formData.country}
+              onChange={handleInputChange}
+              placeholder="Enter your country"
+              className={`mt-1 block w-full rounded border ${errors.country ? 'border-red-500' : 'border-gray-300'} p-2`}
+            />
+            {errors.country && <p className="mt-1 text-sm text-red-500">{errors.country}</p>}
+          </div>
 
-        <FormGroup>
-          <Label htmlFor="zipCode">ZIP Code*</Label>
-          <Input
-            type="text"
-            id="zipCode"
-            name="zipCode"
-            value={formData.zipCode}
-            onChange={handleInputChange}
-            error={errors.zipCode}
-            placeholder="Enter your ZIP code"
-          />
-          {errors.zipCode && <ErrorMessage>{errors.zipCode}</ErrorMessage>}
-        </FormGroup>
+          <div>
+            <label className="block text-sm font-medium">ZIP Code*</label>
+            <input
+              type="text"
+              name="zipCode"
+              value={formData.zipCode}
+              onChange={handleInputChange}
+              placeholder="Enter ZIP code"
+              className={`mt-1 block w-full rounded border ${errors.zipCode ? 'border-red-500' : 'border-gray-300'} p-2`}
+            />
+            {errors.zipCode && <p className="mt-1 text-sm text-red-500">{errors.zipCode}</p>}
+          </div>
+        </div>
 
-        <FormGroup>
-          <Label htmlFor="addressType">Address Type</Label>
-          <Select
-            id="addressType"
+        <div>
+          <label className="block text-sm font-medium">Address Type</label>
+          <select
             name="addressType"
             value={formData.addressType}
             onChange={handleInputChange}
+            className="mt-1 block w-full rounded border border-gray-300 p-2"
           >
             <option value="home">Home</option>
             <option value="work">Work</option>
             <option value="other">Other</option>
-          </Select>
-        </FormGroup>
+          </select>
+        </div>
 
-        <ButtonGroup>
-          <Button type="button" onClick={handleCancel}>
+        <div className="flex gap-4">
+          <button
+            type="button"
+            onClick={() => navigate('/saved-address')}
+            className="flex-1 py-2 px-4 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+          >
             Cancel
-          </Button>
-          <Button type="submit" primary>
-            Save Address
-          </Button>
-        </ButtonGroup>
-      </Form>
-
-    </Container>
+          </button>
+          <button
+            type="submit"
+            className="flex-1 py-2 px-4 bg-black text-white rounded hover:bg-gray-900"
+          >
+            {id ? 'Update Address' : 'Save Address'}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 
