@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { MapPin, HelpCircle, User, Search, ShoppingCart, Heart, ChevronDown, Camera, Menu, X, LogOut } from 'lucide-react';
+import { categoryAPI, subcategoryAPI } from '../../services/api';
 
 const HeaderContext = createContext();
 
@@ -13,6 +14,9 @@ export const HeaderProvider = ({ children }) => {
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [jammelUser, setUserData] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -21,6 +25,24 @@ export const HeaderProvider = ({ children }) => {
       setIsLoggedIn(true);
       setUserData(JSON.parse(userDataStr));
     }
+
+    const fetchCategoriesAndSubcategories = async () => {
+      try {
+        setIsLoading(true);
+        const [categoriesRes, subcategoriesRes] = await Promise.all([
+          categoryAPI.getAllCategories(),
+          subcategoryAPI.getAllSubCategories()
+        ]);
+        
+        setCategories(categoriesRes.data.data || []);
+        setSubcategories(subcategoriesRes.data.data || []);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchCategoriesAndSubcategories();
   }, []);
 
   const handleLogout = () => {
@@ -31,11 +53,49 @@ export const HeaderProvider = ({ children }) => {
     setShowProfileModal(false);
   };
 
-  const headerData = {
-    topBanner: {
-      text: "Early Black Friday. Up to 40% Off Everything",
-      backgroundColor: "#E10002"
+  const dynamicNavigation = [
+    
+    ...categories
+      .filter(category => category.isActive)
+      .map(category => {
+        const categorySubcategories = subcategories
+          .filter(sub => sub.category._id === category._id && sub.isActive)
+          .map(sub => ({
+            name: sub.name,
+            path: `/category/${category.slug}/${sub.slug || sub._id}`
+          }));
+
+        return {
+          name: category.name,
+          path: `/category/${category.slug}`,
+          hasDropdown: categorySubcategories.length > 0,
+          dropdownItems: categorySubcategories.length > 0 ? categorySubcategories : null
+        };
+      }),
+    { 
+      name: 'Blogs', 
+      path: '/blogs-one', 
+      hasDropdown: true,
+      dropdownItems: [
+        { name: 'Latest Posts', path: '/blogs-one' },
+        { name: 'Style Guide', path: '/blogs-two' },
+        { name: 'Care Tips', path: '/blogs-three' },
+        { name: 'News', path: '/blogs-four' }
+      ]
     },
+    { 
+      name: 'Services', 
+      path: '/repair-and-maintances', 
+      hasDropdown: true,
+      dropdownItems: [
+        { name: 'Repair & Maintenance', path: '/repair-and-maintances' },
+        { name: 'Sizing & Adjustment', path: '/services' }
+      ]
+    }
+  ];
+
+  const headerData = {
+
     utilities: [
       { icon: MapPin, text: "Find a Store", link: "/find-your-store" },
       { icon: HelpCircle, text: "Help Centre", link: "/help-center" }
@@ -49,68 +109,7 @@ export const HeaderProvider = ({ children }) => {
       subtext: "POWERED BY JAMEEL GROUP AI",
       link: "/"
     },
-    navigation: [
-      { name: 'Home', path: '/', hasDropdown: false },
-      { 
-        name: 'New Arrivals', 
-        path: '/new-arrivals', 
-        hasDropdown: true,
-        dropdownItems: [
-          { name: 'Latest Collection', path: '/new-arrivals' },
-          { name: 'Trending Now', path: '/products' }
-        ]
-      },
-      { 
-        name: 'Collections', 
-        path: '/collection', 
-        hasDropdown: true,
-        dropdownItems: [
-          { name: 'Featured', path: '/collection' },
-          { name: 'Seasonal', path: '/collectiontwo' }
-        ]
-      },
-      { 
-        name: 'Rings', 
-        path: '/ring', 
-        hasDropdown: true,
-        dropdownItems: [
-          { name: 'Engagement Rings', path: '/ring' },
-          { name: 'Wedding Bands', path: '/products' }
-        ]
-      },
-      { name: 'Necklace', path: '/products', hasDropdown: true },
-      { name: 'Bracelets', path: '/productstwo', hasDropdown: true },
-      { name: 'Earrings', path: '/home-erraring', hasDropdown: true },
-      { 
-        name: 'Personalized', 
-        path: '/custom-jewelry', 
-        hasDropdown: true,
-        dropdownItems: [
-          { name: 'Custom Design', path: '/custom-jewelry' },
-          { name: 'Engraving', path: '/custom-jewelrytwo' }
-        ]
-      },
-      { 
-        name: 'Blogs', 
-        path: '/blogs-one', 
-        hasDropdown: true,
-        dropdownItems: [
-          { name: 'Latest Posts', path: '/blogs-one' },
-          { name: 'Style Guide', path: '/blogs-two' },
-          { name: 'Care Tips', path: '/blogs-three' },
-          { name: 'News', path: '/blogs-four' }
-        ]
-      },
-      { 
-        name: 'Services', 
-        path: '/repair-and-maintances', 
-        hasDropdown: true,
-        dropdownItems: [
-          { name: 'Repair & Maintenance', path: '/repair-and-maintances' },
-          { name: 'Sizing & Adjustment', path: '/services' }
-        ]
-      }
-    ]
+    navigation: isLoading ? [] : dynamicNavigation
   };
 
   return (
@@ -128,26 +127,18 @@ export const HeaderProvider = ({ children }) => {
       showProfileModal,
       setShowProfileModal,
       jammelUser,
-      handleLogout
+      handleLogout,
+      isLoading
     }}>
       {children}
     </HeaderContext.Provider>
   );
 };
 
-const TopBanner = () => {
-  const { headerData } = useContext(HeaderContext);
-  return (
-    <div className="w-full py-2 text-center text-white text-sm md:text-base px-4" style={{ backgroundColor: headerData.topBanner.backgroundColor }}>
-      {headerData.topBanner.text}
-    </div>
-  );
-};
+
 const ProfileModal = () => {
   const { jammelUser, showProfileModal, setShowProfileModal, handleLogout } = useContext(HeaderContext);
-
   if (!showProfileModal || !jammelUser) return null;
-
   return (
     <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-[100]">
       <div className="p-4 border-b">
@@ -172,7 +163,6 @@ const ProfileModal = () => {
 const UtilityNav = () => {
   const { headerData, isLoggedIn, jammelUser } = useContext(HeaderContext);
   const navigate = useNavigate();
-
   return (
     <div className="border-b hidden md:block">
       <div className="container mx-auto px-4 md:px-6">
@@ -197,7 +187,7 @@ const UtilityNav = () => {
               Book an Appointment
             </Link>
             {isLoggedIn ? (
-              <div 
+              <div
                 className="relative"
                 onClick={() => navigate('/my-account')}
                 style={{ cursor: 'pointer' }}
@@ -223,12 +213,13 @@ const UtilityNav = () => {
     </div>
   );
 };
+
 const MainHeader = () => {
-  const { 
-    headerData, 
-    searchQuery, 
-    setSearchQuery, 
-    cartItems, 
+  const {
+    headerData,
+    searchQuery,
+    setSearchQuery,
+    cartItems,
     wishlistItems,
     isMobileMenuOpen,
     setIsMobileMenuOpen,
@@ -237,7 +228,6 @@ const MainHeader = () => {
     showProfileModal
   } = useContext(HeaderContext);
   const navigate = useNavigate();
-  
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -245,7 +235,6 @@ const MainHeader = () => {
       setIsMobileSearchOpen(false);
     }
   };
-  
   return (
     <div className="py-4 md:py-6">
       <div className="container mx-auto px-4 md:px-6">
@@ -266,7 +255,6 @@ const MainHeader = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <div className="absolute right-2 flex items-center gap-2">
-               
                 <button type="submit" className="p-1 hover:text-gray-600">
                   <Search className="w-5 h-5 text-gray-400" />
                 </button>
@@ -332,8 +320,8 @@ const MobileNavigation = () => {
   const location = useLocation();
 
   const toggleExpanded = (index) => {
-    setExpandedItems(prev => 
-      prev.includes(index) 
+    setExpandedItems(prev =>
+      prev.includes(index)
         ? prev.filter(i => i !== index)
         : [...prev, index]
     );
@@ -354,11 +342,11 @@ const MobileNavigation = () => {
                 {item.name}
               </Link>
               {item.hasDropdown && (
-                <button 
+                <button
                   onClick={() => toggleExpanded(index)}
                   className="p-2"
                 >
-                  <ChevronDown 
+                  <ChevronDown
                     className={`w-4 h-4 transform transition-transform ${
                       expandedItems.includes(index) ? 'rotate-180' : ''
                     }`}
@@ -385,22 +373,33 @@ const MobileNavigation = () => {
     </div>
   );
 };
-
 const Navigation = () => {
   const { headerData } = useContext(HeaderContext);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const location = useLocation();
-  
+
+  const handleMouseEnter = (index) => {
+    if (headerData.navigation[index]?.hasDropdown) {
+      setActiveDropdown(index);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setActiveDropdown(null);
+  };
+
   return (
-    <div className="bg-gray-100 relative hidden md:block">
+    <div 
+      className="bg-gray-100 relative hidden md:block"
+      onMouseLeave={handleMouseLeave}
+    >
       <div className="container mx-auto">
         <nav className="flex justify-center">
           {headerData.navigation.map((item, index) => (
             <div
               key={index}
-              className="relative"
-              onMouseEnter={() => item.hasDropdown && setActiveDropdown(index)}
-              onMouseLeave={() => setActiveDropdown(null)}
+              className="relative group"
+              onMouseEnter={() => handleMouseEnter(index)}
             >
               <Link
                 to={item.path}
@@ -414,7 +413,10 @@ const Navigation = () => {
                 )}
               </Link>
               {item.hasDropdown && activeDropdown === index && item.dropdownItems && (
-                <div className="absolute top-full left-0 w-48 bg-white shadow-lg rounded-b mt-1 py-2 z-50">
+                <div 
+                  className="absolute top-full left-0 w-48 bg-white shadow-lg rounded-b mt-1 py-2 z-50 group-hover:block"
+                  onMouseEnter={() => setActiveDropdown(index)}
+                >
                   {item.dropdownItems.map((dropItem, dropIndex) => (
                     <Link
                       key={dropIndex}
@@ -438,7 +440,6 @@ const Header = () => {
   return (
     <HeaderProvider>
       <header className="w-full relative">
-        <TopBanner />
         <UtilityNav />
         <MainHeader />
         <Navigation />

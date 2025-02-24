@@ -71,4 +71,15 @@ export const userAPI = {
   removeFromWishlist: (productId) => api.delete(`/user/wishlist/${productId}`),
 };
 
+// Add these to your api.js file
+export const categoryAPI = {
+  getAllCategories: () => api.get('/categories'),
+  getCategory: (id) => api.get(`/categories/${id}`),
+};
+
+export const subcategoryAPI = {
+  getAllSubCategories: () => api.get('/subcategories'),
+  getSubCategoriesByCategory: (categoryId) => api.get(`/subcategories/category/${categoryId}`),
+};
+
 export default api;

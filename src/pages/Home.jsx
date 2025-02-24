@@ -31,7 +31,6 @@ const Container = styled.div`
 
 const HeroContainer = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
   position: relative;
   margin: 0 auto;
   max-width: 1920px;
@@ -718,17 +717,7 @@ const Home = () => {
           </BlackFridayOverlay>
         </HeroImageSection>
 
-        <OfferSection>
-          <OfferContent>
-            <h1>Up to 40% OFF*</h1>
-            <h2>EVERYTHING</h2>
-          </OfferContent>
-          <CategoryGrid>
-            {categories.map((category, index) => (
-              <CategoryButton key={index}>{category}</CategoryButton>
-            ))}
-          </CategoryGrid>
-        </OfferSection>
+   
       </HeroContainer>
 
       <InspiredSection>
