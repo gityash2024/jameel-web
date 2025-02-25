@@ -59,7 +59,7 @@ export const HeaderProvider = ({ children }) => {
       .filter(category => category.isActive)
       .map(category => {
         const categorySubcategories = subcategories
-          .filter(sub => sub.category._id === category._id && sub.isActive)
+          .filter(sub => sub.category?._id === category?._id && sub?.isActive)
           .map(sub => ({
             name: sub.name,
             path: `/category/${category.slug}/${sub.slug || sub._id}`
@@ -87,7 +87,6 @@ export const HeaderProvider = ({ children }) => {
       hasDropdown: true,
       dropdownItems: [
         { name: 'Repair & Maintenance', path: '/repair-and-maintances' },
-        { name: 'Sizing & Adjustment', path: '/services' }
       ]
     }
   ];
@@ -382,26 +381,30 @@ const Navigation = () => {
     }
   };
 
-  const handleMouseLeave = () => {
-    setActiveDropdown(null);
+  // New function to handle mouse leave only when not hovering dropdown
+  const handleNavItemMouseLeave = (e, index) => {
+    // Check if the mouse is moving to the dropdown
+    const relatedTarget = e.relatedTarget;
+    const dropdown = document.getElementById(`dropdown-${index}`);
+    
+    if (!dropdown || !dropdown.contains(relatedTarget)) {
+      setActiveDropdown(null);
+    }
   };
 
   return (
-    <div 
-      className="bg-gray-100 relative hidden md:block"
-      onMouseLeave={handleMouseLeave}
-    >
+    <div className="bg-gray-100 relative hidden md:block">
       <div className="container mx-auto">
-        <nav className="flex justify-center">
+        <nav className="flex justify-center flex-wrap">
           {headerData.navigation.map((item, index) => (
             <div
               key={index}
-              className="relative group"
+              className="relative group mx-1"
               onMouseEnter={() => handleMouseEnter(index)}
+              onMouseLeave={(e) => handleNavItemMouseLeave(e, index)}
             >
-              <Link
-                to={item.path}
-                className={`px-4 md:px-6 py-3 text-sm hover:text-gray-600 flex items-center whitespace-nowrap ${
+              <div
+                className={`px-3 py-3 text-sm hover:text-gray-600 flex items-center whitespace-nowrap cursor-pointer ${
                   location.pathname === item.path ? 'text-gray-900 font-semibold' : ''
                 }`}
               >
@@ -409,11 +412,13 @@ const Navigation = () => {
                 {item.hasDropdown && (
                   <ChevronDown className="w-4 h-4 ml-1" />
                 )}
-              </Link>
+              </div>
               {item.hasDropdown && activeDropdown === index && item.dropdownItems && (
                 <div 
-                  className="absolute top-full left-0 w-48 bg-white shadow-lg rounded-b mt-1 py-2 z-50 group-hover:block"
+                  id={`dropdown-${index}`}
+                  className="absolute top-full left-0 w-48 bg-white shadow-lg rounded-b mt-0 py-2 z-50"
                   onMouseEnter={() => setActiveDropdown(index)}
+                  onMouseLeave={() => setActiveDropdown(null)}
                 >
                   {item.dropdownItems.map((dropItem, dropIndex) => (
                     <Link
@@ -433,7 +438,6 @@ const Navigation = () => {
     </div>
   );
 };
-
 const Header = () => {
   return (
     <HeaderProvider>
