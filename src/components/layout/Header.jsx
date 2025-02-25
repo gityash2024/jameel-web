@@ -228,7 +228,7 @@ const MainHeader = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      navigate(`/product-details?search=${encodeURIComponent(searchQuery.trim())}`);
       setIsMobileSearchOpen(false);
     }
   };

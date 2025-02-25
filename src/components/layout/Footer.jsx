@@ -8,7 +8,7 @@ const Footer = () => {
     collections: {
       title: 'Our Collections',
       items: [
-        { name: 'New Arrivals', link: '/new-arrivals' },
+        { name: 'New Arrivals', link: '/products' },
         { name: 'Rings', link: '/ring' },
         { name: 'Bracelet', link: '/' },
         { name: 'Necklace', link: '/' },

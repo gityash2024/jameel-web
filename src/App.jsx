@@ -99,15 +99,14 @@ function App() {
         
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="products" element={<Products />} />
-          <Route path="new-arrivals" element={<ProductDetail />} />
+          <Route path="product-details" element={<Products />} />
+          <Route path="products" element={<ProductDetail />} />
           <Route path="cart" element={<AuthGuard><Cart /></AuthGuard>} />
           <Route path="checkout" element={<AuthGuard><CheckOut /></AuthGuard>} />
           <Route path="profile" element={<AuthGuard><Profile /></AuthGuard>} />
           <Route path="home-erraring" element={<HomeErraring />} />
           <Route path="/blog/:slug" element={<BlogDetails />} />
           <Route path="home-payment" element={<Homepayment />} />
-          <Route path="productstwo" element={<Productstwo />} />
           <Route path="collection" element={<Collection />} />
           <Route path="collectiontwo" element={<CollectionTwo />} />
           <Route path="booking-appoinment" element={<AuthGuard><BookingAppoiment /></AuthGuard>} />
