@@ -82,4 +82,47 @@ export const subcategoryAPI = {
   getSubCategoriesByCategory: (categoryId) => api.get(`/subcategories/category/${categoryId}`),
 };
 
+
+export const tagAPI = {
+  getAllTags: () => api.get('/tags'),
+  getTag: (id) => api.get(`/tags/${id}`),
+  getTagBySlug: (slug) => api.get(`/tags/${slug}`),
+  createTag: (data) => api.post('/tags', data),
+  updateTag: (id, data) => api.put(`/tags/${id}`, data),
+  deleteTag: (id) => api.delete(`/tags/${id}`),
+  updateTagStatus: (id, status) => api.put(`/tags/${id}/status`, { isActive: status }),
+  bulkDeleteTags: (ids) => api.delete('/tags/bulk/delete', { data: { ids } })
+};
+
+
+export const mediaAPI = {
+  getAllMedia: (params) => api.get('/media', { params }),
+  getMedia: (id) => api.get(`/media/${id}`),
+  uploadMedia: (data) => api.post('/media', data),
+  updateMedia: (id, data) => api.put(`/media/${id}`, data),
+  deleteMedia: (id) => api.delete(`/media/${id}`),
+};
+
+
+
+
+export const blogAPI = {
+  getAllBlogs: (params) => api.get('/blogs', { params }),
+  getBlog: (slug) => api.get(`/blogs/${slug}`),
+  createBlog: (data) => api.post('/blogs', data),
+  updateBlog: (id, data) => api.put(`/blogs/${id}`, data),
+  deleteBlog: (id) => api.delete(`/blogs/${id}`),
+  updateBlogStatus: (id, status) => api.put(`/blogs/${id}`, { status }),
+  getBlogCategories: () => api.get('/blogs/categories'),
+  getBlogTags: () => api.get('/blogs/tags'),
+  getFeaturedBlogs: () => api.get('/blogs/featured'),
+  likeBlog: (slug) => api.post(`/blogs/${slug}/like`),
+  unlikeBlog: (slug) => api.delete(`/blogs/${slug}/like`),
+  getBlogComments: (slug) => api.get(`/blogs/${slug}/comments`),
+  addBlogComment: (slug, data) => api.post(`/blogs/${slug}/comments`, data),
+  updateBlogComment: (id, data) => api.put(`/blogs/comments/${id}`, data),
+  deleteBlogComment: (id) => api.delete(`/blogs/comments/${id}`)
+};
+
+
 export default api;

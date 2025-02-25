@@ -1,14 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import blogtwo_1 from "../assets/blogtwo_1.png";
-import blogtwo_2 from "../assets/blogtwo_2.png";
-import blogtwo_3 from "../assets/blogtwo_3.png";
-import blogtwo_4 from "../assets/blogtwo_4.png";
-import blogtwo_5 from "../assets/blogtwo_5.png";
-import blogtwo_6 from "../assets/blogtwo_6.png";
-import blogtwo_7 from "../assets/blogtwo_7.png";
-import blogtwo_8 from "../assets/blogtwo_8.png";
-import blogtwo_9 from "../assets/blogtwo_9.png";
+import { Link } from 'react-router-dom';
+import { blogAPI } from "../services/api";
+import placeholderImage from "../assets/blogtwo_1.png";
 
 const Container = styled.div`
   max-width: 1200px;
@@ -54,9 +48,11 @@ const BlogCard = styled.div`
   overflow: hidden;
   transition: transform 0.3s ease;
   height: fit-content;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   
   &:hover {
     transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -89,7 +85,7 @@ const Tag = styled.span`
 `;
 
 const Content = styled.div`
-  padding: 1.5rem 0;
+  padding: 1.5rem;
 `;
 
 const BlogTitle = styled.h3`
@@ -106,81 +102,132 @@ const Description = styled.p`
   margin-bottom: 1rem;
 `;
 
+const ReadMore = styled(Link)`
+  display: inline-block;
+  color: #000;
+  text-decoration: underline;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 1.25rem;
+  color: #666;
+`;
+
+const ErrorContainer = styled.div`
+  text-align: center;
+  padding: 2rem;
+  background-color: #FEF2F2;
+  border-radius: 0.5rem;
+  margin: 2rem 0;
+  color: #B91C1C;
+`;
+
 const BlogsTwo = () => {
-  const blogData = [
-    {
-      image: blogtwo_1,
-      title: "Top 10 Reasons To Flaunt Demi Fine Jewellery",
-      description: "Lorem Ipsum is simply dummy text of the",
-      tags: ["Jewelry", "Design"]
-    },
-    {
-      image: blogtwo_2,
-      title: "Top 10 Reasons To Flaunt Demi Fine Jewellery",
-      description: "Lorem Ipsum is simply dummy text of the",
-      tags: ["Jewelry", "Design"]
-    },
-    {
-      image: blogtwo_3,
-      title: "Top 10 Reasons To Flaunt Demi Fine Jewellery",
-      description: "Lorem Ipsum is simply dummy text of the",
-      tags: ["Jewelry", "Design"]
-    },
-    {
-      image: blogtwo_4,
-      title: "Top 10 Reasons To Flaunt Demi Fine Jewellery",
-      description: "Lorem Ipsum is simply dummy text of the",
-      tags: ["Jewelry", "Design"]
-    },
-    {
-      image: blogtwo_5,
-      title: "Top 10 Reasons To Flaunt Demi Fine Jewellery",
-      description: "Lorem Ipsum is simply dummy text of the",
-      tags: ["Jewelry", "Design"]
-    },
-    {
-      image: blogtwo_6,
-      title: "Top 10 Reasons To Flaunt Demi Fine Jewellery",
-      description: "Lorem Ipsum is simply dummy text of the",
-      tags: ["Jewelry", "Design"]
-    },
-    {
-      image: blogtwo_7,
-      title: "Top 10 Reasons To Flaunt Demi Fine Jewellery",
-      description: "Lorem Ipsum is simply dummy text of the",
-      tags: ["Jewelry", "Design"]
-    },
-    {
-      image: blogtwo_8,
-      title: "Top 10 Reasons To Flaunt Demi Fine Jewellery",
-      description: "Lorem Ipsum is simply dummy text of the",
-      tags: ["Jewelry", "Design"]
-    },
-    {
-      image: blogtwo_9,
-      title: "Top 10 Reasons To Flaunt Demi Fine Jewellery",
-      description: "Lorem Ipsum is simply dummy text of the",
-      tags: ["Jewelry", "Design"]
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch blogs
+        const blogsResponse = await blogAPI.getAllBlogs({ 
+          limit: 9,
+          status: 'published',
+          sort: '-createdAt'
+        });
+        
+        // Fetch categories for tags
+        const categoriesResponse = await blogAPI.getBlogCategories();
+        
+        setBlogs(blogsResponse.data.data.posts);
+        setCategories(categoriesResponse.data.data.categories);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Failed to load blog posts. Please try again later.');
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <Container>
+        <Title>Blogs</Title>
+        <LoadingContainer>Loading blogs...</LoadingContainer>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <Title>Blogs</Title>
+        <ErrorContainer>{error}</ErrorContainer>
+      </Container>
+    );
+  }
+
+  // Function to get category names based on blog category IDs
+  const getCategoryNames = (blogCategories) => {
+    if (!blogCategories || !blogCategories.length) return ["Jewelry"];
+    
+    // If categories are already strings, return them
+    if (typeof blogCategories[0] === 'string') {
+      return blogCategories.slice(0, 2);
     }
-  ];
+    
+    // Map category IDs to names
+    const categoryNames = [];
+    blogCategories.forEach(catId => {
+      const category = categories.find(c => c._id === catId);
+      if (category) {
+        categoryNames.push(category.name);
+      }
+    });
+    
+    return categoryNames.length ? categoryNames.slice(0, 2) : ["Jewelry"];
+  };
 
   return (
     <Container>
       <Title>Blogs</Title>
       <GridContainer>
-        {blogData.map((blog, index) => (
-          <BlogCard key={index}>
+        {blogs.map((blog) => (
+          <BlogCard key={blog._id}>
             <ImageContainer>
-              <BlogImage src={blog.image} alt={blog.title} />
+              <BlogImage src={blog.featuredImage?.[0] || placeholderImage} alt={blog.title} />
               <TagContainer>
-                {blog.tags.map((tag, tagIndex) => (
-                  <Tag key={tagIndex}>{tag}</Tag>
+                {getCategoryNames(blog.categories).map((category, index) => (
+                  <Tag key={index}>{category}</Tag>
                 ))}
               </TagContainer>
             </ImageContainer>
             <Content>
               <BlogTitle>{blog.title}</BlogTitle>
-              <Description>{blog.description}</Description>
+              <Description>
+                {blog.summary && blog.summary.length > 80 
+                  ? `${blog.summary.substring(0, 80)}...` 
+                  : blog.summary || "Lorem Ipsum is simply dummy text of the printing industry."}
+              </Description>
+              <ReadMore to={`/blog/${blog.slug}`} target="_blank">Read more</ReadMore>
             </Content>
           </BlogCard>
         ))}

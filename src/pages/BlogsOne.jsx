@@ -1,13 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import blog_1 from "../assets/blog_1.png";
-import blog_2 from "../assets/blog_2.png";
-import blog_3 from "../assets/blog_3.png";
-import blog_4 from "../assets/blog_4.png";
-import blog_5 from "../assets/blog_5.png";
-import blog_6 from "../assets/blog_6.png";
-import blog_7 from "../assets/blog_7.png";
-import blog_8 from "../assets/blog_8.png";
+import { Link } from 'react-router-dom';
+import { blogAPI } from "../services/api";
+import placeholderImage from "../assets/blogtwo_1.png";
 
 const Container = styled.div`
   max-width: 1200px;
@@ -91,7 +86,7 @@ const BlogTitle = styled.h2`
   }
 `;
 
-const ReadMore = styled.a`
+const ReadMore = styled(Link)`
   display: inline-block;
   color: #000;
   text-decoration: underline;
@@ -109,98 +104,137 @@ const ReadMore = styled.a`
   }
 `;
 
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 1.25rem;
+  color: #666;
+`;
+
+const ErrorContainer = styled.div`
+  text-align: center;
+  padding: 2rem;
+  background-color: #FEF2F2;
+  border-radius: 0.5rem;
+  margin: 2rem 0;
+  color: #B91C1C;
+`;
+
 const BlogsOne = () => {
-  const firstSection = [
-    {
-      image: blog_1,
-      title: "Top 10 reasons to flaunt Demi-fine jewellery this Holi",
-      height: "400px",
-      mobileHeight: "300px"
-    },
-    {
-      image: blog_2,
-      title: "Top 10 reasons to flaunt Demi-fine jewellery this Holi",
-      height: "400px",
-      mobileHeight: "300px"
-    }
-  ];
+  const [featuredBlogs, setFeaturedBlogs] = useState([]);
+  const [regularBlogs, setRegularBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const secondSection = [
-    {
-      image: blog_3,
-      title: "Top 10 reasons to flaunt Demi-fine jewellery this Holi"
-    },
-    {
-      image: blog_4,
-      title: "Top 10 reasons to flaunt Demi-fine jewellery this Holi"
-    },
-    {
-      image: blog_5,
-      title: "Top 10 reasons to flaunt Demi-fine jewellery this Holi"
-    }
-  ];
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch featured blogs
+        const featuredResponse = await blogAPI.getFeaturedBlogs();
+        const featuredData = featuredResponse.data.data.posts;
+        
+        // Fetch all blogs for the regular sections
+        const regularResponse = await blogAPI.getAllBlogs({ limit: 10, status: 'published' });
+        const regularData = regularResponse.data.data.posts;
+        
+        // Filter out featured blogs from regular blogs to avoid duplication
+        const featuredIds = featuredData.map(blog => blog._id);
+        const filteredRegularBlogs = regularData.filter(blog => !featuredIds.includes(blog._id));
+        
+        setFeaturedBlogs(featuredData.slice(0, 10));
+        setRegularBlogs(filteredRegularBlogs);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching blogs:', error);
+        setError('Failed to load blog posts. Please try again later.');
+        setLoading(false);
+      }
+    };
 
-  const thirdSection = [
-    {
-      image: blog_6,
-      title: "Top 10 reasons to flaunt Demi-fine jewellery this Holi"
-    },
-    {
-      image: blog_7,
-      title: "Top 10 reasons to flaunt Demi-fine jewellery this Holi"
-    },
-    {
-      image: blog_8,
-      title: "Top 10 reasons to flaunt Demi-fine jewellery this Holi"
-    }
-  ];
+    fetchBlogs();
+  }, []);
+
+  if (loading) {
+    return (
+      <Container>
+        <Title>Blogs</Title>
+        <LoadingContainer>Loading blogs...</LoadingContainer>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <Title>Blogs</Title>
+        <ErrorContainer>{error}</ErrorContainer>
+      </Container>
+    );
+  }
+
+  // Divide regular blogs for the second and third sections
+  const secondSectionBlogs = regularBlogs.slice(0, 3);
+  const thirdSectionBlogs = regularBlogs.slice(3, 6);
 
   return (
     <Container>
       <Title>Blogs</Title>
 
+      {/* Featured Blogs Section */}
       <SectionGrid>
-        {firstSection.map((blog, index) => (
-          <BlogCard key={index}>
+        {featuredBlogs.map((blog) => (
+          <BlogCard key={blog._id}>
             <BlogImage 
-              src={blog.image} 
+              src={blog.featuredImage?.[0] || placeholderImage} 
               alt={blog.title} 
-              height={blog.height}
-              mobileHeight={blog.mobileHeight} 
+              height="400px"
+              mobileHeight="300px" 
             />
             <BlogContent>
               <BlogTitle>{blog.title}</BlogTitle>
-              <ReadMore>Read more</ReadMore>
+              <ReadMore to={`/blog/${blog.slug}`} target="_blank">Read more</ReadMore>
             </BlogContent>
           </BlogCard>
         ))}
       </SectionGrid>
 
+      {/* Second Section */}
       <SectionGrid 
         columns="1fr 1fr 1fr"
         tablet="repeat(2, 1fr)"
       >
-        {secondSection.map((blog, index) => (
-          <BlogCard key={index}>
-            <BlogImage src={blog.image} alt={blog.title} />
+        {secondSectionBlogs.map((blog) => (
+          <BlogCard key={blog._id}>
+            <BlogImage 
+              src={blog.featuredImage?.[0] || placeholderImage} 
+              alt={blog.title} 
+            />
             <BlogContent>
               <BlogTitle>{blog.title}</BlogTitle>
-              <ReadMore>Read more</ReadMore>
+              <ReadMore to={`/blog/${blog.slug}`} target="_blank">Read more</ReadMore>
             </BlogContent>
           </BlogCard>
         ))}
       </SectionGrid>
 
+      {/* Third Section */}
       <SectionGrid 
         columns="1fr 1fr 1fr"
         tablet="repeat(2, 1fr)"
       >
-        {thirdSection.map((blog, index) => (
-          <BlogCard key={index}>
-            <BlogImage src={blog.image} alt={blog.title} />
+        {thirdSectionBlogs.map((blog) => (
+          <BlogCard key={blog._id}>
+            <BlogImage 
+              src={blog.featuredImage?.[0] || placeholderImage} 
+              alt={blog.title} 
+            />
             <BlogContent>
               <BlogTitle>{blog.title}</BlogTitle>
-              <ReadMore>Read more</ReadMore>
+              <ReadMore to={`/blog/${blog.slug}`} target="_blank">Read more</ReadMore>
             </BlogContent>
           </BlogCard>
         ))}

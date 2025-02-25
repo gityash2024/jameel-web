@@ -53,6 +53,7 @@ import AddAddress from './pages/AddAddress';
 import AboutUsTwo from './pages/AboutUsTwo';
 import AuthGuard from './components/guards/AuthGuard';
 import SavedAddress from './pages/SavedOrder';
+import BlogDetails from './pages/BlogDetails';
 
 const AuthLayout = ({ children }) => {
   return (
@@ -104,6 +105,7 @@ function App() {
           <Route path="checkout" element={<AuthGuard><CheckOut /></AuthGuard>} />
           <Route path="profile" element={<AuthGuard><Profile /></AuthGuard>} />
           <Route path="home-erraring" element={<HomeErraring />} />
+          <Route path="/blog/:slug" element={<BlogDetails />} />
           <Route path="home-payment" element={<Homepayment />} />
           <Route path="productstwo" element={<Productstwo />} />
           <Route path="collection" element={<Collection />} />
@@ -111,8 +113,6 @@ function App() {
           <Route path="booking-appoinment" element={<AuthGuard><BookingAppoiment /></AuthGuard>} />
           <Route path="blogs-one" element={<BlogsOne />} />
           <Route path="blogs-two" element={<BlogsTwo />} />
-          <Route path="blogs-three" element={<BlogsThree />} />
-          <Route path="blogs-four" element={<BlogsFour />} />
           <Route path="ring" element={<Ring />} />
           <Route path="custom-jewelry" element={<CustomJewelry />} />
           <Route path="custom-jewelrytwo" element={<CustomJewelryTwo />} />

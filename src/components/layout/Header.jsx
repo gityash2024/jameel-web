@@ -79,8 +79,6 @@ export const HeaderProvider = ({ children }) => {
       dropdownItems: [
         { name: 'Latest Posts', path: '/blogs-one' },
         { name: 'Style Guide', path: '/blogs-two' },
-        { name: 'Care Tips', path: '/blogs-three' },
-        { name: 'News', path: '/blogs-four' }
       ]
     },
     { 
