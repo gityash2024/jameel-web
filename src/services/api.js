@@ -125,4 +125,40 @@ export const blogAPI = {
 };
 
 
+export const productAPI = {
+  getAllProducts: (params) => api.get('/products', { params }),
+  getProduct: (id) => api.get(`/products/${id}`),
+  getProductBySlug: (slug) => api.get(`/products/${slug}`),
+  getProductsByCategory: (categorySlug) => 
+    api.get(`/products/category/${categorySlug}`),
+  getProductsBySubcategory: (categorySlug, subcategoryId) => 
+    api.get(`/products?subcategory=${subcategoryId}`),
+  getFeaturedProducts: () => api.get('/products/featured'),
+  getNewArrivals: () => api.get('/products/new-arrivals'),
+  searchProducts: (params) => api.get('/products/search', { params }),
+  getRelatedProducts: (productId) => api.get(`/products/${productId}/related`),
+};
+export const cartAPI = {
+  getCart: () => api.get('/cart'),
+  addToCart: (data) => api.post('/cart', data),
+  updateCartItem: (itemId, data) => api.put(`/cart/items/${itemId}`, data),
+  removeCartItem: (itemId) => api.delete(`/cart/items/${itemId}`),
+  clearCart: () => api.delete('/cart'),
+  applyCoupon: (code) => api.post('/cart/coupon', { code }),
+  removeCoupon: () => api.delete('/cart/coupon'),
+};
+
+export const orderAPI = {
+  createOrder: (data) => api.post('/orders', data),
+  getOrders: () => api.get('/orders'),
+  getOrder: (id) => api.get(`/orders/${id}`),
+  cancelOrder: (id) => api.put(`/orders/${id}/cancel`),
+};
+
+export const reviewAPI = {
+  getProductReviews: (productId) => api.get(`/products/${productId}/reviews`),
+  addProductReview: (productId, data) => api.post(`/products/${productId}/reviews`, data),
+};
+
+
 export default api;

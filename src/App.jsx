@@ -99,8 +99,9 @@ function App() {
         
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="product-details" element={<Products />} />
-          <Route path="products" element={<ProductDetail />} />
+          <Route path="/product-details" element={<Products />} />
+<Route path="/products/:slug" element={<ProductDetail />} />
+          <Route path="products" element={<Products />} />
           <Route path="cart" element={<AuthGuard><Cart /></AuthGuard>} />
           <Route path="checkout" element={<AuthGuard><CheckOut /></AuthGuard>} />
           <Route path="profile" element={<AuthGuard><Profile /></AuthGuard>} />

@@ -1,9 +1,160 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { MapPin, HelpCircle, User, Search, ShoppingCart, Heart, ChevronDown, Camera, Menu, X, LogOut } from 'lucide-react';
-import { categoryAPI, subcategoryAPI } from '../../services/api';
+import { categoryAPI, subcategoryAPI, cartAPI, userAPI } from '../../services/api';
+import styled from 'styled-components';
 
-const HeaderContext = createContext();
+// Styled Components
+const CartPreview = styled.div`
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 320px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  padding: 16px;
+  display: ${props => props.$show ? 'block' : 'none'};
+  
+  @media (max-width: 768px) {
+    width: 280px;
+  }
+`;
+
+const CartHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e2e8f0;
+  
+  h3 {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  span {
+    font-size: 14px;
+    color: #666;
+  }
+`;
+
+const CartItem = styled.div`
+  display: flex;
+  padding: 8px 0;
+  border-bottom: 1px solid #f7fafc;
+  
+  .image {
+    width: 60px;
+    height: 60px;
+    border: 1px solid #f0f0f0;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+  
+  .details {
+    flex: 1;
+    
+    .title {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    
+    .price {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    
+    .meta {
+      font-size: 12px;
+      color: #666;
+    }
+  }
+`;
+
+const CartFooter = styled.div`
+  margin-top: 12px;
+  
+  .subtotal {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-weight: 500;
+  }
+  
+  .buttons {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    
+    button {
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      
+      &.view-cart {
+        background: white;
+        border: 1px solid #e2e8f0;
+        
+        &:hover {
+          background: #f7fafc;
+        }
+      }
+      
+      &.checkout {
+        background: black;
+        color: white;
+        border: none;
+        
+        &:hover {
+          background: #333;
+        }
+      }
+    }
+  }
+`;
+
+const EmptyCart = styled.div`
+  text-align: center;
+  padding: 20px 0;
+  
+  p {
+    color: #666;
+    margin-bottom: 12px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    background: black;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    
+    &:hover {
+      background: #333;
+    }
+  }
+`;
+
+export const HeaderContext = createContext();
 
 export const HeaderProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -17,6 +168,7 @@ export const HeaderProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showCartPreview, setShowCartPreview] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -24,6 +176,10 @@ export const HeaderProvider = ({ children }) => {
     if (token && userDataStr) {
       setIsLoggedIn(true);
       setUserData(JSON.parse(userDataStr));
+      
+      // Fetch cart and wishlist data
+      fetchCartData();
+      fetchWishlistData();
     }
 
     const fetchCategoriesAndSubcategories = async () => {
@@ -44,6 +200,29 @@ export const HeaderProvider = ({ children }) => {
     };
     fetchCategoriesAndSubcategories();
   }, []);
+  
+  const fetchCartData = async () => {
+    try {
+      const response = await cartAPI.getCart();
+      if (response.data.data && response.data.data.items) {
+        setCartItems(response.data.data.items);
+      }
+    } catch (error) {
+      console.error('Error fetching cart data:', error);
+    }
+  };
+  
+  const fetchWishlistData = async () => {
+    try {
+      const response = await userAPI.getWishlist();
+      if (response.data.data && response.data.data.wishlist) {
+        // Store only product IDs for easier checking
+        setWishlistItems(response.data.data.wishlist.map(item => item.product._id || item.product));
+      }
+    } catch (error) {
+      console.error('Error fetching wishlist data:', error);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -51,23 +230,25 @@ export const HeaderProvider = ({ children }) => {
     setIsLoggedIn(false);
     setUserData(null);
     setShowProfileModal(false);
+    setCartItems([]);
+    setWishlistItems([]);
   };
 
   const dynamicNavigation = [
-    
     ...categories
       .filter(category => category.isActive)
       .map(category => {
-        const categorySubcategories = subcategories
-          .filter(sub => sub.category?._id === category?._id && sub?.isActive)
-          .map(sub => ({
-            name: sub.name,
-            path: `/category/${category.slug}/${sub.slug || sub._id}`
-          }));
-
+     // In HeaderProvider component in Header.jsx
+const categorySubcategories = subcategories
+.filter(sub => sub.category?._id === category?._id && sub?.isActive)
+.map(sub => ({
+  name: sub.name,
+  // Include category._id as fallback if slug is undefined
+  path: `/product-details?category=${category.slug || category._id}&subcategory=${sub._id}`
+}));
         return {
           name: category.name,
-          path: `/category/${category.slug}`,
+          path: `/product-details?category=${category.slug}`,
           hasDropdown: categorySubcategories.length > 0,
           dropdownItems: categorySubcategories.length > 0 ? categorySubcategories : null
         };
@@ -92,7 +273,6 @@ export const HeaderProvider = ({ children }) => {
   ];
 
   const headerData = {
-
     utilities: [
       { icon: MapPin, text: "Find a Store", link: "/find-your-store" },
       { icon: HelpCircle, text: "Help Centre", link: "/help-center" }
@@ -108,6 +288,12 @@ export const HeaderProvider = ({ children }) => {
     },
     navigation: isLoading ? [] : dynamicNavigation
   };
+  
+  // Calculate cart totals
+  const cartSubtotal = cartItems.reduce((total, item) => {
+    const itemPrice = item.product?.salePrice || item.product?.regularPrice || 0;
+    return total + (itemPrice * item.quantity);
+  }, 0);
 
   return (
     <HeaderContext.Provider value={{
@@ -115,7 +301,9 @@ export const HeaderProvider = ({ children }) => {
       searchQuery,
       setSearchQuery,
       cartItems,
+      setCartItems,
       wishlistItems,
+      setWishlistItems,
       isLoggedIn,
       isMobileMenuOpen,
       setIsMobileMenuOpen,
@@ -125,13 +313,16 @@ export const HeaderProvider = ({ children }) => {
       setShowProfileModal,
       jammelUser,
       handleLogout,
-      isLoading
+      isLoading,
+      showCartPreview,
+      setShowCartPreview,
+      cartSubtotal,
+      fetchCartData
     }}>
       {children}
     </HeaderContext.Provider>
   );
 };
-
 
 const ProfileModal = () => {
   const { jammelUser, showProfileModal, setShowProfileModal, handleLogout } = useContext(HeaderContext);
@@ -222,9 +413,13 @@ const MainHeader = () => {
     setIsMobileMenuOpen,
     isMobileSearchOpen,
     setIsMobileSearchOpen,
-    showProfileModal
+    showCartPreview,
+    setShowCartPreview,
+    cartSubtotal,
+    isLoggedIn
   } = useContext(HeaderContext);
   const navigate = useNavigate();
+  
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -232,6 +427,27 @@ const MainHeader = () => {
       setIsMobileSearchOpen(false);
     }
   };
+  
+  const handleCartHover = () => {
+    if (isLoggedIn && cartItems.length > 0) {
+      setShowCartPreview(true);
+    }
+  };
+  
+  const handleCartLeave = () => {
+    setShowCartPreview(false);
+  };
+  
+  const handleViewCart = () => {
+    navigate('/card-option');
+    setShowCartPreview(false);
+  };
+  
+  const handleCheckout = () => {
+    navigate('/checkout');
+    setShowCartPreview(false);
+  };
+  
   return (
     <div className="py-4 md:py-6">
       <div className="container mx-auto px-4 md:px-6">
@@ -271,14 +487,89 @@ const MainHeader = () => {
             >
               <Search className="w-6 h-6" />
             </button>
-            <Link to="/card-option" className="relative hover:text-gray-600">
-              <ShoppingCart className="w-6 h-6" />
-              {cartItems.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                  {cartItems.length}
-                </span>
-              )}
-            </Link>
+            
+            <div 
+              className="relative" 
+              onMouseEnter={handleCartHover}
+              onMouseLeave={handleCartLeave}
+            >
+              <Link to="/card-option" className="relative hover:text-gray-600">
+                <ShoppingCart className="w-6 h-6" />
+                {cartItems.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                    {cartItems.length}
+                  </span>
+                )}
+              </Link>
+              
+              <CartPreview $show={showCartPreview}>
+              <CartHeader>
+                  <h3>Shopping Bag</h3>
+                  <span>{cartItems.length} items</span>
+                </CartHeader>
+                
+                {cartItems.length === 0 ? (
+                  <EmptyCart>
+                    <p>Your shopping bag is empty</p>
+                    <button onClick={() => navigate('/product-details')}>
+                      Shop Now
+                    </button>
+                  </EmptyCart>
+                ) : (
+                  <>
+                    <div style={{ maxHeight: '240px', overflowY: 'auto' }}>
+                      {cartItems.slice(0, 3).map(item => (
+                        <CartItem key={item._id}>
+                          <div className="image">
+                            <img 
+                              src={item.product?.images?.[0]?.url || '/placeholder.png'} 
+                              alt={item.product?.name} 
+                            />
+                          </div>
+                          <div className="details">
+                            <div className="title">
+                              {item.product?.name}
+                            </div>
+                            <div className="price">
+                              ${(item.product?.salePrice || item.product?.regularPrice).toFixed(2)}
+                            </div>
+                            <div className="meta">
+                              Qty: {item.quantity}
+                              {item.attributes && item.attributes.length > 0 && (
+                                <span> • {item.attributes[0].name}: {item.attributes[0].value}</span>
+                              )}
+                            </div>
+                          </div>
+                        </CartItem>
+                      ))}
+                      
+                      {cartItems.length > 3 && (
+                        <div style={{ padding: '8px 0', textAlign: 'center', fontSize: '14px', color: '#666' }}>
+                          +{cartItems.length - 3} more items
+                        </div>
+                      )}
+                    </div>
+                    
+                    <CartFooter>
+                      <div className="subtotal">
+                        <span>Subtotal:</span>
+                        <span>${cartSubtotal.toFixed(2)}</span>
+                      </div>
+                      
+                      <div className="buttons">
+                        <button className="view-cart" onClick={handleViewCart}>
+                          View Bag
+                        </button>
+                        <button className="checkout" onClick={handleCheckout}>
+                          Checkout
+                        </button>
+                      </div>
+                    </CartFooter>
+                  </>
+                )}
+              </CartPreview>
+            </div>
+            
             <Link to="/favorites" className="relative hover:text-gray-600">
               <Heart className="w-6 h-6" />
               {wishlistItems.length > 0 && (
@@ -370,6 +661,7 @@ const MobileNavigation = () => {
     </div>
   );
 };
+
 const Navigation = () => {
   const { headerData } = useContext(HeaderContext);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -438,6 +730,7 @@ const Navigation = () => {
     </div>
   );
 };
+
 const Header = () => {
   return (
     <HeaderProvider>
