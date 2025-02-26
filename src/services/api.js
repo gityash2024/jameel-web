@@ -149,7 +149,13 @@ export const reviewAPI = {
   getProductReviews: (productId) => api.get(`/products/${productId}/reviews`),
   addProductReview: (productId, data) => api.post(`/products/${productId}/reviews`, data),
 };
-
+export const supportAPI = {
+  createSupportTicket: (data) => api.post('/support-tickets', data),
+  getAllSupportTickets: (params) => api.get('/support-tickets', { params }),
+  getSupportTicket: (id) => api.get(`/support-tickets/${id}`),
+  addTicketResponse: (id, data) => api.post(`/support-tickets/${id}/responses`, data),
+  updateTicketStatus: (id, status) => api.put(`/support-tickets/${id}/status`, { status })
+};
 
 export const cartAPI = {
   getCart: () => api.get('/cart'),

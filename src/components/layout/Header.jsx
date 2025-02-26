@@ -222,7 +222,7 @@ const fetchWishlistData = async () => {
     if (response.data.data && response.data.data.products) {
       // Extract product IDs from the products array
       const wishlistProductIds = response.data.data.products.map(item => 
-        item.product._id || item.product
+        item?.product?._id || item?.product
       );
       setWishlistItems(wishlistProductIds);
     }
@@ -544,7 +544,7 @@ const MainHeader = () => {
                               {item.product?.name}
                             </div>
                             <div className="price">
-                              ${(item.product?.salePrice || item.product?.regularPrice).toFixed(2)}
+                              ${(item?.product?.salePrice || item?.product?.regularPrice)?.toFixed(2)}
                             </div>
                             <div className="meta">
                               Qty: {item.quantity}
