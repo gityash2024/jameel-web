@@ -18,7 +18,6 @@ const ModalOverlay = styled.div`
   padding: 20px;
   display: flex;
   flex-direction: column;
-
   @media (max-width: 480px) {
     width: 100%;
     padding: 16px;
@@ -30,11 +29,9 @@ const ModalHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  
   h2 {
     font-size: 24px;
     font-weight: 500;
-
     @media (max-width: 480px) {
       font-size: 20px;
     }
@@ -47,7 +44,6 @@ const CloseButton = styled.button`
   font-size: 24px;
   cursor: pointer;
   padding: 5px;
-
   @media (max-width: 480px) {
     font-size: 20px;
   }
@@ -59,7 +55,6 @@ const ProgressBar = styled.div`
   background: #e0e0e0;
   margin: 10px 0 20px;
   position: relative;
-
   &::after {
     content: '';
     position: absolute;
@@ -76,7 +71,6 @@ const ShippingMessage = styled.p`
   margin-bottom: 20px;
   color: #333;
   font-size: 14px;
-
   @media (max-width: 480px) {
     font-size: 13px;
   }
@@ -87,11 +81,9 @@ const CartItems = styled.div`
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding-right: 5px;
-
   &::-webkit-scrollbar {
     width: 4px;
   }
-
   &::-webkit-scrollbar-thumb {
     background-color: #ddd;
     border-radius: 2px;
@@ -105,7 +97,6 @@ const CartItem = styled.div`
   padding: 15px 0;
   border-bottom: 1px solid #eee;
   align-items: center;
-
   @media (max-width: 480px) {
     gap: 10px;
     padding: 12px 0;
@@ -116,7 +107,6 @@ const ProductImage = styled.img`
   width: 80px;
   height: 80px;
   object-fit: contain;
-
   @media (max-width: 480px) {
     width: 70px;
     height: 70px;
@@ -128,15 +118,12 @@ const ProductInfo = styled.div`
     margin: 0 0 5px;
     font-size: 16px;
     font-weight: normal;
-
     @media (max-width: 480px) {
       font-size: 14px;
     }
   }
-  
   .price {
     font-weight: 500;
-    
     @media (max-width: 480px) {
       font-size: 14px;
     }
@@ -151,20 +138,17 @@ const QuantityControl = styled.div`
   padding: 5px 10px;
   border-radius: 4px;
   margin-top: 10px;
-  
   button {
     border: none;
     background: none;
     cursor: pointer;
     padding: 0 5px;
     font-size: 16px;
-    
     @media (max-width: 480px) {
       font-size: 14px;
       padding: 0 3px;
     }
   }
-
   span {
     @media (max-width: 480px) {
       font-size: 14px;
@@ -178,11 +162,9 @@ const DeleteButton = styled.button`
   cursor: pointer;
   color: #666;
   padding: 5px;
-  
   &:hover {
     color: #000;
   }
-
   @media (max-width: 480px) {
     padding: 3px;
   }
@@ -192,7 +174,6 @@ const CartFooter = styled.div`
   margin-top: auto;
   padding-top: 20px;
   border-top: 1px solid #eee;
-
   @media (max-width: 480px) {
     padding-top: 16px;
   }
@@ -203,7 +184,6 @@ const SubTotal = styled.div`
   justify-content: space-between;
   margin-bottom: 20px;
   font-weight: 500;
-
   @media (max-width: 480px) {
     font-size: 14px;
     margin-bottom: 16px;
@@ -214,7 +194,6 @@ const ButtonGroup = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-
   @media (max-width: 480px) {
     gap: 8px;
   }
@@ -229,25 +208,20 @@ const Button = styled.button`
   align-items: center;
   justify-content: center;
   gap: 8px;
-  
   &.view-cart {
     background: white;
     border: 1px solid black;
-    
     &:hover {
       background: #f5f5f5;
     }
   }
-  
   &.checkout {
     background: black;
     color: white;
-    
     &:hover {
       background: #333;
     }
   }
-
   @media (max-width: 480px) {
     padding: 12px;
     font-size: 14px;
@@ -265,11 +239,9 @@ const ClearCartButton = styled.button`
   margin-left: auto;
   padding: 5px;
   font-size: 14px;
-  
   &:hover {
     color: #000;
   }
-
   @media (max-width: 480px) {
     font-size: 13px;
     padding: 4px;
@@ -283,18 +255,15 @@ const EmptyCart = styled.div`
   align-items: center;
   justify-content: center;
   text-align: center;
-  
   h3 {
     margin-bottom: 16px;
     font-size: 18px;
   }
-  
   p {
     color: #666;
     margin-bottom: 24px;
     max-width: 240px;
   }
-  
   button {
     padding: 12px 24px;
     background: black;
@@ -305,7 +274,6 @@ const EmptyCart = styled.div`
     gap: 8px;
     font-weight: 500;
     cursor: pointer;
-    
     &:hover {
       background: #333;
     }
@@ -317,7 +285,6 @@ const LoadingSpinner = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  
   &:after {
     content: "";
     width: 30px;
@@ -327,7 +294,6 @@ const LoadingSpinner = styled.div`
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
-  
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -336,28 +302,27 @@ const LoadingSpinner = styled.div`
 
 const CardOption = () => {
   const navigate = useNavigate();
-  const { cartItems, setCartItems, fetchCartData } = useContext(HeaderContext);
+  const { cartItems, setCartItems, fetchCartData } = useContext(HeaderContext) || {};
   const [loading, setLoading] = React.useState(true);
   const [subTotal, setSubTotal] = React.useState(0);
-  const [freeShippingThreshold] = React.useState(100); // Set your free shipping threshold here
+  const [freeShippingThreshold] = React.useState(100);
 
   useEffect(() => {
     const loadCart = async () => {
       try {
         setLoading(true);
-        await fetchCartData();
+        const updatedCartItems = await fetchCartData();
+        setCartItems(updatedCartItems);
         setLoading(false);
       } catch (error) {
         console.error('Error loading cart:', error);
         setLoading(false);
       }
     };
-    
     loadCart();
-  }, [fetchCartData]);
+  }, [fetchCartData, setCartItems]);
 
   useEffect(() => {
-    // Calculate subtotal
     if (cartItems && cartItems.length > 0) {
       const total = cartItems.reduce((acc, item) => {
         const price = item.product?.salePrice || item.product?.regularPrice || 0;
@@ -372,10 +337,7 @@ const CardOption = () => {
   const updateQuantity = async (itemId, change, currentQuantity) => {
     try {
       const newQuantity = Math.max(1, currentQuantity + change);
-      
       await cartAPI.updateCartItem(itemId, { quantity: newQuantity });
-      
-      // Update local state
       setCartItems(prevItems => 
         prevItems.map(item => 
           item._id === itemId 
@@ -392,8 +354,6 @@ const CardOption = () => {
   const removeItem = async (itemId) => {
     try {
       await cartAPI.removeCartItem(itemId);
-      
-      // Update local state
       setCartItems(prevItems => prevItems.filter(item => item._id !== itemId));
       toast.success('Item removed from cart');
     } catch (error) {
@@ -428,8 +388,7 @@ const CardOption = () => {
   const handleShopNow = () => {
     navigate('/product-details');
   };
-
-  // Calculate progress toward free shipping
+  
   const progressPercent = (subTotal / freeShippingThreshold) * 100;
   const freeShippingRemaining = freeShippingThreshold - subTotal;
 
@@ -441,20 +400,17 @@ const CardOption = () => {
           <X size={24} />
         </CloseButton>
       </ModalHeader>
-
       <ShippingMessage>
         {subTotal >= freeShippingThreshold
           ? "Congratulations! You've qualified for FREE shipping!"
           : `Add $${freeShippingRemaining.toFixed(2)} more to qualify for FREE shipping`}
       </ShippingMessage>
       <ProgressBar percent={progressPercent} />
-
       {cartItems && cartItems.length > 0 && (
         <ClearCartButton onClick={clearCart}>
           Clear Cart
         </ClearCartButton>
       )}
-
       {loading ? (
         <LoadingSpinner />
       ) : cartItems && cartItems.length > 0 ? (
@@ -462,7 +418,6 @@ const CardOption = () => {
           <CartItems>
             {cartItems.map(item => {
               const price = item.product?.salePrice || item.product?.regularPrice;
-              
               return (
                 <CartItem key={item._id}>
                   <ProductImage 
@@ -490,13 +445,11 @@ const CardOption = () => {
               );
             })}
           </CartItems>
-
           <CartFooter>
             <SubTotal>
               <span>Subtotal:</span>
               <span>${subTotal.toFixed(2)}</span>
             </SubTotal>
-
             <ButtonGroup>
               <Button className="view-cart" onClick={handleViewCart}>
                 View Cart

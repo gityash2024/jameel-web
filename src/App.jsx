@@ -119,7 +119,6 @@ function App() {
           <Route path="custom-jewelry" element={<CustomJewelry />} />
           <Route path="custom-jewelrytwo" element={<CustomJewelryTwo />} />
           <Route path="help-center" element={<HelpCenter />} />
-          <Route path="card-option" element={<AuthGuard><CardOption /></AuthGuard>} />
           <Route path="checkout-page" element={<AuthGuard><CheckoutPage /></AuthGuard>} />
           <Route path="personalized-jewelry" element={<PersonalizedJewelry />} />
           <Route path="card-page" element={<AuthGuard><CardPage /></AuthGuard>} />

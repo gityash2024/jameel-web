@@ -202,11 +202,16 @@ export const HeaderProvider = ({ children }) => {
   const fetchCartData = async () => {
     try {
       const response = await cartAPI.getCart();
-      if (response.data.data && response.data.data.items) {
-        setCartItems(response.data.data.items);
+      if (response.data && response.data.data && response.data.data.cart) {
+        const updatedCartItems = response.data.data.cart.items || [];
+        setCartItems(updatedCartItems);
+        return updatedCartItems;
+      } else {
+        return [];
       }
     } catch (error) {
       console.error('Error fetching cart data:', error);
+      return [];
     }
   };
   
@@ -447,7 +452,7 @@ const MainHeader = () => {
   };
   
   const handleViewCart = () => {
-    navigate('/card-option');
+    navigate('/cart');
     setShowCartPreview(false);
   };
   
@@ -501,7 +506,7 @@ const MainHeader = () => {
               onMouseEnter={handleCartHover}
               onMouseLeave={handleCartLeave}
             >
-              <Link to="/card-option" className="relative hover:text-gray-600">
+              <Link to="/cart" className="relative hover:text-gray-600">
                 <ShoppingCart className="w-6 h-6" />
                 {cartItems.length > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
