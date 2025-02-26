@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { Diamond, Heart, ChevronDown, ChevronUp, X } from "lucide-react";
+import { Diamond, Heart, ChevronDown, ChevronUp, X, Check } from "lucide-react";
 import { productAPI, userAPI } from "../services/api";
 import { toast } from "react-hot-toast";
 import { HeaderContext } from "../components/layout/Header";
+
 const defaultContextValues = {
   wishlistItems: [],
   setWishlistItems: () => {},
@@ -355,7 +356,6 @@ const RangeInput = styled.input`
   }
 `;
 
-
 const RangeSlider = styled.div`
   position: relative;
   width: 100%;
@@ -383,7 +383,8 @@ const RangeSlider = styled.div`
       transform: translateX(-50%);
     }
     &:last-of-type {
-right: ${props => 100 - props.rightPercent}%;      transform: translateX(50%);
+      right: ${props => 100 - props.rightPercent}%;
+      transform: translateX(50%);
     }
     @media (max-width: 768px) {
       width: 14px;
@@ -524,10 +525,68 @@ const MobileSidebarFooter = styled.div`
   }
 `;
 
+const CompareButton = styled.button`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #000;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  
+  &:hover {
+    background: #333;
+  }
+  
+  &:disabled {
+    background: #999;
+    cursor: not-allowed;
+  }
+`;
+
+const CompareCheckbox = styled.div`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 5;
+  
+  input {
+    display: none;
+  }
+  
+  label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: ${props => props.checked ? '#000' : '#fff'};
+    border: 1px solid ${props => props.checked ? '#000' : '#ddd'};
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    svg {
+      color: #fff;
+      width: 16px;
+      height: 16px;
+    }
+  }
+`;
+
 const Products = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { wishlistItems, setWishlistItems, isLoggedIn } = useContext(HeaderContext)|| defaultContextValues;
+  const { wishlistItems, setWishlistItems, isLoggedIn } = useContext(HeaderContext) || defaultContextValues;
   
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
@@ -538,6 +597,7 @@ const Products = () => {
   const [appliedPriceRange, setAppliedPriceRange] = useState({ min: 0, max: 10000 });
   const [categoryData, setCategoryData] = useState(null);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [compareProducts, setCompareProducts] = useState([]);
   
   // Get query parameters
   const searchParams = new URLSearchParams(location.search);
@@ -598,48 +658,47 @@ const Products = () => {
     }
   ];
   
- // In Products.jsx useEffect
-useEffect(() => {
-  const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      let response;
-      
-      if (searchQuery) {
-        // Search products
-        response = await productAPI.searchProducts({ q: searchQuery });
-      } else if (subcategorySlug) {
-        // Get products by subcategory ID directly - don't rely on categorySlug
-        response = await productAPI.getAllProducts({ subcategory: subcategorySlug });
-        setCategoryData({ name: "Products" });
-      } else if (categorySlug && categorySlug !== "undefined") {
-        // Get products by category
-        response = await productAPI.getProductsByCategory(categorySlug);
-        setCategoryData(response.data.data.category);
-      } else {
-        // Get all products
-        response = await productAPI.getAllProducts();
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        let response;
+        
+        if (searchQuery) {
+          // Search products
+          response = await productAPI.searchProducts({ q: searchQuery });
+        } else if (subcategorySlug) {
+          // Get products by subcategory ID directly - don't rely on categorySlug
+          response = await productAPI.getAllProducts({ subcategory: subcategorySlug });
+          setCategoryData({ name: "Products" });
+        } else if (categorySlug && categorySlug !== "undefined") {
+          // Get products by category
+          response = await productAPI.getProductsByCategory(categorySlug);
+          setCategoryData(response.data.data.category);
+        } else {
+          // Get all products
+          response = await productAPI.getAllProducts();
+        }
+        
+        // Set products and filtered products
+        if (response.data.data.products) {
+          setProducts(response.data.data.products);
+          setFilteredProducts(response.data.data.products);
+          setTotalProducts(response.data.total || response.data.results || response.data.data.products.length);
+        }
+        
+        // Extract filter options
+        extractFilterOptions(response.data.data.products || []);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        toast.error('Failed to load products');
+      } finally {
+        setLoading(false);
       }
-      
-      // Set products and filtered products
-      if (response.data.data.products) {
-        setProducts(response.data.data.products);
-        setFilteredProducts(response.data.data.products);
-        setTotalProducts(response.data.total || response.data.results || response.data.data.products.length);
-      }
-      
-      // Extract filter options
-      extractFilterOptions(response.data.data.products || []);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      toast.error('Failed to load products');
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  fetchProducts();
-}, [categorySlug, subcategorySlug, searchQuery]);
+    };
+    
+    fetchProducts();
+  }, [categorySlug, subcategorySlug, searchQuery]);
   
   // Extract filter options from products
   const extractFilterOptions = (products) => {
@@ -805,6 +864,34 @@ useEffect(() => {
   const pageTitle = searchQuery 
     ? `Search Results for "${searchQuery}"` 
     : categoryData?.name || "All Products";
+  
+  // Handle compare checkbox toggle
+  const handleCompareToggle = (product) => {
+    setCompareProducts(prev => {
+      const isAlreadyAdded = prev.some(p => p._id === product._id);
+      
+      if (isAlreadyAdded) {
+        return prev.filter(p => p._id !== product._id);
+      } else {
+        if (prev.length >= 5) {
+          toast.error('You can compare maximum 5 products at once');
+          return prev;
+        }
+        return [...prev, product];
+      }
+    });
+  };
+  
+  // Navigate to compare page
+  const navigateToCompare = () => {
+    if (compareProducts.length < 2) {
+      toast.error('Please select at least 2 products to compare');
+      return;
+    }
+    
+    const productIds = compareProducts.map(p => p._id).join(',');
+    navigate(`/product-compare?products=${productIds}`);
+  };
   
   const renderMobileSidebar = () => (
     <MobileSidebar isOpen={isMobileSidebarOpen}>
@@ -1033,6 +1120,18 @@ useEffect(() => {
           <ProductGrid>
             {filteredProducts.map((product) => (
               <ProductCard key={product._id}>
+                <CompareCheckbox checked={compareProducts.some(p => p._id === product._id)}>
+                  <input 
+                    type="checkbox" 
+                    id={`compare-${product._id}`}
+                    checked={compareProducts.some(p => p._id === product._id)}
+                    onChange={() => handleCompareToggle(product)}
+                  />
+                  <label htmlFor={`compare-${product._id}`}>
+                    {compareProducts.some(p => p._id === product._id) && <Check size={16} />}
+                  </label>
+                </CompareCheckbox>
+                
                 <ProductHeader>
                   {product.isFeatured && <FeaturedTag>Featured Item</FeaturedTag>}
                   <WishlistButton 
@@ -1084,6 +1183,15 @@ useEffect(() => {
           </ProductGrid>
         )}
       </MainGrid>
+      
+      {compareProducts.length > 0 && (
+        <CompareButton 
+          onClick={navigateToCompare}
+          disabled={compareProducts.length < 2}
+        >
+          Compare {compareProducts.length} Products
+        </CompareButton>
+      )}
     </Container>
   );
 };

@@ -16,6 +16,7 @@ import { productAPI, userAPI, cartAPI } from "../services/api";
 import { toast } from "react-hot-toast";
 import { HeaderContext } from "../components/layout/Header";
 import RelatedProducts from "../components/product/RelatedProducts";
+
 const defaultContextValues = {
   wishlistItems: [],
   setWishlistItems: () => {},
@@ -23,6 +24,7 @@ const defaultContextValues = {
   setCartItems: () => {},
   isLoggedIn: false
 };
+
 const PageContainer = styled.div`
   max-width: 1440px;
   margin: 0 auto;
@@ -602,7 +604,7 @@ const SpecificationList = styled.div`
 const ProductDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const { wishlistItems, setWishlistItems, cartItems, setCartItems, isLoggedIn } = useContext(HeaderContext)||defaultContextValues;
+  const { wishlistItems, setWishlistItems, cartItems, setCartItems, isLoggedIn } = useContext(HeaderContext) || defaultContextValues;
   
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -617,19 +619,24 @@ const ProductDetail = () => {
       setLoading(true);
       try {
         const response = await productAPI.getProductBySlug(slug);
-        setProduct(response.data.data.product);
-        if (response.data.data.product.attributes) {
-          const sizeAttribute = response.data.data.product.attributes.find(
-            attr => attr.name.toLowerCase() === 'size' || attr.name.toLowerCase() === 'ring size'
-          );
-          if (sizeAttribute && sizeAttribute.value) {
-            // Convert to array if it's a string of sizes
-            const sizes = typeof sizeAttribute.value === 'string' 
-              ? sizeAttribute.value.split(',').map(s => s.trim())
-              : [sizeAttribute.value];
+        
+        if (response.data.data.product) {
+          setProduct(response.data.data.product);
+          
+          if (response.data.data.product.attributes) {
+            const sizeAttribute = response.data.data.product.attributes.find(
+              attr => attr.name.toLowerCase() === 'size' || attr.name.toLowerCase() === 'ring size'
+            );
             
-            if (sizes.length > 0) {
-              setSelectedSize(sizes[0]);
+            if (sizeAttribute && sizeAttribute.value) {
+              // Convert to array if it's a string of sizes
+              const sizes = typeof sizeAttribute.value === 'string' 
+                ? sizeAttribute.value.split(',').map(s => s.trim())
+                : [sizeAttribute.value];
+              
+              if (sizes.length > 0) {
+                setSelectedSize(sizes[0]);
+              }
             }
           }
         }
@@ -645,9 +652,10 @@ const ProductDetail = () => {
     fetchProduct();
   }, [slug, navigate]);
   
+  // Check if product is in wishlist
   useEffect(() => {
-    if (product && wishlistItems.includes(product._id)) {
-      setIsInWishlist(true);
+    if (product && wishlistItems) {
+      setIsInWishlist(wishlistItems.includes(product._id));
     } else {
       setIsInWishlist(false);
     }
@@ -693,9 +701,18 @@ const ProductDetail = () => {
       };
       
       await cartAPI.addToCart(cartData);
-      setCartItems((prev) => [...prev, { ...product, quantity }]);
+      
+      if (setCartItems) {
+        setCartItems(prev => [...prev, { 
+          product: product, 
+          quantity,
+          attributes: selectedSize ? [{ name: 'Size', value: selectedSize }] : []
+        }]);
+      }
+      
       toast.success('Added to cart successfully');
     } catch (error) {
+      console.error('Error adding to cart:', error);
       toast.error('Failed to add item to cart');
     }
   };
@@ -703,23 +720,28 @@ const ProductDetail = () => {
   const handleWishlistToggle = async () => {
     if (!isLoggedIn) {
       toast.error('Please login to add items to your wishlist');
-      navigate('/login');
+      navigate('/login', { state: { from: `/products/${slug}` } });
       return;
     }
     
     try {
       if (isInWishlist) {
         await userAPI.removeFromWishlist(product._id);
-        setWishlistItems(prev => prev.filter(id => id !== product._id));
+        if (setWishlistItems) {
+          setWishlistItems(prev => prev.filter(id => id !== product._id));
+        }
         setIsInWishlist(false);
         toast.success('Removed from wishlist');
       } else {
         await userAPI.addToWishlist(product._id);
-        setWishlistItems(prev => [...prev, product._id]);
+        if (setWishlistItems) {
+          setWishlistItems(prev => [...prev, product._id]);
+        }
         setIsInWishlist(true);
         toast.success('Added to wishlist');
       }
     } catch (error) {
+      console.error('Error updating wishlist:', error);
       toast.error('Failed to update wishlist');
     }
   };
@@ -825,7 +847,7 @@ const ProductDetail = () => {
       <Breadcrumb>
         <Link to="/">Home</Link> / 
         {product.category && <Link to={`/product-details?category=${product.category.slug}`}> {product.category.name}</Link>} / 
-        {product.subcategory && <Link to={`/product-details?category=${product.category.slug}&subcategory=${product.subcategory.slug}`}> {product.subcategory.name}</Link>} / 
+        {product.subcategory && <Link to={`/product-details?category=${product.category.slug}&subcategory=${product.subcategory._id}`}> {product.subcategory.name}</Link>} / 
         <span>{product.name}</span>
       </Breadcrumb>
 
