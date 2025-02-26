@@ -65,7 +65,6 @@ export const userAPI = {
   updateAddress: (id, data) => api.put(`/user/addresses/${id}`, data),
   deleteAddress: (id) => api.delete(`/user/addresses/${id}`),
   setDefaultAddress: (id) => api.put(`/user/addresses/${id}/default`),
-  
   getWishlist: () => api.get('/user/wishlist'),
   addToWishlist: (productId) => api.post('/user/wishlist', { productId }),
   removeFromWishlist: (productId) => api.delete(`/user/wishlist/${productId}`),
@@ -138,15 +137,6 @@ export const productAPI = {
   searchProducts: (params) => api.get('/products/search', { params }),
   getRelatedProducts: (productId) => api.get(`/products/${productId}/related`),
 };
-export const cartAPI = {
-  getCart: () => api.get('/cart'),
-  addToCart: (data) => api.post('/cart', data),
-  updateCartItem: (itemId, data) => api.put(`/cart/items/${itemId}`, data),
-  removeCartItem: (itemId) => api.delete(`/cart/items/${itemId}`),
-  clearCart: () => api.delete('/cart'),
-  applyCoupon: (code) => api.post('/cart/coupon', { code }),
-  removeCoupon: () => api.delete('/cart/coupon'),
-};
 
 export const orderAPI = {
   createOrder: (data) => api.post('/orders', data),
@@ -158,6 +148,23 @@ export const orderAPI = {
 export const reviewAPI = {
   getProductReviews: (productId) => api.get(`/products/${productId}/reviews`),
   addProductReview: (productId, data) => api.post(`/products/${productId}/reviews`, data),
+};
+
+
+export const cartAPI = {
+  getCart: () => api.get('/cart'),
+  addToCart: (data) => api.post('/cart/items', data),
+  updateCartItem: (itemId, data) => api.put(`/cart/items/${itemId}`, data),
+  removeCartItem: (itemId) => api.delete(`/cart/items/${itemId}`),
+  clearCart: () => api.delete('/cart'),
+  applyCoupon: (code) => api.post('/cart/apply-coupon', { code }),
+  removeCoupon: () => api.delete('/cart/remove-coupon'),
+  calculateShipping: (addressId) => api.post('/cart/calculate-shipping', { addressId }),
+  saveForLater: (itemId) => api.post(`/cart/items/${itemId}/save-for-later`),
+  moveToCart: (itemId) => api.post(`/cart/saved/${itemId}/move-to-cart`),
+  getSavedItems: () => api.get('/cart/saved-items'),
+  mergeCart: (items) => api.post('/cart/merge', { items }),
+  getCartSummary: () => api.get('/cart/summary')
 };
 
 

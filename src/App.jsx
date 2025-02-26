@@ -54,7 +54,7 @@ import AboutUsTwo from './pages/AboutUsTwo';
 import AuthGuard from './components/guards/AuthGuard';
 import SavedAddress from './pages/SavedOrder';
 import BlogDetails from './pages/BlogDetails';
-
+import ProductCompare from './pages/ProductCompare';
 const AuthLayout = ({ children }) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -100,8 +100,10 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="/product-details" element={<Products />} />
-<Route path="/products/:slug" element={<ProductDetail />} />
+          <Route path="/products/:slug" element={<ProductDetail />} />
           <Route path="products" element={<Products />} />
+          <Route path="product-compare" element={<ProductCompare />} />
+
           <Route path="cart" element={<AuthGuard><Cart /></AuthGuard>} />
           <Route path="checkout" element={<AuthGuard><CheckOut /></AuthGuard>} />
           <Route path="profile" element={<AuthGuard><Profile /></AuthGuard>} />

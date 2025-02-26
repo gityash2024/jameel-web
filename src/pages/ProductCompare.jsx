@@ -304,7 +304,6 @@ const ProductCompare = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Parse product IDs from URL
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
@@ -321,7 +320,6 @@ const ProductCompare = () => {
         const ids = productIds.split(',');
         const productsData = [];
         
-        // Fetch each product individually
         for (const id of ids) {
           try {
             const response = await productAPI.getProduct(id);
@@ -353,7 +351,6 @@ const ProductCompare = () => {
     setProducts(prev => {
       const filtered = prev.filter(p => p._id !== productId);
       
-      // Update URL
       const newIds = filtered.map(p => p._id).join(',');
       if (filtered.length > 1) {
         navigate(`/product-compare?products=${newIds}`, { replace: true });
@@ -369,7 +366,6 @@ const ProductCompare = () => {
     navigate(`/products/${product.slug}`);
   };
   
-  // Get unique specification names across all products
   const getSpecificationNames = () => {
     const specNames = new Set();
     
@@ -384,7 +380,6 @@ const ProductCompare = () => {
     return Array.from(specNames);
   };
   
-  // Get unique attribute names across all products
   const getAttributeNames = () => {
     const attrNames = new Set();
     
@@ -399,7 +394,6 @@ const ProductCompare = () => {
     return Array.from(attrNames);
   };
   
-  // Get attribute value for a product
   const getAttributeValue = (product, attrName) => {
     if (!product.attributes) return 'N/A';
     
@@ -407,7 +401,6 @@ const ProductCompare = () => {
     return attr ? attr.value : 'N/A';
   };
   
-  // Get specification value for a product
   const getSpecificationValue = (product, specName) => {
     if (!product.specifications) return 'N/A';
     
@@ -415,14 +408,10 @@ const ProductCompare = () => {
     return spec ? spec.value : 'N/A';
   };
   
-  // Find the best value for a specification
   const findBestValue = (specName) => {
-    // For numeric values like weight, dimensions, etc., lower or higher might be better
-    // For now, we'll just highlight if all values are the same
     const values = products.map(p => getSpecificationValue(p, specName));
     const uniqueValues = new Set(values.filter(v => v !== 'N/A'));
     
-    // If all values are the same (and not N/A), highlight them all
     if (uniqueValues.size === 1 && values.every(v => v !== 'N/A')) {
       return values[0];
     }

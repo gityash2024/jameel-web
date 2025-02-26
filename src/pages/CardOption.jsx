@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import styled from "styled-components";
-import ring_1 from "../assets/ring_1.svg";
-import ring_2 from "../assets/ring_2.svg";
-import { Trash2 } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
+import { Trash2, ShoppingBag, X, Plus, Minus } from 'lucide-react';
+import { HeaderContext } from "../components/layout/Header";
+import { cartAPI } from "../services/api";
+import { toast } from "react-hot-toast";
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -64,7 +66,7 @@ const ProgressBar = styled.div`
     left: 0;
     top: 0;
     height: 100%;
-    width: 50%;
+    width: ${props => Math.min(100, props.percent)}%;
     background: #000;
   }
 `;
@@ -223,15 +225,27 @@ const Button = styled.button`
   border: none;
   cursor: pointer;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   
   &.view-cart {
     background: white;
     border: 1px solid black;
+    
+    &:hover {
+      background: #f5f5f5;
+    }
   }
   
   &.checkout {
     background: black;
     color: white;
+    
+    &:hover {
+      background: #333;
+    }
   }
 
   @media (max-width: 480px) {
@@ -262,93 +276,247 @@ const ClearCartButton = styled.button`
   }
 `;
 
-const CardOption = () => {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Memories, Moments,",
-      price: 149.99,
-      quantity: 1,
-      image: ring_1
-    },
-    {
-      id: 2,
-      name: "Memories, Moments,",
-      price: 149.99,
-      quantity: 1,
-      image: ring_2
+const EmptyCart = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  
+  h3 {
+    margin-bottom: 16px;
+    font-size: 18px;
+  }
+  
+  p {
+    color: #666;
+    margin-bottom: 24px;
+    max-width: 240px;
+  }
+  
+  button {
+    padding: 12px 24px;
+    background: black;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    
+    &:hover {
+      background: #333;
     }
-  ]);
+  }
+`;
 
-  const updateQuantity = (id, change) => {
-    setCartItems(items =>
-      items.map(item =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + change) }
-          : item
-      )
-    );
+const LoadingSpinner = styled.div`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:after {
+    content: "";
+    width: 30px;
+    height: 30px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #000;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
+const CardOption = () => {
+  const navigate = useNavigate();
+  const { cartItems, setCartItems, fetchCartData } = useContext(HeaderContext);
+  const [loading, setLoading] = React.useState(true);
+  const [subTotal, setSubTotal] = React.useState(0);
+  const [freeShippingThreshold] = React.useState(100); // Set your free shipping threshold here
+
+  useEffect(() => {
+    const loadCart = async () => {
+      try {
+        setLoading(true);
+        await fetchCartData();
+        setLoading(false);
+      } catch (error) {
+        console.error('Error loading cart:', error);
+        setLoading(false);
+      }
+    };
+    
+    loadCart();
+  }, [fetchCartData]);
+
+  useEffect(() => {
+    // Calculate subtotal
+    if (cartItems && cartItems.length > 0) {
+      const total = cartItems.reduce((acc, item) => {
+        const price = item.product?.salePrice || item.product?.regularPrice || 0;
+        return acc + (price * item.quantity);
+      }, 0);
+      setSubTotal(total);
+    } else {
+      setSubTotal(0);
+    }
+  }, [cartItems]);
+
+  const updateQuantity = async (itemId, change, currentQuantity) => {
+    try {
+      const newQuantity = Math.max(1, currentQuantity + change);
+      
+      await cartAPI.updateCartItem(itemId, { quantity: newQuantity });
+      
+      // Update local state
+      setCartItems(prevItems => 
+        prevItems.map(item => 
+          item._id === itemId 
+            ? { ...item, quantity: newQuantity } 
+            : item
+        )
+      );
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+      toast.error('Failed to update quantity');
+    }
   };
 
-  const removeItem = (id) => {
-    setCartItems(items => items.filter(item => item.id !== id));
+  const removeItem = async (itemId) => {
+    try {
+      await cartAPI.removeCartItem(itemId);
+      
+      // Update local state
+      setCartItems(prevItems => prevItems.filter(item => item._id !== itemId));
+      toast.success('Item removed from cart');
+    } catch (error) {
+      console.error('Error removing item:', error);
+      toast.error('Failed to remove item');
+    }
   };
 
-  const clearCart = () => {
-    setCartItems([]);
+  const clearCart = async () => {
+    try {
+      await cartAPI.clearCart();
+      setCartItems([]);
+      toast.success('Cart cleared');
+    } catch (error) {
+      console.error('Error clearing cart:', error);
+      toast.error('Failed to clear cart');
+    }
   };
 
-  const calculateSubTotal = () => {
-    return cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const handleCloseModal = () => {
+    navigate(-1);
   };
+
+  const handleViewCart = () => {
+    navigate('/cart');
+  };
+
+  const handleCheckout = () => {
+    navigate('/checkout');
+  };
+
+  const handleShopNow = () => {
+    navigate('/product-details');
+  };
+
+  // Calculate progress toward free shipping
+  const progressPercent = (subTotal / freeShippingThreshold) * 100;
+  const freeShippingRemaining = freeShippingThreshold - subTotal;
 
   return (
     <ModalOverlay>
       <ModalHeader>
-        <h2>My Cart ({cartItems.length})</h2>
-        <CloseButton>×</CloseButton>
+        <h2>My Cart ({cartItems?.length || 0})</h2>
+        <CloseButton onClick={handleCloseModal}>
+          <X size={24} />
+        </CloseButton>
       </ModalHeader>
 
       <ShippingMessage>
-        Congratulations! Enjoy Free Shipping On US!
+        {subTotal >= freeShippingThreshold
+          ? "Congratulations! You've qualified for FREE shipping!"
+          : `Add $${freeShippingRemaining.toFixed(2)} more to qualify for FREE shipping`}
       </ShippingMessage>
-      <ProgressBar />
+      <ProgressBar percent={progressPercent} />
 
-      <ClearCartButton onClick={clearCart}>
-        Clear Cart
-      </ClearCartButton>
+      {cartItems && cartItems.length > 0 && (
+        <ClearCartButton onClick={clearCart}>
+          Clear Cart
+        </ClearCartButton>
+      )}
 
-      <CartItems>
-        {cartItems.map(item => (
-          <CartItem key={item.id}>
-            <ProductImage src={item.image} alt={item.name} />
-            <ProductInfo>
-              <h3>{item.name}</h3>
-              <div className="price">${item.price}</div>
-              <QuantityControl>
-                <button onClick={() => updateQuantity(item.id, -1)}>-</button>
-                <span>{item.quantity.toString().padStart(2, '0')}</span>
-                <button onClick={() => updateQuantity(item.id, 1)}>+</button>
-              </QuantityControl>
-            </ProductInfo>
-            <DeleteButton onClick={() => removeItem(item.id)}>
-              <Trash2 size={20} />
-            </DeleteButton>
-          </CartItem>
-        ))}
-      </CartItems>
+      {loading ? (
+        <LoadingSpinner />
+      ) : cartItems && cartItems.length > 0 ? (
+        <>
+          <CartItems>
+            {cartItems.map(item => {
+              const price = item.product?.salePrice || item.product?.regularPrice;
+              
+              return (
+                <CartItem key={item._id}>
+                  <ProductImage 
+                    src={item.product?.images?.[0]?.url || '/placeholder.png'} 
+                    alt={item.product?.name} 
+                  />
+                  <ProductInfo>
+                    <h3>{item.product?.name}</h3>
+                    <div className="price">${price?.toFixed(2)}</div>
+                    {item.attributes && item.attributes.length > 0 && (
+                      <div style={{ fontSize: '0.875rem', color: '#666', marginTop: '4px' }}>
+                        {item.attributes[0].name}: {item.attributes[0].value}
+                      </div>
+                    )}
+                    <QuantityControl>
+                      <button onClick={() => updateQuantity(item._id, -1, item.quantity)} disabled={item.quantity <= 1}>-</button>
+                      <span>{item.quantity.toString().padStart(2, '0')}</span>
+                      <button onClick={() => updateQuantity(item._id, 1, item.quantity)}>+</button>
+                    </QuantityControl>
+                  </ProductInfo>
+                  <DeleteButton onClick={() => removeItem(item._id)}>
+                    <Trash2 size={20} />
+                  </DeleteButton>
+                </CartItem>
+              );
+            })}
+          </CartItems>
 
-      <CartFooter>
-        <SubTotal>
-          <span>Sub Total:</span>
-          <span>${calculateSubTotal().toFixed(2)}</span>
-        </SubTotal>
+          <CartFooter>
+            <SubTotal>
+              <span>Subtotal:</span>
+              <span>${subTotal.toFixed(2)}</span>
+            </SubTotal>
 
-        <ButtonGroup>
-          <Button className="view-cart">View Cart</Button>
-          <Button className="checkout">Checkout</Button>
-        </ButtonGroup>
-      </CartFooter>
+            <ButtonGroup>
+              <Button className="view-cart" onClick={handleViewCart}>
+                View Cart
+              </Button>
+              <Button className="checkout" onClick={handleCheckout}>
+                Checkout
+              </Button>
+            </ButtonGroup>
+          </CartFooter>
+        </>
+      ) : (
+        <EmptyCart>
+          <h3>Your cart is empty</h3>
+          <p>Looks like you haven't added any items to your cart yet</p>
+          <button onClick={handleShopNow}>
+            <ShoppingBag size={16} />
+            Shop Now
+          </button>
+        </EmptyCart>
+      )}
     </ModalOverlay>
   );
 };

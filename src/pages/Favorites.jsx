@@ -1,20 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import daimond_logo from "../assets/daimond_logo.svg";
-import ring_1 from "../assets/ring_1.svg";
-import { Heart, Trash2 } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Heart, Trash2, Star, ShoppingBag } from 'lucide-react';
+import { userAPI, cartAPI } from '../services/api';
+import { toast } from 'react-hot-toast';
 
 const Container = styled.div`
   max-width: 1280px;
   margin: 0 auto;
   padding: 1rem;
-  
-  @media (max-width: 768px) {
-    padding: 0.75rem;
-  }
 `;
 
-const Navigation = styled.nav`
+const Navigation = styled.div`
   margin-bottom: 2rem;
   overflow-x: auto;
   white-space: nowrap;
@@ -26,7 +23,7 @@ const Navigation = styled.nav`
   }
 `;
 
-const NavLink = styled.a`
+const NavLink = styled(Link)`
   color: #666;
   text-decoration: none;
   &:hover {
@@ -79,44 +76,31 @@ const SearchText = styled.p`
   }
 `;
 
-const Link = styled.a`
-  color: #000;
-  text-decoration: underline;
-  cursor: pointer;
-`;
+
 
 const ProductGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 2rem;
   margin-top: 2rem;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
 `;
-
 const ProductCard = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  height: 450px; /* Fixed height */
+  width: 100%;
   padding: 1rem;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-  
-  @media (max-width: 768px) {
-    padding: 0.75rem;
-  }
+`;
+
+const ProductImage = styled.img`
+  width: 100%;
+  height: 250px; /* Fixed height */
+  object-fit: contain;
+  margin-bottom: 1rem;
 `;
 
 const ButtonGroup = styled.div`
@@ -175,21 +159,6 @@ const IconButton = styled.button`
   }
 `;
 
-const ProductImage = styled.img`
-  width: 100%;
-  max-width: 300px;
-  height: auto;
-  margin-bottom: 1rem;
-  transition: transform 0.3s ease;
-  
-  ${ProductCard}:hover & {
-    transform: scale(1.05);
-  }
-  
-  @media (max-width: 768px) {
-    margin-bottom: 0.75rem;
-  }
-`;
 
 const ProductTitle = styled.h3`
   font-size: 1rem;
@@ -257,6 +226,51 @@ const OriginalPrice = styled.span`
   }
 `;
 
+const RatingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  width: 100%;
+  
+  .stars {
+    color: #f9a826;
+    display: flex;
+  }
+  
+  .count {
+    color: #666;
+    font-size: 14px;
+  }
+`;
+
+const AddToCartButton = styled.button`
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background 0.2s;
+  
+  &:hover {
+    background: #333;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.25rem;
+  }
+`;
+
 const EmptyState = styled.div`
   text-align: center;
   padding: 3rem 1rem;
@@ -272,6 +286,21 @@ const EmptyState = styled.div`
     margin-bottom: 1.5rem;
   }
   
+  button {
+    padding: 0.75rem 1.5rem;
+    background: black;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0 auto;
+  }
+  
   @media (max-width: 768px) {
     padding: 2rem 1rem;
     
@@ -282,93 +311,195 @@ const EmptyState = styled.div`
     p {
       font-size: 0.875rem;
     }
+    
+    button {
+      padding: 0.625rem 1.25rem;
+      font-size: 0.875rem;
+    }
+  }
+`;
+
+const LoadingSpinner = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  
+  &:after {
+    content: " ";
+    display: block;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #000;
+    animation: spinner 1.2s linear infinite;
+  }
+  
+  @keyframes spinner {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 `;
 
 const Favorites = () => {
-  const [favorites, setFavorites] = useState([1, 2, 3]);
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      title: "Memories, Moments, Magic Princess-Cut Diamond Three-Stone Engagement Ring 1 ct tw 10K White Gold",
-      price: 149.99,
-      originalPrice: 199.00,
-      discount: "25% off",
-      image: ring_1,
-      featured: true
-    },
-    {
-      id: 2,
-      title: "Memories, Moments, Magic Princess-Cut Diamond Three-Stone Engagement Ring 1 ct tw 10K White Gold",
-      price: 149.99,
-      originalPrice: 199.00,
-      discount: "25% off",
-      image: ring_1,
-      featured: true
-    },
-    {
-      id: 3,
-      title: "Memories, Moments, Magic Princess-Cut Diamond Three-Stone Engagement Ring 1 ct tw 10K White Gold",
-      price: 149.99,
-      originalPrice: 199.00,
-      discount: "25% off",
-      image: ring_1,
-      featured: true
-    }
-  ]);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [wishlistProducts, setWishlistProducts] = useState([]);
 
-  const toggleFavorite = (productId) => {
-    setFavorites(prev => 
-      prev.includes(productId)
-        ? prev.filter(id => id !== productId)
-        : [...prev, productId]
+  useEffect(() => {
+    fetchWishlistData();
+  }, []);
+
+  const fetchWishlistData = async () => {
+    try {
+      setLoading(true);
+      const response = await userAPI.getWishlist();
+      if (response.data && response.data.data && response.data.data.products) {
+        setWishlistProducts(response.data.data.products);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching wishlist:', error);
+      toast.error('Failed to load wishlist items');
+      setLoading(false);
+    }
+  };
+
+  const removeFromWishlist = async (productId) => {
+    try {
+      await userAPI.removeFromWishlist(productId);
+      setWishlistProducts(prev => prev.filter(item => item.product._id !== productId));
+      toast.success('Removed from wishlist');
+    } catch (error) {
+      console.error('Error removing from wishlist:', error);
+      toast.error('Failed to remove from wishlist');
+    }
+  };
+
+  const addToCart = async (product) => {
+    try {
+      const cartData = {
+        productId: product._id,
+        quantity: 1
+      };
+      
+      await cartAPI.addToCart(cartData);
+      toast.success('Added to cart successfully');
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      toast.error('Failed to add item to cart');
+    }
+  };
+
+  const handleContinueShopping = () => {
+    navigate('/product-details');
+  };
+
+  if (loading) {
+    return (
+      <Container>
+        <LoadingSpinner />
+      </Container>
     );
-  };
-
-  const removeProduct = (productId) => {
-    setProducts(prev => prev.filter(product => product.id !== productId));
-    if (favorites.includes(productId)) {
-      setFavorites(prev => prev.filter(id => id !== productId));
-    }
-  };
+  }
 
   return (
     <Container>
-    
+      <Navigation>
+        <NavLink to="/">Home</NavLink> / <span>Favorites</span>
+      </Navigation>
 
-      {products.length > 0 ? (
+      <Header>
+        <Title>Your Wishlist</Title>
+        <SubHeader>
+          <SearchText>
+            {wishlistProducts.length} {wishlistProducts.length === 1 ? 'item' : 'items'} in your wishlist
+          </SearchText>
+        </SubHeader>
+      </Header>
+
+      {wishlistProducts.length > 0 ? (
         <ProductGrid>
-          {products.map((product) => (
-            <ProductCard key={product.id}>
-              <ButtonGroup>
-                <IconButton 
-                  className="heart"
-                  active={favorites.includes(product.id)}
-                  onClick={() => toggleFavorite(product.id)}
-                >
-                  <Heart size={20} />
-                </IconButton>
-                <IconButton 
-                  className="trash"
-                  onClick={() => removeProduct(product.id)}
-                >
-                  <Trash2 size={20} />
-                </IconButton>
-              </ButtonGroup>
-              <ProductImage src={product.image} alt={product.title} />
-              <ProductTitle>{product.title}</ProductTitle>
-              <PriceContainer>
-                <Price>${product.price}</Price>
-                <OriginalPrice>${product.originalPrice}</OriginalPrice>
-                <SaleBadge>{product.discount}</SaleBadge>
-              </PriceContainer>
-            </ProductCard>
-          ))}
+          {wishlistProducts.map((item) => {
+            const product = item.product;
+            const hasDiscount = product.salePrice && product.salePrice < product.regularPrice;
+            const discountPercentage = hasDiscount 
+              ? Math.round((1 - product.salePrice / product.regularPrice) * 100) 
+              : 0;
+              
+            return (
+              <ProductCard key={item._id}>
+                <ButtonGroup>
+                  <IconButton 
+                    className="heart"
+                    active={true}
+                    onClick={() => removeFromWishlist(product._id)}
+                  >
+                    <Heart size={20} />
+                  </IconButton>
+                  <IconButton 
+                    className="trash"
+                    onClick={() => removeFromWishlist(product._id)}
+                  >
+                    <Trash2 size={20} />
+                  </IconButton>
+                </ButtonGroup>
+                
+                <ProductImage 
+                  src={product.images?.[0]?.url || '/placeholder.png'} 
+                  alt={product.name} 
+                  onClick={() => navigate(`/products/${product.slug || product._id}`)}
+                  style={{ cursor: 'pointer' }}
+                />
+                
+                <ProductTitle onClick={() => navigate(`/products/${product.slug || product._id}`)} style={{ cursor: 'pointer' }}>
+                  {product.name}
+                </ProductTitle>
+                
+                {product.averageRating > 0 && (
+                  <RatingContainer>
+                    <div className="stars">
+                      {[...Array(5)].map((_, i) => (
+                        <Star 
+                          key={i} 
+                          size={16} 
+                          fill={i < Math.floor(product.averageRating) ? 'currentColor' : 'none'} 
+                        />
+                      ))}
+                    </div>
+                    <span className="count">
+                      ({product.numberOfReviews || 0})
+                    </span>
+                  </RatingContainer>
+                )}
+                
+                <PriceContainer>
+                  <Price>${(product.salePrice || product.regularPrice || 0).toFixed(2)}</Price>
+                  {hasDiscount && (
+                    <>
+                      <OriginalPrice>${product.regularPrice.toFixed(2)}</OriginalPrice>
+                      <SaleBadge>{discountPercentage}% off</SaleBadge>
+                    </>
+                  )}
+                </PriceContainer>
+                
+                <AddToCartButton onClick={() => addToCart(product)}>
+                  <ShoppingBag size={16} />
+                  Add to Cart
+                </AddToCartButton>
+              </ProductCard>
+            );
+          })}
         </ProductGrid>
       ) : (
         <EmptyState>
-          <h2>No favorites yet</h2>
+          <h2>Your wishlist is empty</h2>
           <p>Start adding some items to your favorites list!</p>
+          <button onClick={handleContinueShopping}>
+            <ShoppingBag size={16} />
+            Browse Products
+          </button>
         </EmptyState>
       )}
     </Container>

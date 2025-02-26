@@ -555,8 +555,8 @@ const CompareButton = styled.button`
 
 const CompareCheckbox = styled.div`
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 18px;
+  right: 60px;
   z-index: 5;
   
   input {
@@ -586,7 +586,14 @@ const CompareCheckbox = styled.div`
 const Products = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { wishlistItems, setWishlistItems, isLoggedIn } = useContext(HeaderContext) || defaultContextValues;
+  const { wishlistItems, setWishlistItems } = useContext(HeaderContext) || defaultContextValues;
+
+  let isLoggedIn=false;
+  const token = localStorage.getItem('token');
+  const userDataStr = localStorage.getItem('jammelUser');
+  if (token && userDataStr) {
+    isLoggedIn=true;
+  }
   
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
@@ -599,13 +606,11 @@ const Products = () => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [compareProducts, setCompareProducts] = useState([]);
   
-  // Get query parameters
   const searchParams = new URLSearchParams(location.search);
   const categorySlug = searchParams.get('category');
   const subcategorySlug = searchParams.get('subcategory');
   const searchQuery = searchParams.get('search');
   
-  // Filter states
   const [filters, setFilters] = useState({
     brands: [],
     styles: [],
@@ -614,7 +619,6 @@ const Products = () => {
     sortBy: 'newest'
   });
   
-  // Filter options from backend data
   const [filterOptions, setFilterOptions] = useState({
     brands: [],
     styles: [],
@@ -634,7 +638,6 @@ const Products = () => {
     ]
   });
   
-  // Standard filter categories
   const filterCategories = [
     {
       id: "offersDiscounts",
@@ -665,29 +668,23 @@ const Products = () => {
         let response;
         
         if (searchQuery) {
-          // Search products
           response = await productAPI.searchProducts({ q: searchQuery });
         } else if (subcategorySlug) {
-          // Get products by subcategory ID directly - don't rely on categorySlug
           response = await productAPI.getAllProducts({ subcategory: subcategorySlug });
           setCategoryData({ name: "Products" });
         } else if (categorySlug && categorySlug !== "undefined") {
-          // Get products by category
           response = await productAPI.getProductsByCategory(categorySlug);
           setCategoryData(response.data.data.category);
         } else {
-          // Get all products
           response = await productAPI.getAllProducts();
         }
         
-        // Set products and filtered products
         if (response.data.data.products) {
           setProducts(response.data.data.products);
           setFilteredProducts(response.data.data.products);
           setTotalProducts(response.data.total || response.data.results || response.data.data.products.length);
         }
         
-        // Extract filter options
         extractFilterOptions(response.data.data.products || []);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -700,7 +697,6 @@ const Products = () => {
     fetchProducts();
   }, [categorySlug, subcategorySlug, searchQuery]);
   
-  // Extract filter options from products
   const extractFilterOptions = (products) => {
     const brands = new Set();
     const styles = new Set();
@@ -764,23 +760,19 @@ const Products = () => {
   const applyFilters = () => {
     setAppliedPriceRange({...priceRange});
     
-    // Filter products based on selected filters
     let filtered = [...products];
     
-    // Filter by price
     filtered = filtered.filter(product => {
       const price = product.salePrice || product.regularPrice;
       return price >= priceRange.min && price <= priceRange.max;
     });
     
-    // Filter by brands
     if (filters.brands.length > 0) {
       filtered = filtered.filter(product => 
         filters.brands.includes(product.brand)
       );
     }
     
-    // Filter by styles
     if (filters.styles.length > 0) {
       filtered = filtered.filter(product => {
         if (!product.attributes) return false;
@@ -790,17 +782,14 @@ const Products = () => {
       });
     }
     
-    // Filter by materials
     if (filters.materials.length > 0) {
       filtered = filtered.filter(product => {
-        // Check in attributes
         if (product.attributes && product.attributes.some(attr => 
           attr.name.toLowerCase() === 'material' && filters.materials.includes(attr.value)
         )) {
           return true;
         }
         
-        // Check in materials array
         if (product.materials && Array.isArray(product.materials)) {
           return product.materials.some(material => filters.materials.includes(material));
         }
@@ -827,15 +816,19 @@ const Products = () => {
     setIsMobileSidebarOpen(false);
   };
   
-  const handleWishlistToggle = async (product) => {
+  const handleWishlistToggle = async (product, e) => {
+    e.stopPropagation();
+    
     if (!isLoggedIn) {
       toast.error('Please login to add items to your wishlist');
-      navigate('/login');
+      navigate('/login', { state: { from: location.pathname + location.search } });
       return;
     }
     
     try {
-      if (wishlistItems.includes(product._id)) {
+      const isCurrentlyInWishlist = wishlistItems.includes(product._id);
+      
+      if (isCurrentlyInWishlist) {
         await userAPI.removeFromWishlist(product._id);
         setWishlistItems(prev => prev.filter(id => id !== product._id));
         toast.success('Removed from wishlist');
@@ -846,6 +839,7 @@ const Products = () => {
       }
     } catch (error) {
       toast.error('Failed to update wishlist');
+      console.error('Wishlist error:', error);
     }
   };
   
@@ -853,20 +847,19 @@ const Products = () => {
     navigate(`/products/${product.slug}`);
   };
   
-  // Calculate percentages for price range slider
   const minPrice = 0;
   const maxPrice = 10000;
   const priceSpan = maxPrice - minPrice;
   const leftPercent = ((priceRange.min - minPrice) / priceSpan) * 100;
   const rightPercent = ((priceRange.max - minPrice) / priceSpan) * 100;
   
-  // Calculate page title
   const pageTitle = searchQuery 
     ? `Search Results for "${searchQuery}"` 
     : categoryData?.name || "All Products";
   
-  // Handle compare checkbox toggle
-  const handleCompareToggle = (product) => {
+  const handleCompareToggle = (product, e) => {
+    e.stopPropagation();
+    
     setCompareProducts(prev => {
       const isAlreadyAdded = prev.some(p => p._id === product._id);
       
@@ -882,7 +875,6 @@ const Products = () => {
     });
   };
   
-  // Navigate to compare page
   const navigateToCompare = () => {
     if (compareProducts.length < 2) {
       toast.error('Please select at least 2 products to compare');
@@ -1125,7 +1117,7 @@ const Products = () => {
                     type="checkbox" 
                     id={`compare-${product._id}`}
                     checked={compareProducts.some(p => p._id === product._id)}
-                    onChange={() => handleCompareToggle(product)}
+                    onChange={(e) => handleCompareToggle(product, e)}
                   />
                   <label htmlFor={`compare-${product._id}`}>
                     {compareProducts.some(p => p._id === product._id) && <Check size={16} />}
@@ -1136,12 +1128,9 @@ const Products = () => {
                   {product.isFeatured && <FeaturedTag>Featured Item</FeaturedTag>}
                   <WishlistButton 
                     active={wishlistItems?.includes(product._id)}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleWishlistToggle(product);
-                    }}
+                    onClick={(e) => handleWishlistToggle(product, e)}
                   >
-                    <Heart size={18} fill={wishlistItems.includes(product._id) ? "#ED4956" : "none"} />
+                    <Heart size={25} fill={wishlistItems.includes(product._id) ? "#ED4956" : "none"} />
                   </WishlistButton>
                 </ProductHeader>
 

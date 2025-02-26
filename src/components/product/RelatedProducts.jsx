@@ -238,7 +238,7 @@ const RelatedProducts = ({ productId, categoryId }) => {
     
     if (!isLoggedIn) {
       toast.error('Please login to add items to your wishlist');
-      navigate('/login');
+      navigate('/login', { state: { from: location.pathname } });
       return;
     }
     

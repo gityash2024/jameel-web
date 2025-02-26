@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import ring_1 from "../assets/ring_1.svg";
-import { X, Plus, Minus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
+import { cartAPI } from "../services/api";
+import { toast } from 'react-hot-toast';
 
 const Container = styled.div`
   max-width: 1280px;
@@ -11,7 +12,7 @@ const Container = styled.div`
   overflow-x: auto;
 `;
 
-const Navigation = styled.nav`
+const Navigation = styled.div`
   margin-bottom: 2rem;
   white-space: nowrap;
   overflow-x: auto;
@@ -22,7 +23,7 @@ const Navigation = styled.nav`
   }
 `;
 
-const NavLink = styled.a`
+const NavLink = styled(Link)`
   color: #666;
   text-decoration: none;
   &:hover {
@@ -62,7 +63,7 @@ const SearchText = styled.div`
   }
 `;
 
-const Link = styled.a`
+const StyledLink = styled(Link)`
   color: #000;
   text-decoration: underline;
   cursor: pointer;
@@ -101,10 +102,12 @@ const Td = styled.td`
 
 const ProductImage = styled.img`
   width: 80px;
-  height: auto;
+  height: 80px;
+  object-fit: contain;
   
   @media (max-width: 768px) {
     width: 60px;
+    height: 60px;
   }
 `;
 
@@ -192,6 +195,10 @@ const Button = styled.button`
   cursor: pointer;
   transition: all 0.2s;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   
   ${props => props.primary ? `
     background: black;
@@ -231,130 +238,269 @@ const OriginalPrice = styled.span`
   }
 `;
 
+const EmptyCart = styled.div`
+  text-align: center;
+  padding: 3rem 1rem;
+  
+  h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    color: #666;
+    margin-bottom: 1.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 2rem 1rem;
+    
+    h2 {
+      font-size: 1.25rem;
+    }
+    
+    p {
+      font-size: 0.875rem;
+    }
+  }
+`;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+`;
+
+const LoadingSpinner = styled.div`
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #000;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
 const Cart = () => {
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Memories, Moments",
-      price: 49.99,
-      originalPrice: 199.00,
-      quantity: 1,
-      image: ring_1
-    },
-    {
-      id: 2,
-      name: "Memories, Moments",
-      price: 49.99,
-      originalPrice: 199.00,
-      quantity: 1,
-      image: ring_1
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [subTotal, setSubTotal] = useState(0);
+
+  useEffect(() => {
+    const loadCartData = async () => {
+      try {
+        setLoading(true);
+        const response = await cartAPI.getCart();
+        if (response.data && response.data.data && response.data.data.cart) {
+          setCartItems(response.data.data.cart.items || []);
+        } else {
+          setCartItems([]);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error('Error loading cart:', error);
+        toast.error('Failed to load cart items');
+        setCartItems([]);
+        setLoading(false);
+      }
+    };
+    
+    loadCartData();
+  }, []);
+
+  useEffect(() => {
+    // Calculate subtotal from cart items
+    const total = cartItems.reduce((sum, item) => {
+      const price = item.product?.salePrice || item.product?.regularPrice || 0;
+      return sum + (price * item.quantity);
+    }, 0);
+    
+    setSubTotal(total);
+  }, [cartItems]);
+
+  const handleQuantityChange = async (itemId, change, currentQuantity) => {
+    try {
+      const newQuantity = Math.max(1, currentQuantity + change);
+      
+      await cartAPI.updateCartItem(itemId, { quantity: newQuantity });
+      
+      // Update local state
+      setCartItems(prevItems => 
+        prevItems.map(item => 
+          item._id === itemId 
+            ? { ...item, quantity: newQuantity } 
+            : item
+        )
+      );
+      
+      toast.success('Cart updated');
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+      toast.error('Failed to update quantity');
     }
-  ]);
-
-  const handleQuantityChange = (id, change) => {
-    setCartItems(items =>
-      items.map(item =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + change) }
-          : item
-      )
-    );
   };
 
-  const handleRemoveItem = (id) => {
-    setCartItems(items => items.filter(item => item.id !== id));
-  };
-
-  const calculateSubTotal = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  const handleRemoveItem = async (itemId) => {
+    try {
+      await cartAPI.removeCartItem(itemId);
+      
+      // Update local state
+      setCartItems(prevItems => prevItems.filter(item => item._id !== itemId));
+      
+      toast.success('Item removed from cart');
+    } catch (error) {
+      console.error('Error removing item:', error);
+      toast.error('Failed to remove item');
+    }
   };
 
   const handleContinueShopping = () => {
-    navigate('/');
+    navigate('/product-details');
   };
 
   const handleCheckout = () => {
     navigate('/checkout');
   };
 
+  if (loading) {
+    return (
+      <Container>
+        <LoadingContainer>
+          <LoadingSpinner />
+        </LoadingContainer>
+      </Container>
+    );
+  }
+
+  if (!cartItems || cartItems.length === 0) {
+    return (
+      <Container>
+        <Navigation>
+          <NavLink to="/">Home</NavLink>
+          {" / "}
+          <span>Cart</span>
+        </Navigation>
+        
+        <EmptyCart>
+          <h2>Your cart is empty</h2>
+          <p>Looks like you haven't added any items to your cart yet.</p>
+          <Button primary onClick={handleContinueShopping}>
+            <ShoppingBag size={16} />
+            Start Shopping
+          </Button>
+        </EmptyCart>
+      </Container>
+    );
+  }
+
   return (
     <Container>
       <Navigation>
-        <NavLink href="/">Home</NavLink>
+        <NavLink to="/">Home</NavLink>
         {" / "}
-        <NavLink href="/custom-jewelry">Custom Jewelry</NavLink>
+        <span>Cart</span>
       </Navigation>
 
       <Header>
-        <Title>Cart</Title>
+        <Title>Your Shopping Cart</Title>
         <SearchText>
-          506 results too many?{" "}
-          <Link>Describe what you're looking for?</Link>
+          {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'} in your cart
         </SearchText>
       </Header>
 
-      <Table>
-        <thead>
-          <tr>
-            <Th>Image</Th>
-            <Th>Products Name</Th>
-            <Th>Price</Th>
-            <Th>Quantity</Th>
-            <Th>Total</Th>
-            <Th>Action</Th>
-          </tr>
-        </thead>
-        <tbody>
-          {cartItems.map((item) => (
-            <tr key={item.id}>
-              <Td>
-                <ProductImage src={item.image} alt={item.name} />
-              </Td>
-              <Td>{item.name}</Td>
-              <Td>
-                <Price>
-                  ${item.price}
-                  <OriginalPrice>${item.originalPrice}</OriginalPrice>
-                </Price>
-              </Td>
-              <Td>
-                <QuantityControl>
-                  <QuantityButton 
-                    onClick={() => handleQuantityChange(item.id, -1)}
-                    disabled={item.quantity <= 1}
-                  >
-                    <Minus size={16} />
-                  </QuantityButton>
-                  {item.quantity}
-                  <QuantityButton 
-                    onClick={() => handleQuantityChange(item.id, 1)}
-                  >
-                    <Plus size={16} />
-                  </QuantityButton>
-                </QuantityControl>
-              </Td>
-              <Td>${(item.price * item.quantity).toFixed(2)}</Td>
-              <Td>
-                <RemoveButton onClick={() => handleRemoveItem(item.id)}>
-                  <X size={20} />
-                </RemoveButton>
-              </Td>
+      <div style={{ overflowX: 'auto' }}>
+        <Table>
+          <thead>
+            <tr>
+              <Th>Product</Th>
+              <Th>Price</Th>
+              <Th>Quantity</Th>
+              <Th>Total</Th>
+              <Th></Th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {cartItems.map((item) => {
+              const price = item.product?.salePrice || item.product?.regularPrice;
+              const originalPrice = item.product?.regularPrice;
+              const hasDiscount = item.product?.salePrice && item.product?.salePrice < item.product?.regularPrice;
+              
+              return (
+                <tr key={item._id}>
+                  <Td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <ProductImage 
+                        src={item.product?.images?.[0]?.url || '/placeholder.png'} 
+                        alt={item.product?.name} 
+                      />
+                      <div>
+                        <div style={{ fontWeight: '500', marginBottom: '4px' }}>{item.product?.name}</div>
+                        {item.attributes && item.attributes.length > 0 && (
+                          <div style={{ fontSize: '0.875rem', color: '#666' }}>
+                            {item.attributes[0].name}: {item.attributes[0].value}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </Td>
+                  <Td>
+                    <Price>
+                      ${price?.toFixed(2)}
+                      {hasDiscount && (
+                        <OriginalPrice>${originalPrice?.toFixed(2)}</OriginalPrice>
+                      )}
+                    </Price>
+                  </Td>
+                  <Td>
+                    <QuantityControl>
+                      <QuantityButton 
+                        onClick={() => handleQuantityChange(item._id, -1, item.quantity)}
+                        disabled={item.quantity <= 1}
+                      >
+                        <Minus size={16} />
+                      </QuantityButton>
+                      {item.quantity}
+                      <QuantityButton 
+                        onClick={() => handleQuantityChange(item._id, 1, item.quantity)}
+                      >
+                        <Plus size={16} />
+                      </QuantityButton>
+                    </QuantityControl>
+                  </Td>
+                  <Td>${(price * item.quantity).toFixed(2)}</Td>
+                  <Td>
+                    <RemoveButton onClick={() => handleRemoveItem(item._id)}>
+                      <X size={20} />
+                    </RemoveButton>
+                  </Td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </Table>
+      </div>
 
       <Summary>
         <SubTotal>
-          <span>Sub Total:</span>
-          <span>${calculateSubTotal().toFixed(2)}</span>
+          <span>Subtotal:</span>
+          <span>${subTotal.toFixed(2)}</span>
         </SubTotal>
+        <div style={{ fontSize: '0.875rem', color: '#666', textAlign: 'right', maxWidth: '300px' }}>
+          Shipping and taxes will be calculated at checkout
+        </div>
         <ButtonGroup>
           <Button onClick={handleContinueShopping}>
             Continue Shopping
           </Button>
           <Button primary onClick={handleCheckout}>
+            <ShoppingBag size={16} />
             Checkout
           </Button>
         </ButtonGroup>

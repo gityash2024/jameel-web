@@ -4,7 +4,6 @@ import { MapPin, HelpCircle, User, Search, ShoppingCart, Heart, ChevronDown, Cam
 import { categoryAPI, subcategoryAPI, cartAPI, userAPI } from '../../services/api';
 import styled from 'styled-components';
 
-// Styled Components
 const CartPreview = styled.div`
   position: absolute;
   top: 100%;
@@ -177,7 +176,6 @@ export const HeaderProvider = ({ children }) => {
       setIsLoggedIn(true);
       setUserData(JSON.parse(userDataStr));
       
-      // Fetch cart and wishlist data
       fetchCartData();
       fetchWishlistData();
     }
@@ -212,17 +210,21 @@ export const HeaderProvider = ({ children }) => {
     }
   };
   
-  const fetchWishlistData = async () => {
-    try {
-      const response = await userAPI.getWishlist();
-      if (response.data.data && response.data.data.wishlist) {
-        // Store only product IDs for easier checking
-        setWishlistItems(response.data.data.wishlist.map(item => item.product._id || item.product));
-      }
-    } catch (error) {
-      console.error('Error fetching wishlist data:', error);
+  // In HeaderProvider component, update fetchWishlistData function
+const fetchWishlistData = async () => {
+  try {
+    const response = await userAPI.getWishlist();
+    if (response.data.data && response.data.data.products) {
+      // Extract product IDs from the products array
+      const wishlistProductIds = response.data.data.products.map(item => 
+        item.product._id || item.product
+      );
+      setWishlistItems(wishlistProductIds);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching wishlist data:', error);
+  }
+};
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -238,14 +240,12 @@ export const HeaderProvider = ({ children }) => {
     ...categories
       .filter(category => category.isActive)
       .map(category => {
-     // In HeaderProvider component in Header.jsx
-const categorySubcategories = subcategories
-.filter(sub => sub.category?._id === category?._id && sub?.isActive)
-.map(sub => ({
-  name: sub.name,
-  // Include category._id as fallback if slug is undefined
-  path: `/product-details?category=${category.slug || category._id}&subcategory=${sub._id}`
-}));
+        const categorySubcategories = subcategories
+          .filter(sub => sub.category?._id === category?._id && sub?.isActive)
+          .map(sub => ({
+            name: sub.name,
+            path: `/product-details?category=${category.slug || category._id}&subcategory=${sub._id}`
+          }));
         return {
           name: category.name,
           path: `/product-details?category=${category.slug}`,
@@ -289,7 +289,6 @@ const categorySubcategories = subcategories
     navigation: isLoading ? [] : dynamicNavigation
   };
   
-  // Calculate cart totals
   const cartSubtotal = cartItems.reduce((total, item) => {
     const itemPrice = item.product?.salePrice || item.product?.regularPrice || 0;
     return total + (itemPrice * item.quantity);
@@ -349,7 +348,7 @@ const ProfileModal = () => {
 };
 
 const UtilityNav = () => {
-  const { headerData, isLoggedIn, jammelUser } = useContext(HeaderContext);
+  const { headerData, isLoggedIn, jammelUser, handleLogout } = useContext(HeaderContext);
   const navigate = useNavigate();
   return (
     <div className="border-b hidden md:block">
@@ -375,16 +374,25 @@ const UtilityNav = () => {
               Book an Appointment
             </Link>
             {isLoggedIn ? (
-              <div
-                className="relative"
-                onClick={() => navigate('/my-account')}
-                style={{ cursor: 'pointer' }}
-              >
-                <div className="flex items-center text-sm hover:text-gray-600">
-                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                    {jammelUser?.data.user.firstName.charAt(0).toUpperCase()}
+              <div className="flex items-center gap-3">
+                <div
+                  className="relative"
+                  onClick={() => navigate('/my-account')}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="flex items-center text-sm hover:text-gray-600">
+                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                      {jammelUser?.data.user.firstName.charAt(0).toUpperCase()}
+                    </div>
                   </div>
                 </div>
+                <button 
+                  onClick={handleLogout}
+                  className="flex items-center text-sm text-red-600 hover:text-red-800"
+                >
+                  <LogOut className="w-4 h-4 mr-1" />
+                  Logout
+                </button>
               </div>
             ) : (
               <Link
@@ -503,7 +511,7 @@ const MainHeader = () => {
               </Link>
               
               <CartPreview $show={showCartPreview}>
-              <CartHeader>
+                <CartHeader>
                   <h3>Shopping Bag</h3>
                   <span>{cartItems.length} items</span>
                 </CartHeader>
@@ -603,9 +611,10 @@ const MainHeader = () => {
 };
 
 const MobileNavigation = () => {
-  const { headerData, isMobileMenuOpen } = useContext(HeaderContext);
+  const { headerData, isMobileMenuOpen, isLoggedIn, handleLogout } = useContext(HeaderContext);
   const [expandedItems, setExpandedItems] = useState([]);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleExpanded = (index) => {
     setExpandedItems(prev =>
@@ -620,6 +629,25 @@ const MobileNavigation = () => {
   return (
     <div className="fixed top-[148px] left-0 w-full h-[calc(100vh-148px)] bg-white overflow-y-auto z-50">
       <div className="container mx-auto px-4">
+        {isLoggedIn && (
+          <div className="border-b">
+            <div className="flex items-center justify-between py-3">
+              <div className="text-sm font-semibold">My Account</div>
+            </div>
+            <div className="bg-gray-50 px-4 py-2">
+              <Link to="/my-account" className="block py-2 text-sm text-gray-600">Profile</Link>
+              <Link to="/my-order" className="block py-2 text-sm text-gray-600">Orders</Link>
+              <button 
+                onClick={handleLogout}
+                className="flex items-center py-2 text-sm text-red-600"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
+              </button>
+            </div>
+          </div>
+        )}
+        
         {headerData.navigation.map((item, index) => (
           <div key={index} className="border-b">
             <div className="flex items-center justify-between py-3">
@@ -673,9 +701,7 @@ const Navigation = () => {
     }
   };
 
-  // New function to handle mouse leave only when not hovering dropdown
   const handleNavItemMouseLeave = (e, index) => {
-    // Check if the mouse is moving to the dropdown
     const relatedTarget = e.relatedTarget;
     const dropdown = document.getElementById(`dropdown-${index}`);
     

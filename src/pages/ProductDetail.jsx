@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
 import {
@@ -10,7 +10,9 @@ import {
   Truck,
   Store,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Star,
+  ShoppingBag
 } from "lucide-react";
 import { productAPI, userAPI, cartAPI } from "../services/api";
 import { toast } from "react-hot-toast";
@@ -141,6 +143,41 @@ const Title = styled.h1`
   }
 `;
 
+const BrandInfo = styled.div`
+  margin-bottom: 16px;
+  font-size: 16px;
+  color: #666;
+  
+  a {
+    color: #000;
+    font-weight: 500;
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
+const RatingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  
+  .stars {
+    display: flex;
+    color: #f9a826;
+  }
+  
+  .count {
+    color: #666;
+    font-size: 14px;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+`;
+
 const PriceContainer = styled.div`
   display: flex;
   align-items: center;
@@ -173,6 +210,21 @@ const PriceContainer = styled.div`
     .discount {
       font-size: 12px;
     }
+  }
+`;
+
+const InStockInfo = styled.div`
+  font-size: 14px;
+  color: #2e7d32;
+  font-weight: 500;
+  margin-bottom: 16px;
+  
+  &.low-stock {
+    color: #ed6c02;
+  }
+  
+  &.out-of-stock {
+    color: #d32f2f;
   }
 `;
 
@@ -238,6 +290,7 @@ const AddToCartButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
 
   &:hover {
     background: #333;
@@ -335,11 +388,14 @@ const MainImageContainer = styled.div`
     justify-content: center;
     min-height: 600px;
     background: white;
+    overflow: hidden;
+    position: relative;
 
     img {
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
+      transition: transform 0.3s ease;
     }
     
     @media (max-width: 992px) {
@@ -368,6 +424,18 @@ const MainImageContainer = styled.div`
       font-size: 12px;
     }
   }
+`;
+
+const ZoomedImage = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  opacity: ${props => props.visible ? 1 : 0};
+  pointer-events: none;
+  z-index: 10;
 `;
 
 const MobileThumbsContainer = styled.div`
@@ -601,10 +669,55 @@ const SpecificationList = styled.div`
   }
 `;
 
+const HighlightsList = styled.div`
+  margin: 20px 0;
+  
+  h4 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  
+  ul {
+    padding-left: 20px;
+    
+    li {
+      margin-bottom: 8px;
+      color: #333;
+    }
+  }
+`;
+
+const FinancingInfo = styled.div`
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 4px;
+  margin: 16px 0;
+  
+  h4 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  
+  p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+  }
+  
+  a {
+    color: #000;
+    text-decoration: underline;
+    font-weight: 500;
+  }
+`;
+
 const ProductDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { wishlistItems, setWishlistItems, cartItems, setCartItems, isLoggedIn } = useContext(HeaderContext) || defaultContextValues;
+  const [localIsLoggedIn, setLocalIsLoggedIn] = useState(false);
   
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -614,6 +727,19 @@ const ProductDetail = () => {
   const [openSection, setOpenSection] = useState("overview");
   const [isInWishlist, setIsInWishlist] = useState(false);
   
+  // Refs for zoom functionality
+  const imageWrapperRef = useRef(null);
+  const zoomedImageRef = useRef(null);
+  const [isZoomed, setIsZoomed] = useState(false);
+  
+  // Check auth status
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userDataStr = localStorage.getItem('jammelUser');
+    setLocalIsLoggedIn(!!(token && userDataStr));
+  }, []);
+  
+  // Fetch product data
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
@@ -629,7 +755,6 @@ const ProductDetail = () => {
             );
             
             if (sizeAttribute && sizeAttribute.value) {
-              // Convert to array if it's a string of sizes
               const sizes = typeof sizeAttribute.value === 'string' 
                 ? sizeAttribute.value.split(',').map(s => s.trim())
                 : [sizeAttribute.value];
@@ -652,15 +777,41 @@ const ProductDetail = () => {
     fetchProduct();
   }, [slug, navigate]);
   
-  // Check if product is in wishlist
+  // Check wishlist status when product or wishlist changes
   useEffect(() => {
-    if (product && wishlistItems) {
+    // First, check if the product and wishlistItems are available
+    if (product && wishlistItems && wishlistItems.length > 0) {
       setIsInWishlist(wishlistItems.includes(product._id));
     } else {
       setIsInWishlist(false);
     }
-  }, [product, wishlistItems]);
+    
+    // If product exists but no wishlistItems in context, fetch from API
+    if (product && (!wishlistItems || wishlistItems.length === 0) && (isLoggedIn || localIsLoggedIn)) {
+      const fetchWishlist = async () => {
+        try {
+          const response = await userAPI.getWishlist();
+          if (response.data.data && response.data.data.wishlist) {
+            const wishlistProductIds = response.data.data.wishlist.map(item => 
+              item.product._id || item.product
+            );
+            
+            if (setWishlistItems) {
+              setWishlistItems(wishlistProductIds);
+            }
+            
+            setIsInWishlist(wishlistProductIds.includes(product._id));
+          }
+        } catch (error) {
+          console.error('Error fetching wishlist:', error);
+        }
+      };
+      
+      fetchWishlist();
+    }
+  }, [product, wishlistItems, isLoggedIn, localIsLoggedIn, setWishlistItems]);
   
+  // Image navigation
   const handlePrevImage = () => {
     if (!product || !product.images || product.images.length === 0) return;
     
@@ -679,10 +830,11 @@ const ProductDetail = () => {
     });
   };
   
+  // Add to cart functionality
   const handleAddToCart = async () => {
-    if (!isLoggedIn) {
+    if (!isLoggedIn && !localIsLoggedIn) {
       toast.error('Please login to add items to your cart');
-      navigate('/login');
+      navigate('/login', { state: { from: `/products/${slug}` } });
       return;
     }
     
@@ -717,8 +869,9 @@ const ProductDetail = () => {
     }
   };
   
+  // Wishlist toggle functionality
   const handleWishlistToggle = async () => {
-    if (!isLoggedIn) {
+    if (!isLoggedIn && !localIsLoggedIn) {
       toast.error('Please login to add items to your wishlist');
       navigate('/login', { state: { from: `/products/${slug}` } });
       return;
@@ -746,6 +899,7 @@ const ProductDetail = () => {
     }
   };
   
+  // Quantity handlers
   const handleQuantityChange = (e) => {
     const value = parseInt(e.target.value);
     if (!isNaN(value) && value > 0 && value <= (product?.stockQuantity || 10)) {
@@ -765,6 +919,7 @@ const ProductDetail = () => {
     }
   };
   
+  // Size options
   const getSizeOptions = () => {
     if (!product || !product.attributes) return [];
     
@@ -774,12 +929,37 @@ const ProductDetail = () => {
     
     if (!sizeAttribute) return [];
     
-    // Convert to array if it's a string of sizes
     if (typeof sizeAttribute.value === 'string') {
       return sizeAttribute.value.split(',').map(s => s.trim());
     }
     
     return [sizeAttribute.value];
+  };
+  
+  // Image zoom handling
+  const handleImageMouseMove = (e) => {
+    if (!imageWrapperRef.current || !zoomedImageRef.current) return;
+    
+    const { left, top, width, height } = imageWrapperRef.current.getBoundingClientRect();
+    
+    // Calculate cursor position as percentage
+    const x = (e.clientX - left) / width;
+    const y = (e.clientY - top) / height;
+    
+    // Set background position percentage
+    if (product?.images?.length > 0) {
+      const bgPosX = x * 100;
+      const bgPosY = y * 100;
+      
+      zoomedImageRef.current.style.backgroundImage = `url(${product.images[currentImage].url})`;
+      zoomedImageRef.current.style.backgroundPosition = `${bgPosX}% ${bgPosY}%`;
+      zoomedImageRef.current.style.backgroundSize = '200%';
+      setIsZoomed(true);
+    }
+  };
+  
+  const handleImageMouseLeave = () => {
+    setIsZoomed(false);
   };
   
   if (loading) {
@@ -841,6 +1021,8 @@ const ProductDetail = () => {
     : 0;
   
   const currentPrice = hasDiscount ? product.salePrice : product.regularPrice;
+  const isLowStock = product.stockQuantity <= product.lowStockThreshold;
+  const isOutOfStock = product.stockQuantity <= 0 || product.stockStatus === 'out_of_stock';
 
   return (
     <PageContainer>
@@ -852,7 +1034,6 @@ const ProductDetail = () => {
       </Breadcrumb>
 
       <ProductLayout>
-        {/* Thumbnail Column */}
         <ThumbColumn>
           {product.images && product.images.map((image, index) => (
             <ThumbImage
@@ -870,10 +1051,19 @@ const ProductDetail = () => {
             <ChevronLeft size={20} />
           </NavigationButton>
 
-          <div className="image-wrapper">
+          <div 
+            className="image-wrapper" 
+            ref={imageWrapperRef}
+            onMouseMove={handleImageMouseMove}
+            onMouseLeave={handleImageMouseLeave}
+          >
             {product.images && product.images.length > 0 && (
               <img src={product.images[currentImage].url} alt={product.name} />
             )}
+            <ZoomedImage 
+              ref={zoomedImageRef} 
+              visible={isZoomed}
+            />
           </div>
 
           <NavigationButton className="next" onClick={handleNextImage}>
@@ -882,7 +1072,6 @@ const ProductDetail = () => {
           
           <div className="zoom-text">Hover over image to zoom</div>
           
-          {/* Mobile thumbnails */}
           <MobileThumbsContainer>
             {product.images && product.images.map((image, index) => (
               <MobileThumb
@@ -906,6 +1095,25 @@ const ProductDetail = () => {
           </ProductHeader>
 
           <Title>{product.name}</Title>
+          
+          <BrandInfo>
+            By <Link to={`/product-details?brand=${encodeURIComponent(product.brand)}`}>{product.brand}</Link>
+          </BrandInfo>
+          
+          <RatingContainer>
+            <div className="stars">
+              {[...Array(5)].map((_, i) => (
+                <Star 
+                  key={i} 
+                  size={16} 
+                  fill={i < Math.floor(product.averageRating) ? 'currentColor' : 'none'} 
+                />
+              ))}
+            </div>
+            <span className="count">
+              {product.numberOfReviews} {product.numberOfReviews === 1 ? 'review' : 'reviews'}
+            </span>
+          </RatingContainer>
 
           <PriceContainer>
             <span className="current">${currentPrice.toFixed(2)}</span>
@@ -916,10 +1124,41 @@ const ProductDetail = () => {
               </>
             )}
           </PriceContainer>
-
-          <Link to="#" style={{ color: "#000", textDecoration: "underline" }}>
-            View Other Financing Options
-          </Link>
+          
+          {isOutOfStock ? (
+            <InStockInfo className="out-of-stock">Currently Out of Stock</InStockInfo>
+          ) : isLowStock ? (
+            <InStockInfo className="low-stock">Only {product.stockQuantity} left in stock - order soon</InStockInfo>
+          ) : (
+            <InStockInfo>In Stock</InStockInfo>
+          )}
+          
+          <FinancingInfo>
+            <h4>Financing Options Available</h4>
+            <p>Pay over time with special financing offers</p>
+            <Link to="#">View Other Financing Options</Link>
+          </FinancingInfo>
+          
+          <HighlightsList>
+            <h4>Product Highlights</h4>
+            <ul>
+              {product.specifications?.length > 0 ? (
+                product.specifications.slice(0, 3).map((spec, index) => (
+                  <li key={index}>{spec.name}: {spec.value}</li>
+                ))
+              ) : (
+                <>
+                  <li>Brand: {product.brand}</li>
+                  {product.materials?.length > 0 && (
+                    <li>Materials: {product.materials.join(', ')}</li>
+                  )}
+                  {sizes.length > 0 && (
+                    <li>Available Sizes: {sizes.join(', ')}</li>
+                  )}
+                </>
+              )}
+            </ul>
+          </HighlightsList>
 
           {sizes.length > 0 && (
             <SizeSelector>
@@ -959,7 +1198,10 @@ const ProductDetail = () => {
           </QuantitySelector>
 
           <AddToCartSection>
-            <AddToCartButton onClick={handleAddToCart}>ADD TO BAG</AddToCartButton>
+            <AddToCartButton onClick={handleAddToCart} disabled={isOutOfStock}>
+              <ShoppingBag size={18} />
+              {isOutOfStock ? 'OUT OF STOCK' : 'ADD TO BAG'}
+            </AddToCartButton>
             <WishlistButton 
               active={isInWishlist}
               onClick={handleWishlistToggle}
@@ -1000,7 +1242,6 @@ const ProductDetail = () => {
         </ProductDetails>
       </ProductLayout>
       
-      {/* Accordion sections */}
       <div style={{ maxWidth: '1200px', margin: '40px auto 0' }}>
         <AccordionSection>
           <AccordionHeader 
@@ -1056,12 +1297,12 @@ const ProductDetail = () => {
                 {product.materials && product.materials.map((material, index) => (
                   <li key={index}>Material: {material}</li>
                 ))}
-                {product.dimensions && (
+                {product.dimensions && product.dimensions.length && (
                   <li>
                     Dimensions: {product.dimensions.length} x {product.dimensions.width} x {product.dimensions.height} {product.dimensions.unit}
                   </li>
                 )}
-                {product.weight && (
+                {product.weight && product.weight.value && (
                   <li>
                     Weight: {product.weight.value} {product.weight.unit}
                   </li>
@@ -1090,6 +1331,14 @@ const ProductDetail = () => {
                 marginTop: '16px',
                 cursor: 'pointer'
               }}
+              onClick={() => {
+                if (!isLoggedIn && !localIsLoggedIn) {
+                  toast.error('Please login to write a review');
+                  navigate('/login', { state: { from: `/products/${slug}` } });
+                  return;
+                }
+                toast.success('Review feature is coming soon!');
+              }}
             >
               Write a Review
             </button>
@@ -1097,8 +1346,7 @@ const ProductDetail = () => {
         </AccordionSection>
       </div>
       
-      {/* Related Products */}
-      <RelatedProducts productId={product._id} categoryId={product.category?._id} />
+      {/* <RelatedProducts productId={product._id} categoryId={product.category?._id} /> */}
     </PageContainer>
   );
 };
