@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Footer = () => {
+  const navigate=useNavigate();
   const [email, setEmail] = useState('');
 
   const footerData = {
@@ -67,7 +69,7 @@ const Footer = () => {
             <ul className="space-y-2">
               {footerData.personalised.items.map((item, index) => (
                 <li key={index}>
-                  <a href={item.link} className="text-gray-600 hover:text-gray-900 text-sm block">
+                  <a onClick={() => {navigate(item.link)}}  className="text-gray-600 hover:text-gray-900 text-sm block">
                     {item.name}
                   </a>
                 </li>
@@ -80,7 +82,7 @@ const Footer = () => {
             <ul className="space-y-2">
               {footerData.services.items.map((item, index) => (
                 <li key={index}>
-                  <a href={item.link} className="text-gray-600 hover:text-gray-900 text-sm block">
+                  <a onClick={() => {navigate(item.link)}} className="text-gray-600 hover:text-gray-900 text-sm block">
                     {item.name}
                   </a>
                 </li>
@@ -93,7 +95,7 @@ const Footer = () => {
             <ul className="space-y-2">
               {footerData.about.items.map((item, index) => (
                 <li key={index}>
-                  <a href={item.link} className="text-gray-600 hover:text-gray-900 text-sm block">
+                  <a onClick={() => {navigate(item.link)}} className="text-gray-600 hover:text-gray-900 text-sm block">
                     {item.name}
                   </a>
                 </li>
@@ -106,7 +108,7 @@ const Footer = () => {
             <ul className="space-y-2">
               {footerData.quickLinks.items.map((item, index) => (
                 <li key={index}>
-                  <a href={item.link} className="text-gray-600 hover:text-gray-900 text-sm block">
+                  <a onClick={() => {navigate(item.link)}} className="text-gray-600 hover:text-gray-900 text-sm block">
                     {item.name}
                   </a>
                 </li>
@@ -165,13 +167,13 @@ const Footer = () => {
             <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
               <h4 className="font-semibold">FOLLOW US</h4>
               <div className="flex space-x-4">
-                <a href="#" className="text-gray-600 hover:text-gray-900">
+                <a onClick={() => {navigate('/')}} className="text-gray-600 hover:text-gray-900">
                   <Facebook className="w-5 h-5" />
                 </a>
-                <a href="#" className="text-gray-600 hover:text-gray-900">
+                <a onClick={() => {navigate('/')}} className="text-gray-600 hover:text-gray-900">
                   <Twitter className="w-5 h-5" />
                 </a>
-                <a href="#" className="text-gray-600 hover:text-gray-900">
+                <a onClick={() => {navigate('/')}} className="text-gray-600 hover:text-gray-900">
                   <Instagram className="w-5 h-5" />
                 </a>
               </div>

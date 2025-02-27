@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { useEffect } from 'react';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import Products from './pages/Products';
@@ -55,6 +56,17 @@ import AuthGuard from './components/guards/AuthGuard';
 import SavedAddress from './pages/SavedOrder';
 import BlogDetails from './pages/BlogDetails';
 import ProductCompare from './pages/ProductCompare';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  
+  return null;
+}
+
 const AuthLayout = ({ children }) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -68,6 +80,7 @@ const AuthLayout = ({ children }) => {
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Toaster
         position="top-right"
         toastOptions={{

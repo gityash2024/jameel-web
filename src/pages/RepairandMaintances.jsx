@@ -7,6 +7,7 @@ import justatyourservice_1 from "../assets/justatyourservice_1.svg";
 import justatyourservice_2 from "../assets/justatyourservice_2.svg";
 import justatyourservice_3 from "../assets/justatyourservice_3.svg";
 import justatyourservice_4 from "../assets/justatyourservice_4.svg";
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   width: 100%;
@@ -410,6 +411,7 @@ const PromotionLink = styled.a`
 
 
 const RepairandMaintances = () => {
+  const navigate=useNavigate();
     const [formData, setFormData] = useState({
         jewelryType: '',
         productName: '',
@@ -490,70 +492,30 @@ const RepairandMaintances = () => {
       </Section>
 
       <LoremSection>
-        <Title>What is Lorem Ipsum?</Title>
+        <Title>Jewelry Cleaning & Polishing</Title>
         <Description>
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
-          Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, 
-          when an unknown printer took a galley of type and scrambled it to make a type 
-          specimen book.
+          Regular professional cleaning is essential to maintain the brilliance and beauty of your jewelry. At JSK Jewelers, our expert technicians use state-of-the-art equipment and techniques to clean, polish and restore your precious pieces to their original luster. Our ultrasonic cleaning removes dirt and grime from hard-to-reach places, while our professional polishing services remove minor scratches and restore the shine to your jewelry.
         </Description>
-        <Title>What is Lorem Ipsum?</Title>
+        <Title>Ring Sizing & Repairs</Title>
         <Description>
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
-          Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, 
-          when an unknown printer took a galley of type and scrambled it to make a type 
-          specimen book.
+          Whether you need a ring sized up or down, or repaired after damage, our master jewelers can help. We offer professional ring sizing services to ensure your rings fit perfectly and comfortably. Our repair services can address common issues such as broken prongs, damaged settings, or worn bands. With decades of experience working with all types of precious metals and gemstones, our craftsmen can restore your jewelry to its original beauty.
         </Description>
         <Title>Jewelry Repair Made Easy</Title>
         <Description>
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
-          Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, 
-          when an unknown printer took a galley of type and scrambled it to make a type 
-          specimen book.
-          It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.
-          Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy.
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+          At JSK Jewelers, we've simplified the jewelry repair process to make it convenient and stress-free for our customers. Simply bring your pieces to any of our store locations for a complimentary evaluation by our experts. We'll provide you with a detailed assessment, including repair recommendations and a transparent pricing estimate.
+          
+          Most repairs can be completed within 7-10 business days, with expedited services available for urgent needs. We take exceptional care with your treasured pieces, treating each item with the attention it deserves, whether it's a family heirloom or a recent purchase.
+          
+          Our comprehensive jewelry repair services include prong re-tipping, stone replacement, chain soldering, clasp replacement, and pearl restringing. We also offer custom modifications to update or personalize your existing jewelry. All repairs come with our satisfaction guarantee, ensuring your precious items are returned to you in exceptional condition.
+          
+          Trust our skilled craftsmen to handle your valuable pieces with expert care and precision. Schedule your jewelry repair consultation today and experience the JSK difference.
         </Description>
       </LoremSection>
 
       <FormSection>
           <FormContent>
             <Title>Your Full Service Jeweler</Title>
-            <Form onSubmit={handleSubmit}>
-              <FormGroup>
-                <Label>Jewelry type</Label>
-                <Select 
-                  value={formData.jewelryType}
-                  onChange={(e) => setFormData({...formData, jewelryType: e.target.value})}
-                >
-                  <option value="">Select type</option>
-                  <option value="rings">Rings</option>
-                  <option value="necklaces">Necklaces</option>
-                  <option value="earrings">Earrings</option>
-                </Select>
-              </FormGroup>
-              
-              <FormGroup>
-                <Label>Product name</Label>
-                <Input 
-                  type="text" 
-                  placeholder="Enter Product name"
-                  value={formData.productName}
-                  onChange={(e) => setFormData({...formData, productName: e.target.value})}
-                />
-              </FormGroup>
-              
-              <FormGroup>
-                <Label>Almost there...</Label>
-                <TextArea 
-                  placeholder="Comment"
-                  value={formData.comment}
-                  onChange={(e) => setFormData({...formData, comment: e.target.value})}
-                />
-              </FormGroup>
-              
-              <SubmitButton type="submit">Submit</SubmitButton>
-            </Form>
+            <Button onClick={()=>{navigate('/help-center')}}>Contact Us</Button>
           </FormContent>
           
           <ImageContainer>
