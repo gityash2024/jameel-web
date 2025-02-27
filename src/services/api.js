@@ -174,4 +174,14 @@ export const cartAPI = {
 };
 
 
+export const storeAPI = {
+  getAllStores: () => api.get('/stores'),
+  getStore: (id) => api.get(`/stores/${id}`),
+  createStore: (data) => api.post('/stores', data),
+  updateStore: (id, data) => api.put(`/stores/${id}`, data),
+  deleteStore: (id) => api.delete(`/stores/${id}`),
+  findNearbyStores: (lat, lng, distance) => 
+    api.get(`/stores/nearby?lat=${lat}&lng=${lng}&distance=${distance || 10000}`)
+};
+
 export default api;

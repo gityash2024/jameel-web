@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Search, Navigation, MapPin, Phone, Globe, Clock } from 'lucide-react';
-
+import { Search, Navigation, MapPin, Phone, Clock, Star } from 'lucide-react';
+import { toast } from 'react-hot-toast';
+import { storeAPI } from '../services/api';
 
 const PageContainer = styled.div`
   width: 100%;
@@ -10,29 +11,21 @@ const PageContainer = styled.div`
 `;
 
 const HeroSection = styled.div`
-  height: 400px;
+  height: 250px;
   position: relative;
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/store-bg.jpg');
   background-size: cover;
   background-position: center;
-`;
-
-const HeroContent = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  color: white;
-  width: 100%;
-  max-width: 800px;
-  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const HeroTitle = styled.h1`
-  font-size: 3.5rem;
-  margin-bottom: 2rem;
+  font-size: 3rem;
   font-weight: 600;
+  color: white;
+  text-align: center;
 `;
 
 const SearchSection = styled.div`
@@ -111,31 +104,43 @@ const LocationButton = styled.button`
   }
 `;
 
-const MapAndListContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 400px;
-  gap: 30px;
-  margin-top: 30px;
+const LoadingIndicator = styled.div`
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  border-top-color: #000;
+  animation: spin 1s ease-in-out infinite;
+  margin-left: 10px;
 
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 `;
 
-const MapContainer = styled.div`
-  height: 600px;
-  background: #f5f5f5;
-  border-radius: 10px;
-  overflow: hidden;
-  position: relative;
+const StoreListContainer = styled.div`
+  margin-top: 30px;
+`;
+
+const StoreListHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const StoreCount = styled.h2`
+  font-size: 1.2rem;
+  font-weight: 500;
 `;
 
 const StoreList = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 20px;
-  max-height: 600px;
-  overflow-y: auto;
 `;
 
 const StoreCard = styled.div`
@@ -143,19 +148,14 @@ const StoreCard = styled.div`
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: transform 0.3s ease;
-
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  
   &:hover {
     transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
   }
-`;
-
-const StoreHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 15px;
 `;
 
 const StoreName = styled.h3`
@@ -163,131 +163,335 @@ const StoreName = styled.h3`
   margin-bottom: 5px;
 `;
 
-const StoreDistance = styled.span`
-  color: #666;
-  font-size: 0.9rem;
+const RatingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+  margin-bottom: 15px;
 `;
 
 const StoreInfo = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
+  flex: 1;
 `;
-
 const InfoItem = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   color: #666;
   font-size: 0.9rem;
 
   svg {
     min-width: 20px;
+    margin-top: 2px;
   }
 `;
 
-const StoreActions = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 15px;
+const FeaturesList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  margin-bottom: 20px;
 `;
 
-const ActionButton = styled.button`
-  padding: 10px;
-  background: ${props => props.$primary ? '#000' : 'white'};
-  color: ${props => props.$primary ? 'white' : '#000'};
-  border: 2px solid #000;
+const FeatureTag = styled.span`
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  background: #f5f5f5;
+  border-radius: 20px;
+  color: #555;
+`;
+
+const DirectionButton = styled.button`
+  width: 100%;
+  padding: 12px;
+  background: #000;
+  color: white;
+  border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  font-weight: 500;
+  transition: background 0.3s ease;
+  margin-top: auto;
 
   &:hover {
-    background: ${props => props.$primary ? '#333' : '#f5f5f5'};
+    background: #333;
   }
+`;
+
+const EmptyState = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  text-align: center;
+`;
+
+const EmptyStateIcon = styled.div`
+  color: #a0aec0;
+  margin-bottom: 1rem;
+`;
+
+const EmptyStateText = styled.p`
+  color: #4a5568;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
 `;
 
 const FindYourStore = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [userLocation, setUserLocation] = useState(null);
   const [stores, setStores] = useState([]);
-  const [selectedStore, setSelectedStore] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  // Sample store data - replace with API call
-  const sampleStores = [
-    {
-      id: 1,
-      name: 'JSK Downtown Store',
-      address: '123 Main Street, New York',
-      phone: '(212) 555-0123',
-      hours: '10:00 AM - 9:00 PM',
-      distance: '0.5 miles',
-      location: { lat: 40.7128, lng: -74.0060 },
-    },
-    {
-      id: 2,
-      name: 'JSK Uptown Boutique',
-      address: '456 Madison Ave, New York',
-      phone: '(212) 555-0124',
-      hours: '10:00 AM - 8:00 PM',
-      distance: '1.2 miles',
-      location: { lat: 40.7589, lng: -73.9851 },
-    },
-    // Add more stores as needed
-  ];
+  const [distances, setDistances] = useState({});
 
   useEffect(() => {
-    // Simulate API call to load stores
-    setStores(sampleStores);
+    fetchStores();
   }, []);
 
-  const handleSearch = () => {
+  useEffect(() => {
+    if (userLocation && stores.length > 0) {
+      calculateDistances();
+    }
+  }, [userLocation, stores]);
+
+  const fetchStores = async () => {
     setLoading(true);
-    // Simulate API call with search query
-    setTimeout(() => {
-      // Filter stores based on search query
-      const filteredStores = sampleStores.filter(store => 
-        store.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        store.address.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setStores(filteredStores);
+    try {
+      const response = await storeAPI.getAllStores();
+      const activeStores = response.data.data.stores.filter(store => store.isActive);
+      setStores(activeStores);
+    } catch (error) {
+      toast.error('Failed to load stores');
+      console.error(error);
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
+  };
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) {
+      fetchStores();
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const response = await storeAPI.getAllStores();
+      const allStores = response.data.data.stores;
+      
+      const filteredStores = allStores.filter(store => 
+        store.isActive && (
+          store.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          store.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          store.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          store.state.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          store.zipCode.includes(searchQuery)
+        )
+      );
+      
+      setStores(filteredStores);
+      
+      if (filteredStores.length === 0) {
+        toast.error('No stores found matching your search criteria');
+      }
+    } catch (error) {
+      toast.error('Failed to search stores');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
   };
 
   const getUserLocation = () => {
     if (navigator.geolocation) {
+      setLoading(true);
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
+        async (position) => {
+          const userLoc = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
-          });
-          // Here you would typically call an API to find nearby stores
+          };
+          
+          setUserLocation(userLoc);
+          
+          try {
+            const response = await storeAPI.findNearbyStores(
+              userLoc.lat,
+              userLoc.lng,
+              50000
+            );
+            
+            if (response.data.data.stores.length > 0) {
+              setStores(response.data.data.stores);
+            } else {
+              toast.info('No stores found near your location. Showing all stores instead.');
+              fetchStores();
+            }
+          } catch (error) {
+            toast.error('Failed to find nearby stores');
+            console.error(error);
+          } finally {
+            setLoading(false);
+          }
         },
         (error) => {
+          setLoading(false);
+          toast.error('Error getting your location. Please allow location access or search by zip code.');
           console.error('Error getting location:', error);
         }
       );
+    } else {
+      toast.error('Geolocation is not supported by your browser');
     }
   };
 
-  const handleStoreSelect = (store) => {
-    setSelectedStore(store);
-    // Here you would typically update map to center on selected store
+  const calculateDistances = () => {
+    if (!userLocation) return;
+    
+    const distanceObj = {};
+    
+    stores.forEach(store => {
+      if (store.location && store.location.coordinates) {
+        const storeLat = store.location.coordinates[1];
+        const storeLng = store.location.coordinates[0];
+        
+        const distance = getDistance(
+          userLocation.lat,
+          userLocation.lng,
+          storeLat,
+          storeLng
+        );
+        
+        distanceObj[store._id] = distance;
+      }
+    });
+    
+    setDistances(distanceObj);
+  };
+
+  const getDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371;
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2); 
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    const distance = R * c;
+    return distance;
+  };
+
+  const deg2rad = (deg) => {
+    return deg * (Math.PI/180);
   };
 
   const getDirections = (store) => {
-    window.open(`https://www.google.com/maps/dir/?api=1&destination=${store.address}`);
+    if (store.location && store.location.coordinates) {
+      const lat = store.location.coordinates[1];
+      const lng = store.location.coordinates[0];
+      window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`);
+    } else {
+      window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${store.address}, ${store.city}, ${store.state} ${store.zipCode}`)}`);
+    }
+  };
+
+  const renderStoreList = () => {
+    if (loading) {
+      return (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
+          <LoadingIndicator />
+        </div>
+      );
+    }
+
+    if (!stores || stores.length === 0) {
+      return (
+        <EmptyState>
+          <EmptyStateIcon>
+            <MapPin size={48} />
+          </EmptyStateIcon>
+          <EmptyStateText>No stores found matching your criteria</EmptyStateText>
+        </EmptyState>
+      );
+    }
+
+    const sortedStores = [...stores].sort((a, b) => {
+      if (distances[a._id] && distances[b._id]) {
+        return distances[a._id] - distances[b._id];
+      }
+      return 0;
+    });
+
+    return (
+      <>
+        <StoreListHeader>
+          <StoreCount>Found {sortedStores.length} stores</StoreCount>
+        </StoreListHeader>
+        <StoreList>
+          {sortedStores.map((store) => (
+            <StoreCard key={store._id}>
+              <StoreName>{store.name}</StoreName>
+              <RatingContainer>
+                <Star size={16} fill="#FFD700" color="#FFD700" />
+                <span>{store.rating?.toFixed(1) || '4.5'}</span>
+                <span>({store.reviews || '0'} reviews)</span>
+              </RatingContainer>
+
+              <StoreInfo>
+                <InfoItem>
+                  <MapPin size={16} />
+                  {`${store.address}, ${store.city}, ${store.state} ${store.zipCode}`}
+                </InfoItem>
+                <InfoItem>
+                  <Phone size={16} />
+                  {store.phone}
+                </InfoItem>
+                <InfoItem>
+                  <Clock size={16} />
+                  {store.hours}
+                </InfoItem>
+              </StoreInfo>
+              
+              {store.features && store.features.length > 0 && (
+  <FeaturesList>
+    {store.features.map((feature, index) => (
+      <FeatureTag key={index}>{feature}</FeatureTag>
+    ))}
+  </FeaturesList>
+)}
+{store.privateViewing && (
+  <div style={{ marginBottom: '15px' }}>Private Viewing Room</div>
+)}
+              <DirectionButton onClick={() => getDirections(store)}>
+                Get Directions
+              </DirectionButton>
+            </StoreCard>
+          ))}
+        </StoreList>
+      </>
+    );
   };
 
   return (
     <PageContainer>
       <HeroSection>
-        <HeroContent>
-          <HeroTitle>Find Our Store</HeroTitle>
-        </HeroContent>
+        <HeroTitle>Find Our Store</HeroTitle>
       </HeroSection>
 
       <SearchSection>
@@ -296,75 +500,28 @@ const FindYourStore = () => {
             <SearchInput>
               <input
                 type="text"
-                placeholder="Enter city, state or zip code"
+                placeholder="Search by city, state, zip code or store name"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={handleKeyPress}
               />
-              <button onClick={handleSearch}>
-                <Search size={20} />
-                Search
+              <button onClick={handleSearch} disabled={loading}>
+                {loading ? <LoadingIndicator /> : (
+                  <>
+                    <Search size={20} />
+                    Search
+                  </>
+                )}
               </button>
             </SearchInput>
-            <LocationButton onClick={getUserLocation}>
+            <LocationButton onClick={getUserLocation} disabled={loading}>
               <Navigation size={24} />
             </LocationButton>
           </SearchBar>
 
-          <MapAndListContainer>
-            <MapContainer>
-              {/* Add your preferred map component here */}
-              <div style={{ 
-                width: '100%', 
-                height: '100%', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                background: '#e5e5e5'
-              }}>
-                <MapPin size={40} />
-              </div>
-            </MapContainer>
-
-            <StoreList>
-              {stores.map((store) => (
-                <StoreCard 
-                  key={store.id}
-                  onClick={() => handleStoreSelect(store)}
-                >
-                  <StoreHeader>
-                    <div>
-                      <StoreName>{store.name}</StoreName>
-                      <StoreDistance>{store.distance}</StoreDistance>
-                    </div>
-                  </StoreHeader>
-
-                  <StoreInfo>
-                    <InfoItem>
-                      <MapPin size={20} />
-                      {store.address}
-                    </InfoItem>
-                    <InfoItem>
-                      <Phone size={20} />
-                      {store.phone}
-                    </InfoItem>
-                    <InfoItem>
-                      <Clock size={20} />
-                      {store.hours}
-                    </InfoItem>
-                  </StoreInfo>
-
-                  <StoreActions>
-                    <ActionButton $primary onClick={() => getDirections(store)}>
-                      Get Directions
-                    </ActionButton>
-                    <ActionButton onClick={() => window.open(`/store/${store.id}`)}>
-                      Store Details
-                    </ActionButton>
-                  </StoreActions>
-                </StoreCard>
-              ))}
-            </StoreList>
-          </MapAndListContainer>
+          <StoreListContainer>
+            {renderStoreList()}
+          </StoreListContainer>
         </SearchContainer>
       </SearchSection>
     </PageContainer>
