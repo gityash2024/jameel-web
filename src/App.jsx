@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { useEffect } from 'react';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import Products from './pages/Products';
@@ -53,6 +54,18 @@ import AddAddress from './pages/AddAddress';
 import AboutUsTwo from './pages/AboutUsTwo';
 import AuthGuard from './components/guards/AuthGuard';
 import SavedAddress from './pages/SavedOrder';
+import BlogDetails from './pages/BlogDetails';
+import ProductCompare from './pages/ProductCompare';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  
+  return null;
+}
 
 const AuthLayout = ({ children }) => {
   return (
@@ -67,6 +80,7 @@ const AuthLayout = ({ children }) => {
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Toaster
         position="top-right"
         toastOptions={{
@@ -98,26 +112,26 @@ function App() {
         
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
+          <Route path="/product-details" element={<Products />} />
+          <Route path="/products/:slug" element={<ProductDetail />} />
           <Route path="products" element={<Products />} />
-          <Route path="new-arrivals" element={<ProductDetail />} />
+          <Route path="product-compare" element={<ProductCompare />} />
+
           <Route path="cart" element={<AuthGuard><Cart /></AuthGuard>} />
           <Route path="checkout" element={<AuthGuard><CheckOut /></AuthGuard>} />
           <Route path="profile" element={<AuthGuard><Profile /></AuthGuard>} />
           <Route path="home-erraring" element={<HomeErraring />} />
+          <Route path="/blog/:slug" element={<BlogDetails />} />
           <Route path="home-payment" element={<Homepayment />} />
-          <Route path="productstwo" element={<Productstwo />} />
           <Route path="collection" element={<Collection />} />
           <Route path="collectiontwo" element={<CollectionTwo />} />
           <Route path="booking-appoinment" element={<AuthGuard><BookingAppoiment /></AuthGuard>} />
           <Route path="blogs-one" element={<BlogsOne />} />
           <Route path="blogs-two" element={<BlogsTwo />} />
-          <Route path="blogs-three" element={<BlogsThree />} />
-          <Route path="blogs-four" element={<BlogsFour />} />
           <Route path="ring" element={<Ring />} />
           <Route path="custom-jewelry" element={<CustomJewelry />} />
           <Route path="custom-jewelrytwo" element={<CustomJewelryTwo />} />
           <Route path="help-center" element={<HelpCenter />} />
-          <Route path="card-option" element={<AuthGuard><CardOption /></AuthGuard>} />
           <Route path="checkout-page" element={<AuthGuard><CheckoutPage /></AuthGuard>} />
           <Route path="personalized-jewelry" element={<PersonalizedJewelry />} />
           <Route path="card-page" element={<AuthGuard><CardPage /></AuthGuard>} />

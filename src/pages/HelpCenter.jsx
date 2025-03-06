@@ -1,5 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from "styled-components";
+import { useNavigate } from 'react-router-dom';
+import { Search, ChevronDown, ChevronRight, Phone, Mail, MessageSquare, HelpCircle, Clock } from 'lucide-react';
+import { supportAPI } from "../services/api";
+import { HeaderContext } from '../components/layout/Header';
 import daimond_logo from "../assets/daimond_logo.svg";
 import jewelryservices from "../assets/jewelryservices.svg";
 import justatyourservice_1 from "../assets/justatyourservice_1.svg";
@@ -20,6 +24,8 @@ const Header = styled.div`
   h1 {
     font-size: 42px;
     margin-bottom: 20px;
+    font-weight: 600;
+    color: #222;
   }
 `;
 
@@ -30,125 +36,60 @@ const SearchBox = styled.div`
   gap: 8px;
   
   a {
-    color: #000;
+    color: #6366F1;
     text-decoration: underline;
+    font-weight: 500;
+    
+    &:hover {
+      color: #4F46E5;
+    }
   }
 `;
 
 const HeroSection = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  gap: 60px;
   align-items: center;
   margin-bottom: 80px;
   background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   
   img {
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: cover;
+    max-height: 450px;
   }
   
-  h2 {
-    font-size: 36px;
-    margin-bottom: 20px;
+  .content {
+    padding: 40px;
+    
+    h2 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      color: #111827;
+      font-weight: 600;
+    }
+    
+    p {
+      color: #4B5563;
+      line-height: 1.6;
+      font-size: 18px;
+    }
   }
-  
-  p {
-    color: #666;
-    line-height: 1.6;
-  }
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const ToolsSection = styled.div`
-  h2 {
-    text-align: center;
-    font-size: 32px;
-    margin-bottom: 40px;
-  }
-`;
-
-const ServiceGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-  margin-bottom: 80px;
   
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
+    
+    .content {
+      padding: 30px 20px;
+    }
   }
 `;
 
-const ServiceCard = styled.div`
-  padding: 24px;
-  border: 1px solid #eee;
-  text-align: center;
-  background: #fff;
-  
-  h3 {
-    font-size: 20px;
-    margin-bottom: 12px;
-  }
-  
-  p {
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 16px;
-    line-height: 1.6;
-  }
-  
-  a {
-    color: #000;
-    text-decoration: underline;
-    font-weight: 500;
-  }
-`;
-
-const FAQSection = styled.div`
-  margin-bottom: 60px;
-  
-  h2 {
-    text-align: center;
-    font-size: 32px;
-    margin-bottom: 40px;
-  }
-`;
-
-const AccordionItem = styled.div`
-  border-bottom: 1px solid #eee;
-  margin-bottom: 16px;
-`;
-
-const AccordionButton = styled.button`
-  width: 100%;
-  text-align: left;
-  padding: 16px 0;
-  background: none;
-  border: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  font-size: 18px;
-  font-weight: 500;
-  
-  span {
-    color: #e60023;
-    transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'};
-    transition: transform 0.3s ease;
-  }
-`;
-
-const AccordionContent = styled.div`
-  color: #666;
-  line-height: 1.6;
-  padding-bottom: 16px;
-  display: ${props => props.$isOpen ? 'block' : 'none'};
-`;
 const Section = styled.div`
   margin-bottom: 80px;
   
@@ -156,9 +97,176 @@ const Section = styled.div`
     font-size: 32px;
     text-align: center;
     margin-bottom: 40px;
+    color: #111827;
+    font-weight: 600;
   }
 `;
 
+const SupportGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const FormSection = styled.div`
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  padding: 30px;
+  
+  h3 {
+    font-size: 22px;
+    margin-bottom: 24px;
+    color: #111827;
+    font-weight: 600;
+  }
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    
+    label {
+      font-weight: 500;
+      color: #374151;
+    }
+    
+    input, textarea {
+      padding: 12px;
+      border: 1px solid #E5E7EB;
+      border-radius: 6px;
+      font-size: 16px;
+      
+      &:focus {
+        outline: none;
+        border-color: #6366F1;
+      }
+    }
+    
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+  }
+  
+  button {
+    padding: 14px;
+    background: #6366F1;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s ease;
+    
+    &:hover {
+      background: #4F46E5;
+    }
+    
+    &:disabled {
+      background: #9CA3AF;
+      cursor: not-allowed;
+    }
+  }
+`;
+
+const ContactOptions = styled.div`
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  padding: 30px;
+  
+  h3 {
+    font-size: 22px;
+    margin-bottom: 24px;
+    color: #111827;
+    font-weight: 600;
+  }
+  
+  .contact-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+    cursor: pointer;
+    
+    &:hover {
+      background: #F9FAFB;
+    }
+    
+    .icon {
+      width: 44px;
+      height: 44px;
+      background: #F3F4F6;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      
+      svg {
+        color: #6366F1;
+        width: 22px;
+        height: 22px;
+      }
+    }
+    
+    .details {
+      h4 {
+        font-size: 18px;
+        margin-bottom: 6px;
+        color: #111827;
+        font-weight: 600;
+      }
+      
+      p {
+        color: #6B7280;
+        margin-bottom: 8px;
+        line-height: 1.5;
+      }
+      
+      a {
+        color: #6366F1;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        
+        svg {
+          margin-left: 6px;
+          transition: transform 0.2s ease;
+        }
+        
+        &:hover {
+          text-decoration: underline;
+          
+          svg {
+            transform: translateX(3px);
+          }
+        }
+      }
+    }
+  }
+`;
 
 const RewardsSection = styled.div`
   text-align: center;
@@ -167,6 +275,8 @@ const RewardsSection = styled.div`
   h2 {
     font-size: 36px;
     margin-bottom: 40px;
+    color: #111827;
+    font-weight: 600;
   }
 `;
 
@@ -181,235 +291,218 @@ const RewardsGrid = styled.div`
 `;
 
 const RewardCard = styled.div`
-  background: #F7F7F7;
-  padding: 24px;
+  background: #F9FAFB;
+  padding: 30px 24px;
   text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s ease;
   
-  svg {
-    margin-bottom: 16px;
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+  }
+  
+  img {
+    margin-bottom: 20px;
+    height: 60px;
+    width: auto;
   }
   
   h3 {
-    margin-bottom: 12px;
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #111827;
+    font-weight: 600;
   }
   
   p {
-    color: #666;
-    margin-bottom: 16px;
-    font-size: 14px;
+    color: #6B7280;
+    margin-bottom: 20px;
+    font-size: 15px;
+    line-height: 1.6;
   }
   
   a {
-    color: #000;
+    color: #6366F1;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    letter-spacing: 0.5px;
+    
+    &:hover {
+      color: #4F46E5;
+      text-decoration: underline;
+    }
   }
 `;
+
 const HelpCenter = () => {
-  const [activeQuestion, setActiveQuestion] = useState(null);
-  const [activePayment, setActivePayment] = useState(null);
- 
-  const services = [
-    {
-      title: "Style Help",
-      description: "Shop with a jewelry expert to find the perfect piece.",
-      link: "Get Style Help"
-    },
-    {
-      title: "Store Finder",
-      description: "Find a KAY near you for in-store services and shopping events.",
-      link: "Find Stores Nearby"
-    },
-    {
-      title: "E-Gift Cards",
-      description: "Give them the gift of choice. Delivered within 24 hours.",
-      link: "Purchase e-Gift Cards"
-    },
-    {
-      title: "Start A Return",
-      description: "Returns must start within 30 days of purchase or shipment date.",
-      link: "Get Style Help"
-    },
-    {
-      title: "Request A Service",
-      description: "Book an appointment or visit a store for any service-related help.",
-      link: "Start Request"
-    },
-    {
-      title: "Track A Service",
-      description: "Easily track where your item is within the repair process.",
-      link: "Track Service"
-    },
-    {
-      title: "Track Your Order",
-      description: "Check the location and estimated arrival time of your order.",
-      link: "Track Order"
-    },
-    {
-      title: "Cancel Your Order",
-      description: "Changed your mind? Cancel an order within one hour of placing it.",
-      link: "Cancel Order"
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  
+  let isLoggedIn =false;
+
+  const token = localStorage.getItem('token');
+  const userDataStr = localStorage.getItem('jammelUser');
+  if (token && userDataStr) {
+    isLoggedIn=true;
+  }
+  const navigate = useNavigate();
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!isLoggedIn) {
+      navigate('/login?redirect=/help-center');
+      return;
     }
-  ];
-
-  const faqItems = [
-    {
-      title: "How can I have a Jewelry Style Expert help me?",
-      content: "Quisque rutrum. Aenean imperdi. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget."
-    },
-    {
-      title: "How can I find the perfect gift?",
-      content: "Quisque rutrum. Aenean imperdi. Etiam ultricies nisi vel augue."
-    },
-    {
-      title: "Do you offer gift cards?",
-      content: "Yes, we offer both physical and digital gift cards."
+    
+    if (!subject || !message) {
+      setSubmitError('Please fill in all fields');
+      return;
     }
-  ];
-
-
-  const paymentQuestions = [
-    {
-      question: "What payment methods do you accept?",
-      answer: "We accept major credit cards, debit cards, and PayPal."
-    },
-    {
-      question: "How do I redeem my gift card?",
-      answer: "Enter your gift card number during checkout."
-    },
-    {
-      question: "How can I apply for a KAY Jewelers Credit Card?",
-      answer: "Visit our credit application page online."
-    },
-    {
-      question: "How long does it take to receive my KAY Jewelers Credit Card?",
-      answer: "7-10 business days after approval."
-    },
-    {
-      question: "What if I need help reading my billing statement and account materials?",
-      answer: "Contact our customer service for assistance."
-    },
-    {
-      question: "How do I link my KAY Jewelers Credit Card to my KAY account?",
-      answer: "Login to your account and go to payment methods."
-    },
-    {
-      question: "Will I receive monthly statements for my KAY Jewelers Credit Card?",
-      answer: "Yes, either electronically or by mail."
-    },
-    {
-      question: "When will I be charged a late fee on my KAY Jewelers Credit Card?",
-      answer: "If payment is not received by due date."
-    },
-    {
-      question: "How do I sign up for online account management?",
-      answer: "Visit our account registration page."
-    },
-    {
-      question: "What to do if I am locked out of my account?",
-      answer: "Use the password reset feature or contact support."
-    },
-    {
-      question: "Who can I contact for questions about my KAY Jewelers Credit Card?",
-      answer: "Call our dedicated credit card support line."
+    
+    setSubmitting(true);
+    setSubmitError('');
+    
+    try {
+      await supportAPI.createSupportTicket({
+        subject,
+        message
+      });
+      
+      setSubmitSuccess(true);
+      setSubject('');
+      setMessage('');
+    } catch (error) {
+      setSubmitError(error.response?.data?.message || 'Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
-  ];
-
-   const rewardsData = [
-     { icon: justatyourservice_1, title: "VAULT REWARDS" },
-     { icon: justatyourservice_2, title: "VAULT REWARDS" },
-     { icon: justatyourservice_3, title: "VAULT REWARDS" },
-     { icon: justatyourservice_4, title: "VAULT REWARDS" }
-   ];
-
-
-  const toggleQuestion = (index) => {
-    setActiveQuestion(activeQuestion === index ? null : index);
   };
-
+  
+  const rewardsData = [
+    { icon: justatyourservice_1, title: "VAULT REWARDS" },
+    { icon: justatyourservice_2, title: "VAULT REWARDS" },
+    { icon: justatyourservice_3, title: "VAULT REWARDS" },
+    { icon: justatyourservice_4, title: "VAULT REWARDS" }
+  ];
+  
   return (
     <Container>
       <Header>
         <h1>Help Center</h1>
         <SearchBox>
           <img src={daimond_logo} alt="Diamond" />
-          <span>506 results too many? Our Jewelry Assistant can help!</span>
+          <span>Need assistance? Our Jewelry Assistant can help!</span>
           <a href="#">Describe what you're looking for?</a>
         </SearchBox>
       </Header>
 
       <HeroSection>
         <img src={jewelryservices} alt="Help Center" />
-        <div>
+        <div className="content">
           <h2>Customer Help Center</h2>
-          <p>Need help with something? You're in the right place! From quick self-service tools to live support, we've got you covered.</p>
+          <p>Need help with something? You're in the right place! Our dedicated support team is ready to assist you with any questions or concerns about your jewelry purchase or service.</p>
         </div>
       </HeroSection>
-
-      <ToolsSection>
-        <h2>Self-Service Tools</h2>
-        <ServiceGrid>
-          {services.map((service, index) => (
-            <ServiceCard key={index}>
-              <h3>{service.title}</h3>
-              <p>{service.description}</p>
-              <a href="#">{service.link}</a>
-            </ServiceCard>
-          ))}
-        </ServiceGrid>
-      </ToolsSection>
-
-      <FAQSection>
-        <h2>Style Help & Gifting</h2>
-        {faqItems.map((item, index) => (
-          <AccordionItem key={index}>
-            <AccordionButton 
-              onClick={() => toggleQuestion(index)}
-              $isOpen={activeQuestion === index}
-            >
-              {item.title}
-              <span>▼</span>
-            </AccordionButton>
-            <AccordionContent $isOpen={activeQuestion === index}>
-              {item.content}
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </FAQSection>
+      
       <Section>
-        <h2>Payment</h2>
-        {paymentQuestions.map((item, index) => (
-          <AccordionItem key={index}>
-            <AccordionButton 
-              onClick={() => setActivePayment(activePayment === index ? null : index)}
-              $isOpen={activePayment === index}
-            >
-              {item.question}
-              <span>▼</span>
-            </AccordionButton>
-            <AccordionContent $isOpen={activePayment === index}>
-              {item.answer}
-            </AccordionContent>
-          </AccordionItem>
-        ))}
+        <h2>Contact Support</h2>
+        <SupportGrid>
+          <FormSection>
+            <h3>Send us a message</h3>
+            <Form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="subject">Subject</label>
+                <input
+                  type="text"
+                  id="subject"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  placeholder="How can we help you?"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="message">Message</label>
+                <textarea
+                  id="message"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Please describe your question or issue in detail"
+                  required
+                />
+              </div>
+              
+              {submitError && (
+                <div style={{ color: '#DC2626', fontSize: '14px' }}>{submitError}</div>
+              )}
+              
+              {submitSuccess && (
+                <div style={{ color: '#10B981', fontSize: '14px' }}>
+                  Your message has been sent successfully! We'll get back to you soon.
+                </div>
+              )}
+              
+              <button type="submit" disabled={submitting}>
+                {submitting ? 'Sending...' : 'Send Message'}
+              </button>
+              
+              {!isLoggedIn && (
+                <div style={{ textAlign: 'center', fontSize: '14px', color: '#6B7280', marginTop: '10px' }}>
+                  You'll need to <a href="/login" style={{ color: '#6366F1', fontWeight: '500' }}>sign in</a> to send a message
+                </div>
+              )}
+            </Form>
+          </FormSection>
+          
+          <ContactOptions>
+            <h3>Other ways to reach us</h3>
+            <div className="contact-methods">
+              <div className="contact-item">
+                <div className="icon">
+                  <Phone />
+                </div>
+                <div className="details">
+                  <h4>Call Us</h4>
+                  <p>Speak directly with our customer support team</p>
+                  <a href="tel:+18001234567">1-800-123-4567 <ChevronRight size={16} /></a>
+                </div>
+              </div>
+              
+              <div className="contact-item">
+                <div className="icon">
+                  <Mail />
+                </div>
+                <div className="details">
+                  <h4>Email Us</h4>
+                  <p>Send us an email and we'll respond within 24 hours</p>
+                  <a href="mailto:support@jsk.com">support@jsk.com <ChevronRight size={16} /></a>
+                </div>
+              </div>
+              
+              <div className="contact-item">
+                <div className="icon">
+                  <Clock />
+                </div>
+                <div className="details">
+                  <h4>Support Hours</h4>
+                  <p>Monday - Friday: 9am - 8pm EST<br />Saturday: 10am - 6pm EST<br />Sunday: Closed</p>
+                </div>
+              </div>
+            </div>
+          </ContactOptions>
+        </SupportGrid>
       </Section>
 
-      <RewardsSection>
-        <h2>JSK At Your Service</h2>
-        <RewardsGrid>
-          {rewardsData.map((reward, index) => (
-            <RewardCard key={index}>
-              <img src={reward.icon} alt={reward.title} />
-              <h3>Join Vault Rewards</h3>
-              <p>"This was one of the first rings I had looked at in person. After looking at hundreds"</p>
-              <a href="#">LEARN MORE</a>
-            </RewardCard>
-          ))}
-        </RewardsGrid>
-        <p style={{ marginTop: '40px' }}>
-          <a href="#">PROMOTION TERMS & CONDITIONS</a>
-        </p>
-      </RewardsSection>
+   
     </Container>
   );
 };

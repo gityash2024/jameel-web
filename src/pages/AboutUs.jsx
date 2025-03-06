@@ -7,6 +7,7 @@ import Frame from "../assets/Frame.svg"
 import ourMissionvision from "../assets/ourMission&vision.png";
 import hearwhatclient from "../assets/hearwhatclient.png";
 import AboutUsTwo from '../pages/AboutUsTwo';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   width: 100%;
@@ -415,6 +416,7 @@ const ClientRole = styled.p`
 `;
 
 const AboutUs = () => {
+  const navigate=useNavigate();
   const stats = [
     {
       number: "6,500,00",
@@ -502,7 +504,7 @@ const AboutUs = () => {
             <CardContent>
               <CardTitle>{card.title}</CardTitle>
               <CardText>{card.text}</CardText>
-              <ReadMore href="#">
+              <ReadMore onClick={() => {navigate("/")}}>
                 Read More
                 <span>→</span>
               </ReadMore>

@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from "styled-components";
-import { ChevronDown } from 'lucide-react';
-import ring_1 from "../assets/ring_1.svg";
-import ring_2 from "../assets/ring_2.svg";
-import daimond_logo from "../assets/daimond_logo.svg";
+import { cartAPI, orderAPI } from "../services/api";
+import { toast } from 'react-hot-toast';
 
 const Container = styled.div`
   max-width: 1200px;
@@ -31,27 +30,6 @@ const Title = styled.h1`
   text-align: center;
   font-size: 36px;
   margin-bottom: 30px;
-`;
-
-const AssistantBox = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 30px;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  
-  img {
-    width: 24px;
-    height: 24px;
-  }
-  
-  a {
-    color: #000;
-    text-decoration: underline;
-  }
 `;
 
 const ContentWrapper = styled.div`
@@ -92,25 +70,31 @@ const FormGroup = styled.div`
     margin-bottom: 8px;
     color: #333;
   }
+
+  .error {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+  }
 `;
 
 const Input = styled.input`
   width: 100%;
   padding: 12px;
-  border: 1px solid #ddd;
+  border: 1px solid ${props => props.error ? 'red' : '#ddd'};
   border-radius: 4px;
   background-color: #f8f9fc;
   
   &:focus {
     outline: none;
-    border-color: #000;
+    border-color: ${props => props.error ? 'red' : '#000'};
   }
 `;
 
 const Select = styled.select`
   width: 100%;
   padding: 12px;
-  border: 1px solid #ddd;
+  border: 1px solid ${props => props.error ? 'red' : '#ddd'};
   border-radius: 4px;
   background-color: #f8f9fc;
   appearance: none;
@@ -118,7 +102,7 @@ const Select = styled.select`
   
   &:focus {
     outline: none;
-    border-color: #000;
+    border-color: ${props => props.error ? 'red' : '#000'};
   }
 `;
 
@@ -126,19 +110,6 @@ const PhoneInput = styled.div`
   display: grid;
   grid-template-columns: 80px 1fr;
   gap: 10px;
-`;
-
-const Checkbox = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 20px 0;
-  
-  input {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-  }
 `;
 
 const OrderSummary = styled.div`
@@ -219,19 +190,6 @@ const RadioOption = styled.label`
   }
 `;
 
-const PaymentOptions = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  margin: 20px 0;
-`;
-
-const PaymentOption = styled(RadioOption)`
-  justify-content: center;
-  text-transform: uppercase;
-  font-weight: 500;
-`;
-
 const PlaceOrderButton = styled.button`
   width: 100%;
   padding: 15px;
@@ -246,19 +204,49 @@ const PlaceOrderButton = styled.button`
   &:hover {
     opacity: 0.9;
   }
+
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
 `;
 
 const CheckoutPage = () => {
-  // Form state
+  const navigate = useNavigate();
+  const [cartItems, setCartItems] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const loadCartAndCheckAuth = async () => {
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      setIsLoggedIn(true);
+
+      try {
+        const response = await cartAPI.getCart();
+        if (response.data && response.data.data && response.data.data.cart) {
+          setCartItems(response.data.data.cart.items || []);
+        }
+      } catch (error) {
+        console.error('Error loading cart:', error);
+        toast.error('Failed to load cart items');
+      }
+    };
+
+    loadCartAndCheckAuth();
+  }, [navigate]);
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     phoneCode: '+1',
     phone: '',
-    password: '',
-    createAccount: false,
-    title: '',
     address: '',
     state: '',
     city: '',
@@ -266,31 +254,10 @@ const CheckoutPage = () => {
     delivery: 'standard',
     payment: 'cod'
   });
+  const [errors, setErrors] = useState({});
 
-  // Cart items state
-  const [cartItems] = useState([
-    {
-      id: 1,
-      name: "Memories, Moments,",
-      price: 149.99,
-      quantity: 1,
-      image: ring_1
-    },
-    {
-      id: 2,
-      name: "Memories, Moments,",
-      price: 149.99,
-      quantity: 1,
-      image: ring_2
-    }
-  ]);
-
-  // Dropdown options
   const states = [
-    "New York",
-    "California",
-    "Texas",
-    "Florida"
+    "New York", "California", "Texas", "Florida"
   ];
 
   const cities = {
@@ -300,80 +267,147 @@ const CheckoutPage = () => {
     "Florida": ["Miami", "Orlando", "Tampa"]
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
+    if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.trim()) newErrors.email = 'Email is required';
+    else if (!emailRegex.test(formData.email)) newErrors.email = 'Invalid email format';
+    
+    const phoneRegex = /^\d{6,10}$/;
+    if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
+    else if (!phoneRegex.test(formData.phone)) newErrors.phone = 'Invalid phone number';
+    
+    if (!formData.address.trim()) newErrors.address = 'Address is required';
+    if (!formData.state) newErrors.state = 'State is required';
+    if (!formData.city) newErrors.city = 'City is required';
+    
+    const pincodeRegex = /^\d{5,6}$/;
+    if (!formData.pincode.trim()) newErrors.pincode = 'Pincode is required';
+    else if (!pincodeRegex.test(formData.pincode)) newErrors.pincode = 'Invalid pincode';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
   };
 
   const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cartItems.reduce((total, item) => {
+      const price = item.product?.salePrice || item.product?.regularPrice || 0;
+      return total + (price * item.quantity);
+    }, 0);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    console.log('Order total:', calculateTotal());
+    
+    if (!validateForm()) {
+      toast.error('Please fill in all required fields correctly');
+      return;
+    }
+
+    try {
+      const orderData = {
+        ...formData,
+        items: cartItems,
+        total: calculateTotal()
+      };
+
+      const response = await orderAPI.createOrder(orderData);
+      
+      if (response.data.success) {
+        toast.success('Order placed successfully!');
+        navigate('/order-confirmation', { 
+          state: { 
+            orderDetails: response.data.data,
+            items: cartItems 
+          } 
+        });
+      } else {
+        toast.error('Failed to place order');
+      }
+    } catch (error) {
+      console.error('Order submission error:', error);
+      toast.error('Error placing order');
+    }
   };
+
+  if (!isLoggedIn) {
+    return null;
+  }
 
   return (
     <Container>
       <BreadCrumb>
         <a href="/">Home</a>
         <span>/</span>
-        <span>Custom Jewelry</span>
+        <span>Checkout</span>
       </BreadCrumb>
       
       <Title>Checkout</Title>
-      
-      <AssistantBox>
-        <img src={daimond_logo} alt="Diamond" />
-        <span>506 results too many? Our Jewelry Assistant can help!</span>
-        <a href="#">Describe what you're looking for?</a>
-      </AssistantBox>
 
       <form onSubmit={handleSubmit}>
         <ContentWrapper>
           <div>
             <Section>
-              <h2>Account Details</h2>
+              <h2>Shipping Details</h2>
               <FormGrid>
                 <FormGroup>
-                  <label>Full Name</label>
+                  <label>First Name</label>
                   <Input 
                     type="text" 
                     name="firstName" 
-                    placeholder="Enter name"
+                    placeholder="Enter first name"
                     value={formData.firstName}
                     onChange={handleInputChange}
-                    required
+                    error={errors.firstName}
                   />
+                  {errors.firstName && <div className="error">{errors.firstName}</div>}
                 </FormGroup>
                 <FormGroup>
                   <label>Last Name</label>
                   <Input 
                     type="text" 
                     name="lastName" 
-                    placeholder="Enter Last Name"
+                    placeholder="Enter last name"
                     value={formData.lastName}
                     onChange={handleInputChange}
-                    required
+                    error={errors.lastName}
                   />
+                  {errors.lastName && <div className="error">{errors.lastName}</div>}
                 </FormGroup>
               </FormGrid>
+
+              </Section> 
               
               <FormGroup>
                 <label>Email Address</label>
                 <Input 
                   type="email" 
                   name="email" 
-                  placeholder="Enter Email Address"
+                  placeholder="Enter email address"
                   value={formData.email}
                   onChange={handleInputChange}
-                  required
+                  error={errors.email}
                 />
+                {errors.email && <div className="error">{errors.email}</div>}
               </FormGroup>
               
               <FormGroup>
@@ -391,48 +425,13 @@ const CheckoutPage = () => {
                   <Input 
                     type="tel" 
                     name="phone" 
-                    placeholder="000000"
+                    placeholder="Enter phone number"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    required
+                    error={errors.phone}
                   />
                 </PhoneInput>
-              </FormGroup>
-              
-              <FormGroup>
-                <label>Password</label>
-                <Input 
-                  type="password" 
-                  name="password" 
-                  placeholder="Enter Password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  required
-                />
-              </FormGroup>
-              
-              <Checkbox>
-                <input 
-                  type="checkbox" 
-                  name="createAccount" 
-                  checked={formData.createAccount}
-                  onChange={handleInputChange}
-                />
-                <span>Create an account?</span>
-              </Checkbox>
-            </Section>
-
-            <Section>
-              <h2>Shipping Details</h2>
-              <FormGroup>
-                <label>Title</label>
-                <Input 
-                  type="text" 
-                  name="title" 
-                  placeholder="Enter Title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                />
+                {errors.phone && <div className="error">{errors.phone}</div>}
               </FormGroup>
               
               <FormGroup>
@@ -440,307 +439,174 @@ const CheckoutPage = () => {
                 <Input 
                   type="text" 
                   name="address" 
-                  placeholder="Enter Address"
+                  placeholder="Enter address"
                   value={formData.address}
                   onChange={handleInputChange}
-                  required
+                  error={errors.address}
                 />
+                {errors.address && <div className="error">{errors.address}</div>}
               </FormGroup>
               
-              <FormGroup>
-                <label>Select State</label>
-                <Select 
-                  name="state" 
-                  value={formData.state}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="">Select</option>
-                  {states.map(state => (
-                    <option key={state} value={state}>{state}</option>
-                  ))}
-                </Select>
-              </FormGroup>
-              
-              <FormGroup>
-                <label>Select City</label>
-                <Select 
-                  name="city" 
-                  value={formData.city}
-                  onChange={handleInputChange}
-                  required
-                  disabled={!formData.state}
-                >
-                  <option value="">Select</option>
-                  {formData.state && cities[formData.state].map(city => (
-                    <option key={city} value={city}>{city}</option>
-                  ))}
-                </Select>
-              </FormGroup>
+              <FormGrid>
+                <FormGroup>
+                  <label>State</label>
+                  <Select 
+                    name="state" 
+                    value={formData.state}
+                    onChange={handleInputChange}
+                    error={errors.state}
+                  >
+                    <option value="">Select State</option>
+                    {states.map(state => (
+                      <option key={state} value={state}>{state}</option>
+                    ))}
+                  </Select>
+                  {errors.state && <div className="error">{errors.state}</div>}
+                </FormGroup>
+                
+                <FormGroup>
+                  <label>City</label>
+                  <Select 
+                    name="city" 
+                    value={formData.city}
+                    onChange={handleInputChange}
+                    disabled={!formData.state}
+                    error={errors.city}
+                  >
+                    <option value="">Select City</option>
+                    {formData.state && cities[formData.state].map(city => (
+                      <option key={city} value={city}>{city}</option>
+                    ))}
+                  </Select>
+                  {errors.city && <div className="error">{errors.city}</div>}
+                </FormGroup>
+              </FormGrid>
               
               <FormGroup>
                 <label>Pincode</label>
                 <Input 
                   type="text" 
                   name="pincode" 
-                  placeholder="Enter Pincode"
+                  placeholder="Enter pincode"
                   value={formData.pincode}
                   onChange={handleInputChange}
-                  required
+                  error={errors.pincode}
                 />
+                {errors.pincode && <div className="error">{errors.pincode}</div>}
               </FormGroup>
-              <FormGroup>
-                <label>Phone Number</label>
-                <PhoneInput>
-                  <Select 
-                    name="phoneCode"
-                    value={formData.phoneCode}
-                    onChange={handleInputChange}
-                  >
-                    <option value="+1">+1</option>
-                    <option value="+44">+44</option>
-                    <option value="+91">+91</option>
-                  </Select>
-                  <Input 
-                    type="tel" 
-                    name="phone" 
-                    placeholder="000000"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </PhoneInput>
-              </FormGroup>
-            </Section>
-            <Section>
-              <h2>Billing Details</h2>
-              <FormGroup>
-                <label>Title</label>
-                <Input 
-                  type="text" 
-                  name="title" 
-                  placeholder="Enter Title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                />
-              </FormGroup>
-              
-              <FormGroup>
-                <label>Address</label>
-                <Input 
-                  type="text" 
-                  name="address" 
-                  placeholder="Enter Address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  required
-                />
-              </FormGroup>
-              
-              <FormGroup>
-                <label>Select State</label>
-                <Select 
-                  name="state" 
-                  value={formData.state}
-                  onChange={handleInputChange}
-                  required
+
+              <Section>
+                <h2>Delivery Method</h2>
+                <RadioGroup>
+                  <RadioOption checked={formData.delivery === 'standard'}>
+                    <input 
+                      type="radio" 
+                      name="delivery" 
+                      value="standard"
+                      checked={formData.delivery === 'standard'}
+                      onChange={handleInputChange}
+                    />
+                    <div>
+                      <div>Standard Delivery</div>
+                      <div>Approx 5 to 7 Days</div>
+                    </div>
+                  </RadioOption>
+                  <RadioOption checked={formData.delivery === 'express'}>
+                    <input 
+                      type="radio" 
+                      name="delivery" 
+                      value="express"
+                      checked={formData.delivery === 'express'}
+                      onChange={handleInputChange}
+                    />
+                    <div>
+                      <div>Express Delivery</div>
+                      <div>Schedule</div>
+                    </div>
+                  </RadioOption>
+                </RadioGroup>
+              </Section>
+
+              <Section>
+                <h2>Payment Method</h2>
+                <RadioGroup>
+                  <RadioOption checked={formData.payment === 'cod'}>
+                    <input 
+                      type="radio" 
+                      name="payment" 
+                      value="cod"
+                      checked={formData.payment === 'cod'}
+                      onChange={handleInputChange}
+                    />
+                    <span>Cash on Delivery</span>
+                  </RadioOption>
+                  <RadioOption checked={formData.payment === 'stripe'}>
+                    <input 
+                      type="radio" 
+                      name="payment" 
+                      value="stripe"
+                      checked={formData.payment === 'stripe'}
+                      onChange={handleInputChange}
+                    />
+                    <span>Credit Card</span>
+                  </RadioOption>
+                </RadioGroup>
+              </Section>
+            </div>
+
+            <div>
+              <OrderSummary>
+                <h2>Order Summary</h2>
+                {cartItems.map(item => {
+                  const price = item.product?.salePrice || item.product?.regularPrice;
+                  return (
+                    <OrderItem key={item._id}>
+                      <img 
+                        src={item.product?.images?.[0]?.url || '/placeholder.png'} 
+                        alt={item.product?.name} 
+                      />
+                      <div className="details">
+                        <h3>{item.product?.name}</h3>
+                        <div className="price">
+                          ${price?.toFixed(2)} x {item.quantity}
+                        </div>
+                        {item.attributes && item.attributes.length > 0 && (
+                          <div style={{ fontSize: '0.875rem', color: '#666' }}>
+                            {item.attributes[0].name}: {item.attributes[0].value}
+                          </div>
+                        )}
+                      </div>
+                      <div>${(price * item.quantity).toFixed(2)}</div>
+                    </OrderItem>
+                  );
+                })}
+                
+                <BillingSummary>
+                  <div className="row">
+                    <span>Subtotal:</span>
+                    <span>${calculateTotal().toFixed(2)}</span>
+                  </div>
+                  <div className="row">
+                    <span>Shipping:</span>
+                    <span>$0.00</span>
+                  </div>
+                  <div className="row total">
+                    <span>Total:</span>
+                    <span>${calculateTotal().toFixed(2)}</span>
+                  </div>
+                </BillingSummary>
+
+                <PlaceOrderButton 
+                  type="submit"
+                  disabled={cartItems.length === 0}
                 >
-                  <option value="">Select</option>
-                  {states.map(state => (
-                    <option key={state} value={state}>{state}</option>
-                  ))}
-                </Select>
-              </FormGroup>
-              
-              <FormGroup>
-                <label>Select City</label>
-                <Select 
-                  name="city" 
-                  value={formData.city}
-                  onChange={handleInputChange}
-                  required
-                  disabled={!formData.state}
-                >
-                  <option value="">Select</option>
-                  {formData.state && cities[formData.state].map(city => (
-                    <option key={city} value={city}>{city}</option>
-                  ))}
-                </Select>
-              </FormGroup>
-              
-              <FormGroup>
-                <label>Pincode</label>
-                <Input 
-                  type="text" 
-                  name="pincode" 
-                  placeholder="Enter Pincode"
-                  value={formData.pincode}
-                  onChange={handleInputChange}
-                  required
-                />
-              </FormGroup>
-              <FormGroup>
-                <label>Phone Number</label>
-                <PhoneInput>
-                  <Select 
-                    name="phoneCode"
-                    value={formData.phoneCode}
-                    onChange={handleInputChange}
-                  >
-                    <option value="+1">+1</option>
-                    <option value="+44">+44</option>
-                    <option value="+91">+91</option>
-                  </Select>
-                  <Input 
-                    type="tel" 
-                    name="phone" 
-                    placeholder="000000"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </PhoneInput>
-              </FormGroup>
-            </Section>
-
-            <Section>
-              <h2>Delivery Details</h2>
-              <RadioGroup>
-                <RadioOption checked={formData.delivery === 'standard'}>
-                  <input 
-                    type="radio" 
-                    name="delivery" 
-                    value="standard"
-                    checked={formData.delivery === 'standard'}
-                    onChange={handleInputChange}
-                  />
-                  <div>
-                    <div>Standard Delivery</div>
-                    <div>Approx 5 to 7 Days</div>
-                  </div>
-                </RadioOption>
-                <RadioOption checked={formData.delivery === 'express'}>
-                  <input 
-                    type="radio" 
-                    name="delivery" 
-                    value="express"
-                    checked={formData.delivery === 'express'}
-                    onChange={handleInputChange}
-                  />
-                  <div>
-                    <div>Express Delivery</div>
-                    <div>Schedule</div>
-                  </div>
-                </RadioOption>
-              </RadioGroup>
-            </Section>
-
-            <Section>
-              <h2>Payment Details</h2>
-              <PaymentOptions>
-                <PaymentOption checked={formData.payment === 'cod'}>
-                  <input 
-                    type="radio" 
-                    name="payment" 
-                    value="cod"
-                    checked={formData.payment === 'cod'}
-                    onChange={handleInputChange}
-                  />
-                  <span>COD</span>
-                </PaymentOption>
-                <PaymentOption checked={formData.payment === 'paypal'}>
-                  <input 
-                    type="radio" 
-                    name="payment" 
-                    value="paypal"
-                    checked={formData.payment === 'paypal'}
-                    onChange={handleInputChange}
-                  />
-                  <span>PayPal</span>
-                </PaymentOption>
-                <PaymentOption checked={formData.payment === 'stripe'}>
-                  <input 
-                    type="radio" 
-                    name="payment" 
-                    value="stripe"
-                    checked={formData.payment === 'stripe'}
-                    onChange={handleInputChange}
-                  />
-                  <span>Stripe</span>
-                </PaymentOption>
-                <PaymentOption checked={formData.payment === 'sslcommerz'}>
-                  <input 
-                    type="radio" 
-                    name="payment" 
-                    value="sslcommerz"
-                    checked={formData.payment === 'sslcommerz'}
-                    onChange={handleInputChange}
-                  />
-                  <span>SSLCommerz</span>
-                </PaymentOption>
-              </PaymentOptions>
-            </Section>
-          </div>
-
-          <div>
-            <OrderSummary>
-              <h2>Summary Order</h2>
-              {cartItems.map(item => (
-                <OrderItem key={item.id}>
-                  <img src={item.image} alt={item.name} />
-                  <div className="details">
-                    <h3>{item.name}</h3>
-                    <div className="price">${item.price} x {item.quantity}</div>
-                  </div>
-                  <div>${(item.price * item.quantity).toFixed(2)}</div>
-                </OrderItem>
-              ))}
-              
-              <BillingSummary>
-                <div className="row">
-                  <span>Sub Total:</span>
-                  <span>$49.99</span>
-                </div>
-                <div className="row">
-                  <span>Shipping:</span>
-                  <span>$49.99</span>
-                </div>
-                <div className="row">
-                  <span>Tax:</span>
-                  <span>$49.99</span>
-                </div>
-                <div className="row">
-                  <span>Points:</span>
-                  <span>$49.99</span>
-                </div>
-                <div className="row">
-                  <span>Down payment:</span>
-                  <span>$49.99</span>
-                </div>
-                <div className="row">
-                  <span>Layaway Payment:</span>
-                  <span>$49.99</span>
-                </div>
-                <div className="row">
-                  <span>Monthly payment:</span>
-                  <span>$49.99</span>
-                </div>
-                <div className="row">
-                  <span>Total:</span>
-                  <span>$49.99</span>
-                </div>
-                <div className="row total">
-                  <span>Sub Total:</span>
-                  <span>${calculateTotal().toFixed(2)}</span>
-                </div>
-              </BillingSummary>
-
-              <PlaceOrderButton type="submit">Place Order</PlaceOrderButton>
-            </OrderSummary>
-          </div>
-        </ContentWrapper>
-      </form>
-    </Container>
+                  Place Order
+                </PlaceOrderButton>
+              </OrderSummary>
+            </div>
+          </ContentWrapper>
+        </form>
+      </Container>
   );
 };
 
