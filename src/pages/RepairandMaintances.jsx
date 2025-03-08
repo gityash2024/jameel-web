@@ -9,14 +9,22 @@ import justatyourservice_3 from "../assets/justatyourservice_3.svg";
 import justatyourservice_4 from "../assets/justatyourservice_4.svg";
 import { useNavigate } from 'react-router-dom';
 
+// Main container for the entire component
+const PageWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 const Container = styled.div`
   width: 100%;
-  max-width: 1440px;
+  max-width: 1200px; // Reduced from 1440px to make content less spread out
   margin: 0 auto;
   padding: 0 1rem;
   
   @media (min-width: 768px) {
-    padding: 0;
+    padding: 0 2rem;
   }
 `;
 
@@ -29,6 +37,9 @@ const SearchSection = styled.div`
   padding: 15px;
   background: white;
   text-align: center;
+  width: 100%;
+  max-width: 1000px; // Added max-width to make it less wide
+  margin: 0 auto;
   
   @media (min-width: 768px) {
     flex-direction: row;
@@ -50,6 +61,7 @@ const SearchText = styled.p`
   
   @media (min-width: 768px) {
     font-size: 16px;
+    font-family: 'Scope One';
   }
 `;
 
@@ -61,6 +73,7 @@ const MainTitle = styled.h1`
   
   @media (min-width: 768px) {
     font-size: 42px;
+    font-family: 'Scope One';
   }
 `;
 
@@ -72,6 +85,8 @@ const Section = styled.div`
   background: #f8f8f8;
   margin: 20px 0;
   gap: 30px;
+  width: 100%;
+  max-width: 1000px; // Added max-width
   
   @media (min-width: 768px) {
     flex-direction: ${props => props.reverse ? 'row-reverse' : 'row'};
@@ -111,6 +126,7 @@ const Title = styled.h2`
   @media (min-width: 768px) {
     font-size: 42px;
     margin-bottom: 20px;
+    font-family: 'Scope One';
   }
 `;
 
@@ -123,6 +139,7 @@ const Description = styled.p`
   @media (min-width: 768px) {
     font-size: 18px;
     margin-bottom: 30px;
+    font-family: 'Scope One';
   }
 `;
 
@@ -151,6 +168,9 @@ const Button = styled.button`
 
   @media (min-width: 768px) {
     width: auto;
+    font-family: 'Scope One';
+    padding: 9px;
+    margin: 0px;
   }
 
   &:hover {
@@ -161,6 +181,8 @@ const Button = styled.button`
 const LoremSection = styled.div`
   padding: 20px;
   background: white;
+  width: 100%;
+  max-width: 1000px; // Added max-width
   
   @media (min-width: 768px) {
     padding: 40px;
@@ -173,11 +195,13 @@ const FormSection = styled.div`
   gap: 30px;
   padding: 40px 20px;
   align-items: center;
+  width: 100%;
+  max-width: 1000px; // Added max-width
   
   @media (min-width: 768px) {
     grid-template-columns: 1fr 1fr;
     gap: 60px;
-    padding: 80px 0;
+    padding: 80px 40px; // Changed from 80px 0
   }
 `;
 
@@ -215,6 +239,7 @@ const Label = styled.label`
   
   @media (min-width: 768px) {
     font-size: 16px;
+    // font-family: 'Scope One';
   }
 `;
 
@@ -228,6 +253,7 @@ const Input = styled.input`
   @media (min-width: 768px) {
     padding: 12px 16px;
     font-size: 16px;
+    // font-family: 'Scope One';
   }
 
   &::placeholder {
@@ -246,6 +272,7 @@ const Select = styled.select`
   @media (min-width: 768px) {
     padding: 12px 16px;
     font-size: 16px;
+    // font-family: 'Scope One';
   }
 `;
 
@@ -281,6 +308,7 @@ const SubmitButton = styled.button`
   @media (min-width: 768px) {
     width: fit-content;
     font-size: 16px;
+    // font-family: 'Scope One';
   }
   
   &:hover {
@@ -303,9 +331,11 @@ const ImageContainer = styled.div`
 const RewardsSection = styled.div`
   padding: 40px 20px;
   background: #fff;
+  width: 100%;
+  max-width: 1000px; // Added max-width
   
   @media (min-width: 768px) {
-    padding: 80px 0;
+    padding: 80px 40px; // Changed from 80px 0
   }
 `;
 
@@ -369,6 +399,7 @@ const CardTitle = styled.h3`
   @media (min-width: 768px) {
     font-size: 18px;
     margin: 8px 0;
+    font-family: 'Scope One';
   }
 `;
 
@@ -381,6 +412,7 @@ const CardText = styled.p`
   @media (min-width: 768px) {
     font-size: 14px;
     margin-bottom: 16px;
+    font-family: 'Scope One';
   }
 `;
 
@@ -392,6 +424,7 @@ const LearnMoreLink = styled.a`
   
   @media (min-width: 768px) {
     font-size: 14px;
+    font-family: 'Scope One';
   }
 `;
 
@@ -406,6 +439,7 @@ const PromotionLink = styled.a`
   @media (min-width: 768px) {
     font-size: 14px;
     margin-top: 24px;
+    font-family: 'Scope One';
   }
 `;
 
@@ -450,69 +484,70 @@ const RepairandMaintances = () => {
     }
   ];
   return (
-    <Container>
-      <MainTitle>Jewelry Services</MainTitle>
-      <SearchSection>
-        <DiamondIcons>💎</DiamondIcons>
-        <SearchText>
-          <strong>506 results too many?</strong> Our Jewelry Assistant can help!{" "}
-          <span style={{ textDecoration: "underline", cursor: "pointer" }}>
-            Describe what you're looking for?
-          </span>
-        </SearchText>
-      </SearchSection>
+    <PageWrapper>
+      <Container>
+        <MainTitle>Jewelry Services</MainTitle>
+        <SearchSection>
+          <DiamondIcons>💎</DiamondIcons>
+          <SearchText>
+            <strong>506 results too many?</strong> Our Jewelry Assistant can help!{" "}
+            <span style={{ textDecoration: "underline", cursor: "pointer" }}>
+              Describe what you're looking for?
+            </span>
+          </SearchText>
+        </SearchSection>
 
-      <Section reverse>
-        <ContentArea>
-          <Title>In-Store Services</Title>
+        <Section reverse>
+          <ContentArea>
+            <Title>In-Store Services</Title>
+            <Description>
+              Discover what's happening at your local JSK Jewelers and plan your next visit
+            </Description>
+            <ButtonGroup>
+              <Button>Find Store</Button>
+              <Button>Book Appointment</Button>
+              <Button>Start a Repair</Button>
+            </ButtonGroup>
+          </ContentArea>
+          <ImageArea>
+            <img src={instoreservice} alt="In-store services" />
+          </ImageArea>
+        </Section>
+
+        <Section>
+          <ContentArea>
+            <Title>Your Full Service Jeweler</Title>
+            <Description>
+              JSK offers services to keep your jewelry sparkling for a lifetime.
+            </Description>
+          </ContentArea>
+          <ImageArea>
+            <img src={diamondband} alt="Full service jeweler" />
+          </ImageArea>
+        </Section>
+
+        <LoremSection>
+          <Title>Jewelry Cleaning & Polishing</Title>
           <Description>
-            Discover what's happening at your local JSK Jewelers and plan your next visit
+            Regular professional cleaning is essential to maintain the brilliance and beauty of your jewelry. At JSK Jewelers, our expert technicians use state-of-the-art equipment and techniques to clean, polish and restore your precious pieces to their original luster. Our ultrasonic cleaning removes dirt and grime from hard-to-reach places, while our professional polishing services remove minor scratches and restore the shine to your jewelry.
           </Description>
-          <ButtonGroup>
-            <Button>FIND STORE</Button>
-            <Button>Book Appointment</Button>
-            <Button>START A REPAIR</Button>
-          </ButtonGroup>
-        </ContentArea>
-        <ImageArea>
-          <img src={instoreservice} alt="In-store services" />
-        </ImageArea>
-      </Section>
-
-      <Section>
-        <ContentArea>
-          <Title>Your Full Service Jeweler</Title>
+          <Title>Ring Sizing & Repairs</Title>
           <Description>
-            JSK offers services to keep your jewelry sparkling for a lifetime.
+            Whether you need a ring sized up or down, or repaired after damage, our master jewelers can help. We offer professional ring sizing services to ensure your rings fit perfectly and comfortably. Our repair services can address common issues such as broken prongs, damaged settings, or worn bands. With decades of experience working with all types of precious metals and gemstones, our craftsmen can restore your jewelry to its original beauty.
           </Description>
-        </ContentArea>
-        <ImageArea>
-          <img src={diamondband} alt="Full service jeweler" />
-        </ImageArea>
-      </Section>
+          <Title>Jewelry Repair Made Easy</Title>
+          <Description>
+            At JSK Jewelers, we've simplified the jewelry repair process to make it convenient and stress-free for our customers. Simply bring your pieces to any of our store locations for a complimentary evaluation by our experts. We'll provide you with a detailed assessment, including repair recommendations and a transparent pricing estimate.
+            
+            Most repairs can be completed within 7-10 business days, with expedited services available for urgent needs. We take exceptional care with your treasured pieces, treating each item with the attention it deserves, whether it's a family heirloom or a recent purchase.
+            
+            Our comprehensive jewelry repair services include prong re-tipping, stone replacement, chain soldering, clasp replacement, and pearl restringing. We also offer custom modifications to update or personalize your existing jewelry. All repairs come with our satisfaction guarantee, ensuring your precious items are returned to you in exceptional condition.
+            
+            Trust our skilled craftsmen to handle your valuable pieces with expert care and precision. Schedule your jewelry repair consultation today and experience the JSK difference.
+          </Description>
+        </LoremSection>
 
-      <LoremSection>
-        <Title>Jewelry Cleaning & Polishing</Title>
-        <Description>
-          Regular professional cleaning is essential to maintain the brilliance and beauty of your jewelry. At JSK Jewelers, our expert technicians use state-of-the-art equipment and techniques to clean, polish and restore your precious pieces to their original luster. Our ultrasonic cleaning removes dirt and grime from hard-to-reach places, while our professional polishing services remove minor scratches and restore the shine to your jewelry.
-        </Description>
-        <Title>Ring Sizing & Repairs</Title>
-        <Description>
-          Whether you need a ring sized up or down, or repaired after damage, our master jewelers can help. We offer professional ring sizing services to ensure your rings fit perfectly and comfortably. Our repair services can address common issues such as broken prongs, damaged settings, or worn bands. With decades of experience working with all types of precious metals and gemstones, our craftsmen can restore your jewelry to its original beauty.
-        </Description>
-        <Title>Jewelry Repair Made Easy</Title>
-        <Description>
-          At JSK Jewelers, we've simplified the jewelry repair process to make it convenient and stress-free for our customers. Simply bring your pieces to any of our store locations for a complimentary evaluation by our experts. We'll provide you with a detailed assessment, including repair recommendations and a transparent pricing estimate.
-          
-          Most repairs can be completed within 7-10 business days, with expedited services available for urgent needs. We take exceptional care with your treasured pieces, treating each item with the attention it deserves, whether it's a family heirloom or a recent purchase.
-          
-          Our comprehensive jewelry repair services include prong re-tipping, stone replacement, chain soldering, clasp replacement, and pearl restringing. We also offer custom modifications to update or personalize your existing jewelry. All repairs come with our satisfaction guarantee, ensuring your precious items are returned to you in exceptional condition.
-          
-          Trust our skilled craftsmen to handle your valuable pieces with expert care and precision. Schedule your jewelry repair consultation today and experience the JSK difference.
-        </Description>
-      </LoremSection>
-
-      <FormSection>
+        <FormSection>
           <FormContent>
             <Title>Your Full Service Jeweler</Title>
             <Button onClick={()=>{navigate('/help-center')}}>Contact Us</Button>
@@ -538,7 +573,8 @@ const RepairandMaintances = () => {
           </RewardsGrid>
           <PromotionLink href="#">PROMOTION TERMS & CONDITIONS</PromotionLink>
         </RewardsSection>
-    </Container>
+      </Container>
+    </PageWrapper>
   );
 };
 

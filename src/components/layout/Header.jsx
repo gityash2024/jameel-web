@@ -38,6 +38,7 @@ const CartHeader = styled.div`
   span {
     font-size: 14px;
     color: #666;
+
   }
 `;
 
@@ -68,17 +69,20 @@ const CartItem = styled.div`
     .title {
       font-size: 14px;
       margin-bottom: 4px;
+
     }
     
     .price {
       font-size: 14px;
       font-weight: 500;
       margin-bottom: 4px;
+
     }
     
     .meta {
       font-size: 12px;
       color: #666;
+
     }
   }
 `;
@@ -105,6 +109,7 @@ const CartFooter = styled.div`
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
+
       
       &.view-cart {
         background: white;
@@ -144,6 +149,7 @@ const EmptyCart = styled.div`
     border: none;
     border-radius: 4px;
     font-size: 14px;
+
     font-weight: 500;
     cursor: pointer;
     

@@ -411,6 +411,7 @@ const OfferSection = styled.div`
   flex-direction: column;
   justify-content: center;
   opacity: 0;
+  font-family: 'Scope One';
 
   &.animated {
     animation: ${fadeIn} 0.8s ease-out forwards;
@@ -592,6 +593,7 @@ const PriceText = styled.div`
   font-size: 32px;
   font-weight: bold;
   margin-bottom: 8px;
+  font-family: 'Scope One';
   
   sup {
     font-size: 16px;
@@ -637,6 +639,7 @@ const SaleTitle = styled.h3`
   font-size: 24px;
   font-weight: 500;
   margin-bottom: 24px;
+  font-family: 'Scope One';
 
   @media (max-width: 768px) {
     font-size: 20px;
@@ -657,6 +660,7 @@ const ShopButton = styled.button`
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
+  font-family: 'Poppins';
   
   &:hover {
     background: #333;
@@ -696,6 +700,7 @@ const GiftsTitle = styled.h2`
   margin-bottom: 40px;
   color: #000;
   opacity: 0;
+  font-family: 'Poppins';
 
   &.animated {
     animation: ${fadeIn} 0.8s ease-out forwards;
@@ -745,6 +750,7 @@ const GiftButton = styled.button`
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-family: 'Scope One';
 
   &:hover {
     background: #cc0002;
@@ -852,6 +858,7 @@ const Title = styled.h2`
   font-weight: 500;
   line-height: 1.2;
   margin-bottom: 20px;
+  font-family: 'Scope One';
 
   @media (max-width: 1024px) {
     font-size: 36px;
@@ -873,6 +880,7 @@ const Subtitle = styled.p`
   line-height: 1.6;
   margin-bottom: 40px;
   opacity: 0.9;
+  font-family: 'Scope One'; 
 
   @media (max-width: 768px) {
     font-size: 16px;
@@ -896,6 +904,7 @@ const OrderButton = styled.button`
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-family: 'Poppins';
   
   &:hover {
     background: #f0f0f0;
@@ -1230,6 +1239,7 @@ const ServiceTitle = styled.h2`
   font-weight: 600;
   margin-bottom: 20px;
   color: #000;
+  font-family: 'Scope One';
   
   @media (max-width: 768px) {
     font-size: 28px;
@@ -1246,6 +1256,7 @@ const ServiceDescription = styled.p`
   color: #666;
   line-height: 1.6;
   margin-bottom: 30px;
+  font-family: 'Scope One';
   
   @media (max-width: 768px) {
     font-size: 15px;
@@ -1268,6 +1279,7 @@ const ServiceButton = styled.button`
   cursor: pointer;
   transition: all 0.3s ease;
   align-self: flex-start;
+  font-family: 'Poppins';
   
   &:hover {
     background: #333;
