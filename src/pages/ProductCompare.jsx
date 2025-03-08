@@ -1,8 +1,8 @@
+
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
 import { ChevronLeft, X, Check } from "lucide-react";
-import { productAPI } from "../services/api";
 import { toast } from "react-hot-toast";
 
 const Container = styled.div`
@@ -305,43 +305,51 @@ const ProductCompare = () => {
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      
-      const searchParams = new URLSearchParams(location.search);
-      const productIds = searchParams.get('products');
-      
-      if (!productIds) {
-        setLoading(false);
-        return;
-      }
-      
-      try {
-        const ids = productIds.split(',');
-        const productsData = [];
+    // Check if we have products data in location state
+    if (location.state && location.state.products) {
+      setProducts(location.state.products);
+      setLoading(false);
+    } else {
+      // Fallback to the existing API fetching logic
+      const fetchProducts = async () => {
+        setLoading(true);
         
-        for (const id of ids) {
-          try {
-            const response = await productAPI.getProduct(id);
-            if (response.data.data.product) {
-              productsData.push(response.data.data.product);
-            }
-          } catch (error) {
-            console.error(`Error fetching product ${id}:`, error);
-          }
+        const searchParams = new URLSearchParams(location.search);
+        const productIds = searchParams.get('products');
+        
+        if (!productIds) {
+          setLoading(false);
+          return;
         }
         
-        setProducts(productsData);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        toast.error('Failed to load products for comparison');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchProducts();
-  }, [location.search]);
+        try {
+          const ids = productIds.split(',');
+          const productsData = [];
+          
+          for (const id of ids) {
+            try {
+              const response = await productAPI.getProduct(id);
+              if (response.data.data.product) {
+                productsData.push(response.data.data.product);
+              }
+            } catch (error) {
+              console.error(`Error fetching product ${id}:`, error);
+            }
+          }
+          
+          setProducts(productsData);
+        } catch (error) {
+          console.error('Error fetching products:', error);
+          toast.error('Failed to load products for comparison');
+        } finally {
+          setLoading(false);
+        }
+      };
+      
+      fetchProducts();
+    }
+  }, [location]);
+  
   
   const handleBack = () => {
     navigate(-1);
@@ -351,19 +359,20 @@ const ProductCompare = () => {
     setProducts(prev => {
       const filtered = prev.filter(p => p._id !== productId);
       
-      const newIds = filtered.map(p => p._id).join(',');
       if (filtered.length > 1) {
-        navigate(`/product-compare?products=${newIds}`, { replace: true });
+        // Just update our local state, no need to change URL since 
+        // we're using location.state now
+        return filtered;
       } else {
+        // Navigate back to products if less than 2 products remain
         navigate('/product-details');
+        return filtered;
       }
-      
-      return filtered;
     });
   };
   
   const handleViewProduct = (product) => {
-    navigate(`/products/${product.slug}`);
+    navigate(`/products/${product._id}`);
   };
   
   const getSpecificationNames = () => {

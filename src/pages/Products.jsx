@@ -844,7 +844,9 @@ const Products = () => {
   };
   
   const handleProductClick = (product) => {
-    navigate(`/products/${product.slug}`);
+    // Previously using product.slug which might be undefined
+    // Now using product._id which is always present
+    navigate(`/products/${product._id}`);
   };
   
   const minPrice = 0;
@@ -881,8 +883,12 @@ const Products = () => {
       return;
     }
     
-    const productIds = compareProducts.map(p => p._id).join(',');
-    navigate(`/product-compare?products=${productIds}`);
+    // Pass the full products data through state
+    navigate(`/product-compare`, {
+      state: { 
+        products: compareProducts
+      }
+    });
   };
   
   const renderMobileSidebar = () => (
@@ -1133,17 +1139,20 @@ const Products = () => {
                     <Heart size={25} fill={wishlistItems.includes(product._id) ? "#ED4956" : "none"} />
                   </WishlistButton>
                 </ProductHeader>
-
                 <div 
-                  className="image-container"
-                  onClick={() => handleProductClick(product)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <img 
-                    src={product.images?.[0]?.url || '/placeholder.png'} 
-                    alt={product.name} 
-                  />
-                </div>
+  className="image-container"
+  onClick={() => handleProductClick(product)}
+  style={{ cursor: 'pointer' }}
+>
+  <img 
+    src={product.images?.[0]?.url || '/placeholder.png'} 
+    alt={product.name} 
+  />
+</div>
+
+<ProductTitle onClick={() => handleProductClick(product)} style={{ cursor: 'pointer' }}>
+  {product.name}
+</ProductTitle>
 
                 <ProductTitle onClick={() => handleProductClick(product)} style={{ cursor: 'pointer' }}>
                   {product.name}

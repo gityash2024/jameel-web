@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import SocialShare from './SocialShare';
+
 import styled from "styled-components";
 import {
   ChevronLeft,
@@ -744,11 +746,20 @@ const ProductDetail = () => {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        const response = await productAPI.getProductBySlug(slug);
+        // Check if slug is actually an ID (this happens when navigating from Products.js)
+        let response;
+        if (slug.match(/^[0-9a-fA-F]{24}$/)) {
+          // It's likely a MongoDB ObjectId
+          response = await productAPI.getProduct(slug);
+        } else {
+          // It's a slug
+          response = await productAPI.getProductBySlug(slug);
+        }
         
         if (response.data.data.product) {
           setProduct(response.data.data.product);
           
+          // Size selection logic remains the same...
           if (response.data.data.product.attributes) {
             const sizeAttribute = response.data.data.product.attributes.find(
               attr => attr.name.toLowerCase() === 'size' || attr.name.toLowerCase() === 'ring size'
@@ -776,7 +787,6 @@ const ProductDetail = () => {
     
     fetchProduct();
   }, [slug, navigate]);
-  
   // Check wishlist status when product or wishlist changes
   useEffect(() => {
     // First, check if the product and wishlistItems are available
@@ -1086,13 +1096,14 @@ const ProductDetail = () => {
         </MainImageContainer>
 
         <ProductDetails>
-          <ProductHeader>
-            <div className="item-number">
-              <span>Item #: {product.sku}</span>
-              {product.isNewArrival && <span className="new-tag">New</span>}
-            </div>
-            <Share2 size={20} />
-          </ProductHeader>
+        <ProductHeader>
+  <div className="item-number">
+    <span>Item #: {product.sku}</span>
+    {product.isNewArrival && <span className="new-tag">New</span>}
+  </div>
+  {/* Replace this Share2 icon with the SocialShare component */}
+  <SocialShare productName={product.name} productId={product._id} />
+</ProductHeader>
 
           <Title>{product.name}</Title>
           

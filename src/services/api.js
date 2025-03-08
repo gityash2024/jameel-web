@@ -125,9 +125,19 @@ export const blogAPI = {
 
 
 export const productAPI = {
-  getAllProducts: (params) => api.get('/products', { params }),
-  getProduct: (id) => api.get(`/products/${id}`),
-  getProductBySlug: (slug) => api.get(`/products/${slug}`),
+  getAllProducts: (params) => {
+    return api.get('/products', { params });
+  },
+  
+  getProduct: (id) => {
+    // Update this to use the new endpoint
+    return api.get(`/products/id/${id}`);
+  },
+  
+  getProductBySlug: (slug) => {
+    return api.get(`/products/${slug}`);
+  },
+  
   getProductsByCategory: (categorySlug) => 
     api.get(`/products/category/${categorySlug}`),
   getProductsBySubcategory: (categorySlug, subcategoryId) => 
