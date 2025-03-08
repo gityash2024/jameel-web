@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { Diamond, Heart, ChevronDown, ChevronUp, X, Check } from "lucide-react";
+import { Diamond, Heart, ChevronDown, ChevronUp, X, Check, ChevronRight, ChevronLeft } from "lucide-react";
 import { productAPI, userAPI } from "../services/api";
 import { toast } from "react-hot-toast";
 import { HeaderContext } from "../components/layout/Header";
@@ -583,28 +583,101 @@ const CompareCheckbox = styled.div`
   }
 `;
 
+const ShowMoreButton = styled.button`
+  display: block;
+  margin: 40px auto 0;
+  padding: 12px 32px;
+  background: white;
+  color: black;
+  border: 1px solid black;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    background: #f5f5f5;
+  }
+  
+  &:disabled {
+    background: #f5f5f5;
+    color: #999;
+    border-color: #e0e0e0;
+    cursor: not-allowed;
+  }
+`;
+
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+  gap: 8px;
+`;
+
+const PageButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  border: ${props => props.active ? 'none' : '1px solid #e0e0e0'};
+  background: ${props => props.active ? '#000' : '#fff'};
+  color: ${props => props.active ? '#fff' : '#333'};
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    background: ${props => props.active ? '#000' : '#f5f5f5'};
+  }
+  
+  &:disabled {
+    background: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+  }
+`;
+
+const PageInfo = styled.div`
+  font-size: 14px;
+  color: #666;
+  margin-top: 16px;
+  text-align: center;
+`;
+
 const Products = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { wishlistItems, setWishlistItems } = useContext(HeaderContext) || defaultContextValues;
 
-  let isLoggedIn=false;
+  let isLoggedIn = false;
   const token = localStorage.getItem('token');
   const userDataStr = localStorage.getItem('jammelUser');
   if (token && userDataStr) {
-    isLoggedIn=true;
+    isLoggedIn = true;
   }
   
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [totalProducts, setTotalProducts] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [openFilters, setOpenFilters] = useState({});
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
   const [appliedPriceRange, setAppliedPriceRange] = useState({ min: 0, max: 10000 });
   const [categoryData, setCategoryData] = useState(null);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [compareProducts, setCompareProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showPagination, setShowPagination] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [allProductsLoaded, setAllProductsLoaded] = useState(false);
+  
+  const productsPerPage = 9;
+  const initialProductsToShow = 6;
   
   const searchParams = new URLSearchParams(location.search);
   const categorySlug = searchParams.get('category');
@@ -660,29 +733,42 @@ const Products = () => {
       options: filterOptions.materials
     }
   ];
-  
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
         let response;
+        const params = {
+          page: 1,
+          limit: productsPerPage
+        };
         
         if (searchQuery) {
-          response = await productAPI.searchProducts({ q: searchQuery });
+          response = await productAPI.searchProducts({ q: searchQuery, ...params });
         } else if (subcategorySlug) {
-          response = await productAPI.getAllProducts({ subcategory: subcategorySlug });
+          response = await productAPI.getWebProducts({ subcategory: subcategorySlug, ...params });
           setCategoryData({ name: "Products" });
         } else if (categorySlug && categorySlug !== "undefined") {
-          response = await productAPI.getProductsByCategory(categorySlug);
+          response = await productAPI.getProductsByCategory(categorySlug, params);
           setCategoryData(response.data.data.category);
         } else {
-          response = await productAPI.getAllProducts();
+          response = await productAPI.getWebProducts(params);
         }
         
         if (response.data.data.products) {
           setProducts(response.data.data.products);
           setFilteredProducts(response.data.data.products);
           setTotalProducts(response.data.total || response.data.results || response.data.data.products.length);
+          setTotalPages(Math.ceil(response.data.total / productsPerPage));
+          
+          if (response.data.total > initialProductsToShow) {
+            setShowPagination(true);
+            setInitialLoad(false);
+          }
+          
+          if (response.data.data.products.length < productsPerPage) {
+            setAllProductsLoaded(true);
+          }
         }
         
         extractFilterOptions(response.data.data.products || []);
@@ -691,11 +777,96 @@ const Products = () => {
         toast.error('Failed to load products');
       } finally {
         setLoading(false);
+        setInitialLoad(false);
       }
     };
     
     fetchProducts();
   }, [categorySlug, subcategorySlug, searchQuery]);
+  const loadMoreProducts = async () => {
+    if (allProductsLoaded) return;
+    
+    const nextPage = currentPage + 1;
+    setCurrentPage(nextPage);
+    
+    try {
+      setLoading(true);
+      
+      let response;
+      const params = {
+        page: nextPage,
+        limit: productsPerPage
+      };
+      
+      if (searchQuery) {
+        response = await productAPI.searchProducts({ q: searchQuery, ...params });
+      } else if (subcategorySlug) {
+        response = await productAPI.getWebProducts({ subcategory: subcategorySlug, ...params });
+      } else if (categorySlug && categorySlug !== "undefined") {
+        response = await productAPI.getProductsByCategory(categorySlug, params);
+      } else {
+        response = await productAPI.getWebProducts(params);
+      }
+      
+      if (response.data.data.products) {
+        const newProducts = [...products, ...response.data.data.products];
+        setProducts(newProducts);
+        setFilteredProducts(newProducts);
+        
+        if (response.data.data.products.length < productsPerPage || newProducts.length >= totalProducts) {
+          setAllProductsLoaded(true);
+        }
+        
+        if (newProducts.length > initialProductsToShow) {
+          setShowPagination(true);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading more products:', error);
+      toast.error('Failed to load more products');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handlePageChange = async (page) => {
+    if (page === currentPage) return;
+    
+    setCurrentPage(page);
+    setLoading(true);
+    
+    try {
+      let response;
+      const params = {
+        page,
+        limit: productsPerPage
+      };
+      
+      if (searchQuery) {
+        response = await productAPI.searchProducts({ q: searchQuery, ...params });
+      } else if (subcategorySlug) {
+        response = await productAPI.getWebProducts({ subcategory: subcategorySlug, ...params });
+      } else if (categorySlug && categorySlug !== "undefined") {
+        response = await productAPI.getProductsByCategory(categorySlug, params);
+      } else {
+        response = await productAPI.getWebProducts(params);
+      }
+      
+      if (response.data.data.products) {
+        setFilteredProducts(response.data.data.products);
+        
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }
+    } catch (error) {
+      console.error('Error loading page:', error);
+      toast.error('Failed to load products');
+    } finally {
+      setLoading(false);
+    }
+  };
   
   const extractFilterOptions = (products) => {
     const brands = new Set();
@@ -799,6 +970,7 @@ const Products = () => {
     }
     
     setFilteredProducts(filtered);
+    setCurrentPage(1);
     setIsMobileSidebarOpen(false);
   };
   
@@ -813,9 +985,11 @@ const Products = () => {
     setPriceRange({ min: 0, max: 10000 });
     setAppliedPriceRange({ min: 0, max: 10000 });
     setFilteredProducts(products);
+    setCurrentPage(1);
     setIsMobileSidebarOpen(false);
   };
-  
+ 
+
   const handleWishlistToggle = async (product, e) => {
     e.stopPropagation();
     
@@ -844,8 +1018,7 @@ const Products = () => {
   };
   
   const handleProductClick = (product) => {
-    // Previously using product.slug which might be undefined
-    // Now using product._id which is always present
+    // Navigate using the _id which is always present
     navigate(`/products/${product._id}`);
   };
   
@@ -889,6 +1062,22 @@ const Products = () => {
         products: compareProducts
       }
     });
+  };
+
+  // Determine if we should show the initial "Show More" button or pagination
+  const displayedProducts = initialLoad ? 
+    filteredProducts.slice(0, initialProductsToShow) : 
+    filteredProducts;
+
+  const isShowMoreVisible = initialLoad && filteredProducts.length > initialProductsToShow && !showPagination;
+  
+  const handleShowMore = () => {
+    setInitialLoad(false);
+    setShowPagination(true);
+    
+    if (products.length < productsPerPage) {
+      loadMoreProducts();
+    }
   };
   
   const renderMobileSidebar = () => (
@@ -985,6 +1174,56 @@ const Products = () => {
       </MobileSidebarFooter>
     </MobileSidebar>
   );
+
+  const renderPagination = () => {
+    if (totalPages <= 1 && totalProducts <= productsPerPage) return null;
+  
+    const pageNumbers = [];
+    const maxPageButtons = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
+    let endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+  
+    if (endPage - startPage + 1 < maxPageButtons) {
+      startPage = Math.max(1, endPage - maxPageButtons + 1);
+    }
+  
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+  
+    return (
+      <>
+        <PaginationContainer>
+          <PageButton 
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            <ChevronLeft size={16} />
+          </PageButton>
+          
+          {pageNumbers.map(number => (
+            <PageButton
+              key={number}
+              active={currentPage === number}
+              onClick={() => handlePageChange(number)}
+            >
+              {number}
+            </PageButton>
+          ))}
+          
+          <PageButton 
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            <ChevronRight size={16} />
+          </PageButton>
+        </PaginationContainer>
+        <PageInfo>
+          Showing {(currentPage - 1) * productsPerPage + 1} - {Math.min(currentPage * productsPerPage, totalProducts)} of {totalProducts} products
+        </PageInfo>
+      </>
+    );
+  };
 
   return (
     <Container>
@@ -1106,79 +1345,89 @@ const Products = () => {
           ))}
         </FilterSidebar>
 
-        {loading ? (
+        {loading && initialLoad ? (
           <LoadingSpinner />
-        ) : filteredProducts.length === 0 ? (
+        ) : displayedProducts.length === 0 ? (
           <NoResults>
             <h3>No products found</h3>
             <p>Try adjusting your search or filter criteria</p>
             <button onClick={resetFilters}>Clear all filters</button>
           </NoResults>
         ) : (
-          <ProductGrid>
-            {filteredProducts.map((product) => (
-              <ProductCard key={product._id}>
-                <CompareCheckbox checked={compareProducts.some(p => p._id === product._id)}>
-                  <input 
-                    type="checkbox" 
-                    id={`compare-${product._id}`}
-                    checked={compareProducts.some(p => p._id === product._id)}
-                    onChange={(e) => handleCompareToggle(product, e)}
-                  />
-                  <label htmlFor={`compare-${product._id}`}>
-                    {compareProducts.some(p => p._id === product._id) && <Check size={16} />}
-                  </label>
-                </CompareCheckbox>
-                
-                <ProductHeader>
-                  {product.isFeatured && <FeaturedTag>Featured Item</FeaturedTag>}
-                  <WishlistButton 
-                    active={wishlistItems?.includes(product._id)}
-                    onClick={(e) => handleWishlistToggle(product, e)}
+          <div>
+            <ProductGrid>
+              {displayedProducts.map((product) => (
+                <ProductCard key={product._id}>
+                  <CompareCheckbox checked={compareProducts.some(p => p._id === product._id)}>
+                    <input 
+                      type="checkbox" 
+                      id={`compare-${product._id}`}
+                      checked={compareProducts.some(p => p._id === product._id)}
+                      onChange={(e) => handleCompareToggle(product, e)}
+                    />
+                    <label htmlFor={`compare-${product._id}`}>
+                      {compareProducts.some(p => p._id === product._id) && <Check size={16} />}
+                    </label>
+                  </CompareCheckbox>
+                  
+                  <ProductHeader>
+                    {product.isFeatured && <FeaturedTag>Featured Item</FeaturedTag>}
+                    <WishlistButton 
+                      active={wishlistItems?.includes(product._id)}
+                      onClick={(e) => handleWishlistToggle(product, e)}
+                    >
+                      <Heart size={25} fill={wishlistItems.includes(product._id) ? "#ED4956" : "none"} />
+                    </WishlistButton>
+                  </ProductHeader>
+                  <div 
+                    className="image-container"
+                    onClick={() => handleProductClick(product)}
+                    style={{ cursor: 'pointer' }}
                   >
-                    <Heart size={25} fill={wishlistItems.includes(product._id) ? "#ED4956" : "none"} />
-                  </WishlistButton>
-                </ProductHeader>
-                <div 
-  className="image-container"
-  onClick={() => handleProductClick(product)}
-  style={{ cursor: 'pointer' }}
->
-  <img 
-    src={product.images?.[0]?.url || '/placeholder.png'} 
-    alt={product.name} 
-  />
-</div>
-
-<ProductTitle onClick={() => handleProductClick(product)} style={{ cursor: 'pointer' }}>
-  {product.name}
-</ProductTitle>
-
-                <ProductTitle onClick={() => handleProductClick(product)} style={{ cursor: 'pointer' }}>
-                  {product.name}
-                </ProductTitle>
-                
-                {product.salePrice && product.salePrice < product.regularPrice && (
-                  <SaleTag>Sale</SaleTag>
-                )}
-
-                <PriceInfo>
-                  <span className="current-price">
-                    ${(product.salePrice || product.regularPrice).toFixed(2)}
-                  </span>
+                    <img 
+                      src={product.images?.[0]?.url || '/placeholder.png'} 
+                      alt={product.name} 
+                    />
+                  </div>
+                  
+                  <ProductTitle onClick={() => handleProductClick(product)} style={{ cursor: 'pointer' }}>
+                    {product.name}
+                  </ProductTitle>
                   
                   {product.salePrice && product.salePrice < product.regularPrice && (
-                    <>
-                      <span className="original-price">${product.regularPrice.toFixed(2)}</span>
-                      <span className="discount">
-                        {Math.round((1 - product.salePrice / product.regularPrice) * 100)}% off
-                      </span>
-                    </>
+                    <SaleTag>Sale</SaleTag>
                   )}
-                </PriceInfo>
-              </ProductCard>
-            ))}
-          </ProductGrid>
+
+                  <PriceInfo>
+                    <span className="current-price">
+                      ${(product.salePrice || product.regularPrice).toFixed(2)}
+                    </span>
+                    
+                    {product.salePrice && product.salePrice < product.regularPrice && (
+                      <>
+                        <span className="original-price">${product.regularPrice.toFixed(2)}</span>
+                        <span className="discount">
+                          {Math.round((1 - product.salePrice / product.regularPrice) * 100)}% off
+                        </span>
+                      </>
+                    )}
+                  </PriceInfo>
+                </ProductCard>
+              ))}
+            </ProductGrid>
+            
+            {isShowMoreVisible && (
+              <ShowMoreButton onClick={handleShowMore}>
+                Show More
+              </ShowMoreButton>
+            )}
+            
+            {renderPagination()}
+            
+            {loading && !initialLoad && (
+              <LoadingSpinner style={{ marginTop: '20px' }} />
+            )}
+          </div>
         )}
       </MainGrid>
       

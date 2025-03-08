@@ -133,7 +133,7 @@ export const productAPI = {
     // Update this to use the new endpoint
     return api.get(`/products/id/${id}`);
   },
-  
+  getWebProducts: (params) => api.get('/products/web', { params }),
   getProductBySlug: (slug) => {
     return api.get(`/products/${slug}`);
   },

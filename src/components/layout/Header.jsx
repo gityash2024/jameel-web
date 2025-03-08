@@ -742,24 +742,34 @@ const Navigation = () => {
                   <ChevronDown className="w-4 h-4 ml-1" />
                 )}
               </div>
-              {item.hasDropdown && activeDropdown === index && item.dropdownItems && (
-                <div 
-                  id={`dropdown-${index}`}
-                  className="absolute top-full left-0 w-48 bg-white shadow-lg rounded-b mt-0 py-2 z-50"
-                  onMouseEnter={() => setActiveDropdown(index)}
-                  onMouseLeave={() => setActiveDropdown(null)}
-                >
-                  {item.dropdownItems.map((dropItem, dropIndex) => (
-                    <Link
-                      key={dropIndex}
-                      to={dropItem.path}
-                      className="block px-4 py-2 text-sm hover:bg-gray-100"
-                    >
-                      {dropItem.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
+            
+{item.hasDropdown && activeDropdown === index && item.dropdownItems && (
+  <div 
+    id={`dropdown-${index}`}
+    className="absolute top-full left-0 bg-white shadow-lg rounded-b mt-0 py-2 z-50"
+    style={{
+      width: '450px',
+      display: 'grid',
+      gridTemplateColumns: 'repeat(3, 1fr)',
+      maxHeight: '400px',
+      overflowY: 'auto',
+      overflowX: 'hidden'
+    }}
+    onMouseEnter={() => setActiveDropdown(index)}
+    onMouseLeave={() => setActiveDropdown(null)}
+  >
+    {item.dropdownItems.map((dropItem, dropIndex) => (
+      <Link
+        key={dropIndex}
+        to={dropItem.path}
+        className="block px-3 py-2 text-sm hover:bg-gray-100 overflow-hidden text-ellipsis"
+        style={{ fontSize: '13px' }}
+      >
+        {dropItem.name}
+      </Link>
+    ))}
+  </div>
+)}
             </div>
           ))}
         </nav>
