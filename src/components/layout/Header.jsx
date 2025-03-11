@@ -174,6 +174,13 @@ export const HeaderProvider = ({ children }) => {
   const [subcategories, setSubcategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCartPreview, setShowCartPreview] = useState(false);
+  const location = useLocation();
+
+  // Close mobile menu when location changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+    setIsMobileSearchOpen(false);
+  }, [location]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -221,12 +228,10 @@ export const HeaderProvider = ({ children }) => {
     }
   };
   
-  // In HeaderProvider component, update fetchWishlistData function
 const fetchWishlistData = async () => {
   try {
     const response = await userAPI.getWishlist();
     if (response.data.data && response.data.data.products) {
-      // Extract product IDs from the products array
       const wishlistProductIds = response.data.data.products.map(item => 
         item?.product?._id || item?.product
       );
@@ -622,7 +627,7 @@ const MainHeader = () => {
 };
 
 const MobileNavigation = () => {
-  const { headerData, isMobileMenuOpen, isLoggedIn, handleLogout } = useContext(HeaderContext);
+  const { headerData, isMobileMenuOpen, isLoggedIn, handleLogout, setIsMobileMenuOpen } = useContext(HeaderContext);
   const [expandedItems, setExpandedItems] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
@@ -633,6 +638,11 @@ const MobileNavigation = () => {
         ? prev.filter(i => i !== index)
         : [...prev, index]
     );
+  };
+  
+  const handleNavClick = (path) => {
+    navigate(path);
+    setIsMobileMenuOpen(false);
   };
 
   if (!isMobileMenuOpen) return null;
@@ -646,8 +656,8 @@ const MobileNavigation = () => {
               <div className="text-sm font-semibold">My Account</div>
             </div>
             <div className="bg-gray-50 px-4 py-2">
-              <Link to="/my-account" className="block py-2 text-sm text-gray-600">Profile</Link>
-              <Link to="/my-order" className="block py-2 text-sm text-gray-600">Orders</Link>
+              <div onClick={() => handleNavClick("/my-account")} className="block py-2 text-sm text-gray-600 cursor-pointer">Profile</div>
+              <div onClick={() => handleNavClick("/my-order")} className="block py-2 text-sm text-gray-600 cursor-pointer">Orders</div>
               <button 
                 onClick={handleLogout}
                 className="flex items-center py-2 text-sm text-red-600"
@@ -662,12 +672,12 @@ const MobileNavigation = () => {
         {headerData.navigation.map((item, index) => (
           <div key={index} className="border-b">
             <div className="flex items-center justify-between py-3">
-              <Link
-                to={item.path}
-                className={`text-sm ${location.pathname === item.path ? 'font-semibold' : ''}`}
+              <div
+                onClick={() => handleNavClick(item.path)}
+                className={`text-sm cursor-pointer ${location.pathname === item.path ? 'font-semibold' : ''}`}
               >
                 {item.name}
-              </Link>
+              </div>
               {item.hasDropdown && (
                 <button
                   onClick={() => toggleExpanded(index)}
@@ -684,13 +694,13 @@ const MobileNavigation = () => {
             {item.hasDropdown && expandedItems?.includes(index) && item.dropdownItems && (
               <div className="bg-gray-50 px-4 py-2">
                 {item.dropdownItems.map((dropItem, dropIndex) => (
-                  <Link
+                  <div
                     key={dropIndex}
-                    to={dropItem.path}
-                    className="block py-2 text-sm text-gray-600"
+                    onClick={() => handleNavClick(dropItem.path)}
+                    className="block py-2 text-sm text-gray-600 cursor-pointer"
                   >
                     {dropItem.name}
-                  </Link>
+                  </div>
                 ))}
               </div>
             )}
@@ -732,7 +742,8 @@ const Navigation = () => {
               onMouseEnter={() => handleMouseEnter(index)}
               onMouseLeave={(e) => handleNavItemMouseLeave(e, index)}
             >
-              <div
+              <Link
+                to={item.path}
                 className={`px-3 py-3 text-sm hover:text-gray-600 flex items-center whitespace-nowrap cursor-pointer ${
                   location.pathname === item.path ? 'text-gray-900 font-semibold' : ''
                 }`}
@@ -741,35 +752,35 @@ const Navigation = () => {
                 {item.hasDropdown && (
                   <ChevronDown className="w-4 h-4 ml-1" />
                 )}
-              </div>
+              </Link>
             
-{item.hasDropdown && activeDropdown === index && item.dropdownItems && (
-  <div 
-    id={`dropdown-${index}`}
-    className="absolute top-full left-0 bg-white shadow-lg rounded-b mt-0 py-2 z-50"
-    style={{
-      width: '450px',
-      display: 'grid',
-      gridTemplateColumns: 'repeat(3, 1fr)',
-      maxHeight: '400px',
-      overflowY: 'auto',
-      overflowX: 'hidden'
-    }}
-    onMouseEnter={() => setActiveDropdown(index)}
-    onMouseLeave={() => setActiveDropdown(null)}
-  >
-    {item.dropdownItems.map((dropItem, dropIndex) => (
-      <Link
-        key={dropIndex}
-        to={dropItem.path}
-        className="block px-3 py-2 text-sm hover:bg-gray-100 overflow-hidden text-ellipsis"
-        style={{ fontSize: '13px' }}
-      >
-        {dropItem.name}
-      </Link>
-    ))}
-  </div>
-)}
+              {item.hasDropdown && activeDropdown === index && item.dropdownItems && (
+                <div 
+                  id={`dropdown-${index}`}
+                  className="absolute top-full left-0 bg-white shadow-lg rounded-b mt-0 py-2 z-50"
+                  style={{
+                    width: '450px',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    maxHeight: '400px',
+                    overflowY: 'auto',
+                    overflowX: 'hidden'
+                  }}
+                  onMouseEnter={() => setActiveDropdown(index)}
+                  onMouseLeave={() => setActiveDropdown(null)}
+                >
+                  {item.dropdownItems.map((dropItem, dropIndex) => (
+                    <Link
+                      key={dropIndex}
+                      to={dropItem.path}
+                      className="block px-3 py-2 text-sm hover:bg-gray-100 overflow-hidden text-ellipsis"
+                      style={{ fontSize: '13px' }}
+                    >
+                      {dropItem.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </nav>

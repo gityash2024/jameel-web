@@ -622,7 +622,7 @@ const Layawaypayment = () => {
     const [activeAccordion, setActiveAccordion] = useState(null);
   
     const images = [ring_1, ring_2, ring_3];
-    const sizes = ["5", "5.25", "5.5", "5.75", "6", "6.25", "6.5", "6.75"];
+    const sizes = ["5", "5.25", "5.5", "5.75", "6", "6.25", "6.5", "6.75","7","7.25","7.5","7.75"];
     const [favorites, setFavorites] = useState([]);
 
     const recommendedProducts = [
