@@ -37,12 +37,19 @@ const PageContainer = styled.div`
   @media (max-width: 768px) {
     padding: 20px 16px;
   }
+  
+  @media (max-width: 480px) {
+    padding: 15px 10px;
+  }
 `;
 
 const Breadcrumb = styled.div`
   margin-bottom: 24px;
   font-size: 14px;
   color: #666;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 
   a {
     color: inherit;
@@ -55,6 +62,11 @@ const Breadcrumb = styled.div`
   @media (max-width: 768px) {
     font-size: 12px;
     margin-bottom: 16px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 10px;
+    margin-bottom: 12px;
   }
 `;
 
@@ -74,8 +86,9 @@ const ProductLayout = styled.div`
   }
   
   @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
   }
 `;
 
@@ -94,6 +107,7 @@ const ProductDetails = styled.div`
   
   @media (max-width: 768px) {
     padding-left: 0;
+    order: 2;
   }
 `;
 
@@ -122,9 +136,16 @@ const ProductHeader = styled.div`
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+    margin-bottom: 15px;
     
     .item-number {
       font-size: 12px;
+      gap: 8px;
+    }
+    
+    .new-tag {
+      padding: 3px 8px;
+      font-size: 10px;
     }
   }
 `;
@@ -137,11 +158,17 @@ const Title = styled.h1`
   
   @media (max-width: 992px) {
     font-size: 28px;
+    margin-bottom: 20px;
   }
   
   @media (max-width: 768px) {
     font-size: 24px;
     margin-bottom: 16px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 20px;
+    margin-bottom: 12px;
   }
 `;
 
@@ -158,6 +185,16 @@ const BrandInfo = styled.div`
     &:hover {
       text-decoration: underline;
     }
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 12px;
+    margin-bottom: 10px;
   }
 `;
 
@@ -178,11 +215,39 @@ const RatingContainer = styled.div`
     text-decoration: underline;
     cursor: pointer;
   }
+  
+  @media (max-width: 768px) {
+    margin-bottom: 12px;
+    
+    .count {
+      font-size: 13px;
+    }
+    
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 10px;
+    gap: 6px;
+    
+    .count {
+      font-size: 12px;
+    }
+    
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+  }
 `;
 
 const PriceContainer = styled.div`
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 20px;
 
@@ -205,12 +270,30 @@ const PriceContainer = styled.div`
   }
   
   @media (max-width: 768px) {
+    margin-bottom: 16px;
+    gap: 10px;
+    
     .current, .original {
       font-size: 24px;
     }
     
     .discount {
       font-size: 12px;
+      padding: 3px 10px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 14px;
+    gap: 8px;
+    
+    .current, .original {
+      font-size: 20px;
+    }
+    
+    .discount {
+      font-size: 11px;
+      padding: 2px 8px;
     }
   }
 `;
@@ -228,10 +311,28 @@ const InStockInfo = styled.div`
   &.out-of-stock {
     color: #d32f2f;
   }
+  
+  @media (max-width: 768px) {
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
 `;
 
 const SizeSelector = styled.div`
   margin: 30px 0;
+  
+  @media (max-width: 768px) {
+    margin: 24px 0;
+  }
+  
+  @media (max-width: 480px) {
+    margin: 20px 0;
+  }
 `;
 
 const SizeHeader = styled.div`
@@ -243,12 +344,26 @@ const SizeHeader = styled.div`
     color: #000;
     text-decoration: underline;
   }
+  
+  @media (max-width: 768px) {
+    margin-bottom: 12px;
+    font-size: 14px;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 10px;
+    font-size: 12px;
+  }
 `;
 
 const SizeGrid = styled.div`
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  
+  @media (max-width: 480px) {
+    gap: 6px;
+  }
 `;
 
 const SizeButton = styled.button`
@@ -264,10 +379,21 @@ const SizeButton = styled.button`
     border-color: #000;
   }
   
+  @media (max-width: 768px) {
+    width: 45px;
+    height: 45px;
+  }
+  
   @media (max-width: 576px) {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     font-size: 13px;
+  }
+  
+  @media (max-width: 480px) {
+    width: 35px;
+    height: 35px;
+    font-size: 12px;
   }
 `;
 
@@ -277,8 +403,15 @@ const AddToCartSection = styled.div`
   gap: 12px;
   margin-top: 30px;
   
+  @media (max-width: 768px) {
+    margin-top: 24px;
+  }
+  
   @media (max-width: 576px) {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
   }
 `;
 
@@ -302,6 +435,17 @@ const AddToCartButton = styled.button`
     background: #ccc;
     cursor: not-allowed;
   }
+  
+  @media (max-width: 768px) {
+    padding: 14px;
+    font-size: 15px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 12px;
+    font-size: 14px;
+    gap: 6px;
+  }
 `;
 
 const WishlistButton = styled.button`
@@ -318,9 +462,20 @@ const WishlistButton = styled.button`
     border-color: #000;
   }
   
+  @media (max-width: 768px) {
+    width: 45px;
+  }
+  
   @media (max-width: 576px) {
-    width: 100%;
-    padding: 12px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+    }
   }
 `;
 
@@ -338,11 +493,34 @@ const AssistanceSection = styled.div`
     text-decoration: underline;
   }
   
+  @media (max-width: 768px) {
+    margin: 24px 0;
+    padding: 16px 0;
+    gap: 10px;
+  }
+  
   @media (max-width: 576px) {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
-    padding: 16px 0;
+    gap: 8px;
+    padding: 14px 0;
+    font-size: 13px;
+    
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    margin: 20px 0;
+    padding: 12px 0;
+    font-size: 12px;
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
   }
 `;
 
@@ -378,8 +556,13 @@ const MainImageContainer = styled.div`
   position: relative;
   margin: 0 40px;
   
+  @media (max-width: 992px) {
+    margin: 0 30px;
+  }
+  
   @media (max-width: 768px) {
     margin: 0;
+    order: 1;
   }
 
   .image-wrapper {
@@ -411,8 +594,13 @@ const MainImageContainer = styled.div`
     }
     
     @media (max-width: 576px) {
-      min-height: 280px;
-      padding: 16px;
+      min-height: 300px;
+      padding: 15px;
+    }
+    
+    @media (max-width: 480px) {
+      min-height: 250px;
+      padding: 10px;
     }
   }
 
@@ -424,6 +612,11 @@ const MainImageContainer = styled.div`
     
     @media (max-width: 768px) {
       font-size: 12px;
+      margin-top: 8px;
+    }
+    
+    @media (max-width: 480px) {
+      display: none;
     }
   }
 `;
@@ -438,6 +631,10 @@ const ZoomedImage = styled.div`
   opacity: ${props => props.visible ? 1 : 0};
   pointer-events: none;
   z-index: 10;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const MobileThumbsContainer = styled.div`
@@ -447,9 +644,20 @@ const MobileThumbsContainer = styled.div`
   gap: 8px;
   margin-top: 16px;
   padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
   
   @media (max-width: 768px) {
     display: flex;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 6px;
+    margin-top: 12px;
   }
 `;
 
@@ -468,6 +676,12 @@ const MobileThumb = styled.div`
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
+  }
+  
+  @media (max-width: 480px) {
+    width: 50px;
+    height: 50px;
+    padding: 3px;
   }
 `;
 
@@ -504,8 +718,30 @@ const NavigationButton = styled.button`
   }
   
   @media (max-width: 768px) {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
+    
+    &.prev {
+      left: 5px;
+    }
+    &.next {
+      right: 5px;
+    }
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    width: 25px;
+    height: 25px;
+    
+    svg {
+      width: 14px;
+      height: 14px;
+    }
   }
 `;
 
@@ -561,6 +797,52 @@ const QuantitySelector = styled.div`
       }
     }
   }
+  
+  @media (max-width: 768px) {
+    margin-bottom: 16px;
+    
+    label {
+      font-size: 13px;
+      margin-right: 10px;
+    }
+    
+    .control {
+      button {
+        width: 32px;
+        height: 32px;
+      }
+      
+      input {
+        width: 40px;
+        height: 32px;
+        font-size: 13px;
+      }
+    }
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    
+    label {
+      font-size: 12px;
+      margin-right: 8px;
+      margin-bottom: 5px;
+    }
+    
+    .control {
+      button {
+        width: 30px;
+        height: 30px;
+      }
+      
+      input {
+        width: 35px;
+        height: 30px;
+        font-size: 12px;
+      }
+    }
+  }
 `;
 
 const AccordionSection = styled.div`
@@ -568,6 +850,18 @@ const AccordionSection = styled.div`
   
   &:last-child {
     margin-bottom: 40px;
+  }
+  
+  @media (max-width: 768px) {
+    &:last-child {
+      margin-bottom: 30px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    &:last-child {
+      margin-bottom: 20px;
+    }
   }
 `;
 
@@ -592,6 +886,11 @@ const AccordionHeader = styled.button`
     padding: 16px 0;
     font-size: 15px;
   }
+  
+  @media (max-width: 480px) {
+    padding: 14px 0;
+    font-size: 14px;
+  }
 `;
 
 const AccordionContent = styled.div`
@@ -611,6 +910,39 @@ const AccordionContent = styled.div`
       margin-bottom: 8px;
       color: #666;
       font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    padding-bottom: 16px;
+    
+    p, ul li {
+      font-size: 13px;
+    }
+    
+    ul {
+      padding-left: 16px;
+      
+      li {
+        margin-bottom: 6px;
+      }
+    }
+  }
+  
+  @media (max-width: 480px) {
+    padding-bottom: 12px;
+    
+    p, ul li {
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    
+    ul {
+      padding-left: 15px;
+      
+      li {
+        margin-bottom: 5px;
+      }
     }
   }
 `;
@@ -646,6 +978,55 @@ const DeliveryInfo = styled.div`
     margin-top: 12px;
     font-size: 14px;
   }
+  
+  @media (max-width: 768px) {
+    margin-top: 24px;
+    
+    > div {
+      gap: 10px;
+      margin-bottom: 14px;
+      
+      div {
+        gap: 2px;
+      }
+      
+      div div:last-child {
+        font-size: 13px;
+      }
+    }
+    
+    a {
+      margin-top: 10px;
+      font-size: 13px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    margin-top: 20px;
+    
+    > div {
+      gap: 8px;
+      margin-bottom: 12px;
+      
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+      
+      div div:first-child {
+        font-size: 12px;
+      }
+      
+      div div:last-child {
+        font-size: 11px;
+      }
+    }
+    
+    a {
+      margin-top: 8px;
+      font-size: 12px;
+    }
+  }
 `;
 
 const SpecificationList = styled.div`
@@ -666,8 +1047,23 @@ const SpecificationList = styled.div`
     }
   }
   
+  @media (max-width: 768px) {
+    gap: 10px;
+    
+    div {
+      font-size: 13px;
+    }
+  }
+  
   @media (max-width: 576px) {
     grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  @media (max-width: 480px) {
+    div {
+      font-size: 12px;
+    }
   }
 `;
 
@@ -686,6 +1082,42 @@ const HighlightsList = styled.div`
     li {
       margin-bottom: 8px;
       color: #333;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    margin: 16px 0;
+    
+    h4 {
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
+    
+    ul {
+      padding-left: 16px;
+      
+      li {
+        margin-bottom: 6px;
+        font-size: 13px;
+      }
+    }
+  }
+  
+  @media (max-width: 480px) {
+    margin: 14px 0;
+    
+    h4 {
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    
+    ul {
+      padding-left: 14px;
+      
+      li {
+        margin-bottom: 5px;
+        font-size: 12px;
+      }
     }
   }
 `;
@@ -713,6 +1145,40 @@ const FinancingInfo = styled.div`
     text-decoration: underline;
     font-weight: 500;
   }
+  
+  @media (max-width: 768px) {
+    padding: 14px;
+    margin: 14px 0;
+    
+    h4 {
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+    
+    p {
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    padding: 12px;
+    margin: 12px 0;
+    
+    h4 {
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+    
+    p {
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+    
+    a {
+      font-size: 12px;
+    }
+  }
 `;
 
 const ProductDetail = () => {
@@ -729,37 +1195,30 @@ const ProductDetail = () => {
   const [openSection, setOpenSection] = useState("overview");
   const [isInWishlist, setIsInWishlist] = useState(false);
   
-  // Refs for zoom functionality
   const imageWrapperRef = useRef(null);
   const zoomedImageRef = useRef(null);
   const [isZoomed, setIsZoomed] = useState(false);
   
-  // Check auth status
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userDataStr = localStorage.getItem('jammelUser');
     setLocalIsLoggedIn(!!(token && userDataStr));
   }, []);
   
-  // Fetch product data
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        // Check if slug is actually an ID (this happens when navigating from Products.js)
         let response;
         if (slug.match(/^[0-9a-fA-F]{24}$/)) {
-          // It's likely a MongoDB ObjectId
           response = await productAPI.getProduct(slug);
         } else {
-          // It's a slug
           response = await productAPI.getProductBySlug(slug);
         }
         
         if (response.data.data.product) {
           setProduct(response.data.data.product);
           
-          // Size selection logic remains the same...
           if (response.data.data.product.attributes) {
             const sizeAttribute = response.data.data.product.attributes.find(
               attr => attr.name.toLowerCase() === 'size' || attr.name.toLowerCase() === 'ring size'
@@ -787,16 +1246,14 @@ const ProductDetail = () => {
     
     fetchProduct();
   }, [slug, navigate]);
-  // Check wishlist status when product or wishlist changes
+  
   useEffect(() => {
-    // First, check if the product and wishlistItems are available
     if (product && wishlistItems && wishlistItems.length > 0) {
       setIsInWishlist(wishlistItems.includes(product._id));
     } else {
       setIsInWishlist(false);
     }
     
-    // If product exists but no wishlistItems in context, fetch from API
     if (product && (!wishlistItems || wishlistItems.length === 0) && (isLoggedIn || localIsLoggedIn)) {
       const fetchWishlist = async () => {
         try {
@@ -821,7 +1278,6 @@ const ProductDetail = () => {
     }
   }, [product, wishlistItems, isLoggedIn, localIsLoggedIn, setWishlistItems]);
   
-  // Image navigation
   const handlePrevImage = () => {
     if (!product || !product.images || product.images.length === 0) return;
     
@@ -840,7 +1296,6 @@ const ProductDetail = () => {
     });
   };
   
-  // Add to cart functionality
   const handleAddToCart = async () => {
     if (!isLoggedIn && !localIsLoggedIn) {
       toast.error('Please login to add items to your cart');
@@ -879,7 +1334,6 @@ const ProductDetail = () => {
     }
   };
   
-  // Wishlist toggle functionality
   const handleWishlistToggle = async () => {
     if (!isLoggedIn && !localIsLoggedIn) {
       toast.error('Please login to add items to your wishlist');
@@ -909,7 +1363,6 @@ const ProductDetail = () => {
     }
   };
   
-  // Quantity handlers
   const handleQuantityChange = (e) => {
     const value = parseInt(e.target.value);
     if (!isNaN(value) && value > 0 && value <= (product?.stockQuantity || 10)) {
@@ -929,7 +1382,6 @@ const ProductDetail = () => {
     }
   };
   
-  // Size options
   const getSizeOptions = () => {
     if (!product || !product.attributes) return [];
     
@@ -946,17 +1398,14 @@ const ProductDetail = () => {
     return [sizeAttribute.value];
   };
   
-  // Image zoom handling
   const handleImageMouseMove = (e) => {
     if (!imageWrapperRef.current || !zoomedImageRef.current) return;
     
     const { left, top, width, height } = imageWrapperRef.current.getBoundingClientRect();
     
-    // Calculate cursor position as percentage
     const x = (e.clientX - left) / width;
     const y = (e.clientY - top) / height;
     
-    // Set background position percentage
     if (product?.images?.length > 0) {
       const bgPosX = x * 100;
       const bgPosY = y * 100;
@@ -1101,7 +1550,6 @@ const ProductDetail = () => {
     <span>Item #: {product.sku}</span>
     {product.isNewArrival && <span className="new-tag">New</span>}
   </div>
-  {/* Replace this Share2 icon with the SocialShare component */}
   <SocialShare productName={product.name} productId={product._id} />
 </ProductHeader>
 
@@ -1356,8 +1804,6 @@ const ProductDetail = () => {
           </AccordionContent>
         </AccordionSection>
       </div>
-      
-      {/* <RelatedProducts productId={product._id} categoryId={product.category?._id} /> */}
     </PageContainer>
   );
 };

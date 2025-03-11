@@ -5,18 +5,6 @@ import { categoryAPI, subcategoryAPI, productAPI, blogAPI, storeAPI } from '../s
 import { toast } from 'react-hot-toast';
 import { ArrowRight, ChevronLeft, ChevronRight, Diamond } from 'lucide-react';
 
-import HeroSectionimg from '../assets/HeroSectionimg.jpeg';
-import earlyblackfriday from '../assets/earlyblackfriday.svg';
-import shopnow_1 from '../assets/shopnow_1.svg';
-import shopnow_2 from '../assets/shopnow_2.svg';
-import shopnow_3 from '../assets/shopnow_3.svg';
-import shopnow_4 from '../assets/shopnow_4.svg';
-import nowsale_1 from '../assets/nowsale_1.svg';
-import nowsale_2 from '../assets/nowsale_2.svg';
-import mariahlogoimg from '../assets/mariahlogoimg.svg';
-import HomeErraring from "../pages/HomeErraring";
-import Homepayment from "../pages/Homepayment";
-
 const fadeIn = keyframes`
   from {
     opacity: 0;
@@ -66,6 +54,10 @@ const Container = styled.div`
   @media (max-width: 768px) {
     padding-top: 16px;
   }
+  
+  @media (max-width: 480px) {
+    padding-top: 12px;
+  }
 `;
 
 const HeroContainer = styled.div`
@@ -77,6 +69,10 @@ const HeroContainer = styled.div`
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
+  
+  @media (max-width: 480px) {
+    margin: 0 auto 10px;
+  }
 `;
 
 const CarouselContainer = styled.div`
@@ -84,6 +80,10 @@ const CarouselContainer = styled.div`
   width: 100%;
   height: 680px;
   overflow: hidden;
+  
+  @media (max-width: 1200px) {
+    height: 550px;
+  }
   
   @media (max-width: 1024px) {
     height: 500px;
@@ -94,7 +94,11 @@ const CarouselContainer = styled.div`
   }
   
   @media (max-width: 480px) {
-    height: 300px;
+    height: 250px;
+  }
+  
+  @media (max-width: 360px) {
+    height: 200px;
   }
 `;
 
@@ -127,6 +131,16 @@ const CarouselNavigation = styled.div`
   display: flex;
   gap: 10px;
   z-index: 5;
+  
+  @media (max-width: 768px) {
+    bottom: 15px;
+    gap: 8px;
+  }
+  
+  @media (max-width: 480px) {
+    bottom: 10px;
+    gap: 6px;
+  }
 `;
 
 const NavDot = styled.button`
@@ -140,6 +154,11 @@ const NavDot = styled.button`
   
   &:hover {
     background: #ffffff;
+  }
+  
+  @media (max-width: 480px) {
+    width: 8px;
+    height: 8px;
   }
 `;
 
@@ -180,36 +199,18 @@ const CarouselButton = styled.button`
   @media (max-width: 480px) {
     width: 30px;
     height: 30px;
-  }
-`;
-
-const BlackFridayOverlay = styled.div`
-  position: absolute;
-  bottom: 120px;
-  right: 0;
-  z-index: 2;
-  animation: ${fadeIn} 1s ease-out forwards;
-  
-  img {
-    max-width: 220px;
-    height: auto;
-    object-fit: contain;
-  }
-
-  @media (max-width: 768px) {
-    bottom: 60px;
-    right: 10px;
-    img {
-      max-width: 160px;
+    &.prev {
+      left: 10px;
+    }
+    
+    &.next {
+      right: 10px;
     }
   }
   
-  @media (max-width: 480px) {
-    bottom: 40px;
-    right: 5px;
-    img {
-      max-width: 120px;
-    }
+  @media (max-width: 360px) {
+    width: 25px;
+    height: 25px;
   }
 `;
 
@@ -233,6 +234,11 @@ const SectionTitle = styled.h2`
     font-size: 20px;
     margin-bottom: 24px;
   }
+  
+  @media (max-width: 360px) {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
 `;
 
 const InspiredSection = styled.div`
@@ -246,6 +252,10 @@ const InspiredSection = styled.div`
   
   @media (max-width: 480px) {
     padding: 30px 12px;
+  }
+  
+  @media (max-width: 360px) {
+    padding: 25px 10px;
   }
 `;
 
@@ -271,6 +281,11 @@ const CategoryTags = styled.div`
   @media (max-width: 480px) {
     padding: 0 10px;
     gap: 8px;
+  }
+  
+  @media (max-width: 360px) {
+    padding: 0 5px;
+    gap: 6px;
   }
 `;
 
@@ -298,6 +313,11 @@ const CategoryTag = styled.button`
     padding: 10px 16px;
     font-size: 11px;
   }
+  
+  @media (max-width: 360px) {
+    padding: 8px 12px;
+    font-size: 10px;
+  }
 `;
 
 const ProductGrid = styled.div`
@@ -321,7 +341,17 @@ const ProductGrid = styled.div`
   @media (max-width: 640px) {
     grid-template-columns: 1fr;
     padding: 20px;
+    gap: 15px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 15px;
     gap: 12px;
+  }
+  
+  @media (max-width: 360px) {
+    padding: 10px;
+    gap: 10px;
   }
 `;
 
@@ -337,6 +367,12 @@ const ProductCard = styled.div`
     transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
   }
+  
+  @media (max-width: 480px) {
+    &:hover {
+      transform: translateY(-3px);
+    }
+  }
 `;
 
 const DiscountBanner = styled.div`
@@ -351,6 +387,11 @@ const DiscountBanner = styled.div`
     padding: 16px;
     gap: 6px;
   }
+  
+  @media (max-width: 360px) {
+    padding: 12px;
+    gap: 4px;
+  }
 `;
 
 const DiscountText = styled.div`
@@ -358,8 +399,16 @@ const DiscountText = styled.div`
   font-size: 24px;
   font-weight: bold;
   
+  @media (max-width: 768px) {
+    font-size: 22px;
+  }
+  
   @media (max-width: 480px) {
     font-size: 20px;
+  }
+  
+  @media (max-width: 360px) {
+    font-size: 18px;
   }
 `;
 
@@ -367,8 +416,16 @@ const DiscountDescription = styled.div`
   font-size: 14px;
   color: #fff;
   
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
+  
   @media (max-width: 480px) {
     font-size: 12px;
+  }
+  
+  @media (max-width: 360px) {
+    font-size: 11px;
   }
 `;
 
@@ -382,9 +439,18 @@ const ShopLink = styled.a`
     opacity: 0.9;
   }
   
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
+  
   @media (max-width: 480px) {
     font-size: 12px;
     margin-top: 3px;
+  }
+  
+  @media (max-width: 360px) {
+    font-size: 11px;
+    margin-top: 2px;
   }
 `;
 
@@ -418,15 +484,22 @@ const OfferSection = styled.div`
   }
 
   @media (max-width: 1024px) {
-    padding: 40px 30px;
+    padding: 60px 40px;
   }
   
   @media (max-width: 768px) {
-    padding: 30px 20px;
+    padding: 40px 30px;
+    margin-top: 30px;
   }
   
   @media (max-width: 480px) {
-    padding: 24px 16px;
+    padding: 30px 20px;
+    margin-top: 20px;
+  }
+  
+  @media (max-width: 360px) {
+    padding: 25px 15px;
+    margin-top: 15px;
   }
 `;
 
@@ -435,7 +508,7 @@ const OfferContent = styled.div`
   margin-bottom: 60px;
   
   h1, h2 {
-    font-size: 72px;
+    font-size: 30px;
     font-weight: 700;
     line-height: 1.1;
     opacity: 0;
@@ -462,12 +535,28 @@ const OfferContent = styled.div`
     h1, h2 {
       font-size: 42px;
     }
+    h1 {
+      margin-bottom: 15px;
+    }
   }
   
   @media (max-width: 480px) {
     margin-bottom: 30px;
     h1, h2 {
       font-size: 36px;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+  }
+  
+  @media (max-width: 360px) {
+    margin-bottom: 25px;
+    h1, h2 {
+      font-size: 30px;
+    }
+    h1 {
+      margin-bottom: 8px;
     }
   }
 `;
@@ -482,6 +571,10 @@ const CategoryGrid = styled.div`
     animation: ${fadeIn} 0.8s ease-out 0.6s forwards;
   }
 
+  @media (max-width: 768px) {
+    gap: 15px;
+  }
+  
   @media (max-width: 480px) {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -491,8 +584,8 @@ const CategoryGrid = styled.div`
 const CategoryButton = styled.button`
   background: #000;
   color: white;
-  padding: 16px;
-  width: 100%;
+  padding: 10px;
+  width: 160px;
   border: none;
   font-size: 18px;
   font-weight: 500;
@@ -513,6 +606,11 @@ const CategoryButton = styled.button`
   @media (max-width: 480px) {
     font-size: 14px;
     padding: 12px;
+  }
+  
+  @media (max-width: 360px) {
+    font-size: 13px;
+    padding: 10px;
   }
 `;
 
@@ -536,13 +634,21 @@ const SalesGrid = styled.div`
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 30px;
     padding: 24px 16px;
+    margin: 30px auto 0;
   }
   
   @media (max-width: 480px) {
-    gap: 32px;
+    gap: 24px;
     padding: 20px 12px;
+    margin: 20px auto 0;
+  }
+  
+  @media (max-width: 360px) {
+    gap: 20px;
+    padding: 15px 10px;
+    margin: 15px auto 0;
   }
 `;
 
@@ -572,9 +678,24 @@ const SalesCard = styled.div`
     transform: scale(1.05);
   }
   
+  @media (max-width: 768px) {
+    img {
+      margin-bottom: 20px;
+    }
+  }
+  
   @media (max-width: 480px) {
     img {
       margin-bottom: 16px;
+    }
+    &:hover {
+      transform: translateY(-3px);
+    }
+  }
+  
+  @media (max-width: 360px) {
+    img {
+      margin-bottom: 12px;
     }
   }
 `;
@@ -583,8 +704,16 @@ const SalesContent = styled.div`
   text-align: left;
   padding: 0 20px;
   
+  @media (max-width: 768px) {
+    padding: 0 16px;
+  }
+  
   @media (max-width: 480px) {
     padding: 0 12px;
+  }
+  
+  @media (max-width: 360px) {
+    padding: 0 8px;
   }
 `;
 
@@ -607,9 +736,19 @@ const PriceText = styled.div`
   
   @media (max-width: 480px) {
     font-size: 24px;
+    margin-bottom: 6px;
     
     sup {
       font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 360px) {
+    font-size: 22px;
+    margin-bottom: 5px;
+    
+    sup {
+      font-size: 12px;
     }
   }
 `;
@@ -619,8 +758,18 @@ const PresetText = styled.div`
   margin-bottom: 4px;
   color: #666;
   
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
+  
   @media (max-width: 480px) {
     font-size: 12px;
+    margin-bottom: 3px;
+  }
+  
+  @media (max-width: 360px) {
+    font-size: 11px;
+    margin-bottom: 2px;
   }
 `;
 
@@ -629,9 +778,19 @@ const SaveText = styled.div`
   font-weight: bold;
   margin-bottom: 12px;
   
+  @media (max-width: 768px) {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+  
   @media (max-width: 480px) {
     font-size: 14px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+  }
+  
+  @media (max-width: 360px) {
+    font-size: 13px;
+    margin-bottom: 6px;
   }
 `;
 
@@ -649,6 +808,11 @@ const SaleTitle = styled.h3`
   @media (max-width: 480px) {
     font-size: 18px;
     margin-bottom: 16px;
+  }
+  
+  @media (max-width: 360px) {
+    font-size: 16px;
+    margin-bottom: 14px;
   }
 `;
 
@@ -668,9 +832,19 @@ const ShopButton = styled.button`
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
   
+  @media (max-width: 768px) {
+    padding: 11px 36px;
+    font-size: 13px;
+  }
+  
   @media (max-width: 480px) {
     padding: 10px 32px;
-    font-size: 13px;
+    font-size: 12px;
+  }
+  
+  @media (max-width: 360px) {
+    padding: 8px 28px;
+    font-size: 11px;
   }
 `;
 
@@ -686,10 +860,17 @@ const GiftsSection = styled.section`
 
   @media (max-width: 768px) {
     padding: 40px 20px;
+    margin: 30px auto 0;
   }
   
   @media (max-width: 480px) {
     padding: 32px 16px;
+    margin: 24px auto 0;
+  }
+  
+  @media (max-width: 360px) {
+    padding: 25px 12px;
+    margin: 20px auto 0;
   }
 `;
 
@@ -714,6 +895,11 @@ const GiftsTitle = styled.h2`
   @media (max-width: 480px) {
     font-size: 24px;
     margin-bottom: 24px;
+  }
+  
+  @media (max-width: 360px) {
+    font-size: 20px;
+    margin-bottom: 20px;
   }
 `;
 
@@ -758,6 +944,10 @@ const GiftButton = styled.button`
     box-shadow: 0 6px 12px rgba(225, 0, 2, 0.2);
   }
 
+  @media (max-width: 1024px) {
+    padding: 20px 60px;
+  }
+
   @media (max-width: 768px) {
     padding: 16px 40px;
     font-size: 14px;
@@ -766,6 +956,12 @@ const GiftButton = styled.button`
   @media (max-width: 480px) {
     padding: 14px 32px;
     font-size: 13px;
+  }
+  
+  @media (max-width: 360px) {
+    padding: 12px 24px;
+    font-size: 12px;
+    letter-spacing: 0.3px;
   }
 `;
 
@@ -794,6 +990,10 @@ const MariahSection = styled.section`
   
   @media (max-width: 480px) {
     margin: 24px auto;
+  }
+  
+  @media (max-width: 360px) {
+    margin: 20px auto;
   }
 `;
 
@@ -824,6 +1024,10 @@ const ImageContainer = styled.div`
   @media (max-width: 480px) {
     height: 300px;
   }
+  
+  @media (max-width: 360px) {
+    height: 250px;
+  }
 `;
 
 const ContentContainer = styled.div`
@@ -840,15 +1044,19 @@ const ContentContainer = styled.div`
   }
 
   @media (max-width: 1024px) {
-    padding: 40px;
+    padding: 60px 40px;
   }
   
   @media (max-width: 768px) {
-    padding: 32px;
+    padding: 40px 32px;
   }
   
   @media (max-width: 480px) {
-    padding: 24px;
+    padding: 30px 24px;
+  }
+  
+  @media (max-width: 360px) {
+    padding: 24px 20px;
   }
 `;
 
@@ -861,18 +1069,25 @@ const Title = styled.h2`
   font-family: 'Scope One';
 
   @media (max-width: 1024px) {
-    font-size: 36px;
+    font-size: 42px;
   }
 
   @media (max-width: 768px) {
-    font-size: 32px;
+    font-size: 36px;
+    margin-bottom: 16px;
   }
   
   @media (max-width: 480px) {
-    font-size: 28px;
-    margin-bottom: 16px;
+    font-size: 30px;
+    margin-bottom: 14px;
+  }
+  
+  @media (max-width: 360px) {
+    font-size: 24px;
+    margin-bottom: 12px;
   }
 `;
+
 
 const Subtitle = styled.p`
   color: white;

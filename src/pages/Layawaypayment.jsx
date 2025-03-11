@@ -13,11 +13,20 @@ import { Heart } from 'lucide-react';
 const Container = styled.div`
   max-width: 1440px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2rem 1rem;
+  
+  @media (max-width: 768px) {
+    padding: 1.5rem 0.75rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1rem 0.5rem;
+  }
 `;
 
 const Breadcrumb = styled.nav`
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   color: #666;
   font-size: 0.875rem;
@@ -30,6 +39,11 @@ const Breadcrumb = styled.nav`
       text-decoration: underline;
     }
   }
+  
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const ProductLayout = styled.div`
@@ -39,6 +53,11 @@ const ProductLayout = styled.div`
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    gap: 1rem;
   }
 `;
 
@@ -46,12 +65,33 @@ const ThumbList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  
+  @media (max-width: 1024px) {
+    flex-direction: row;
+    justify-content: center;
+    order: 2;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 0.5rem;
+  }
 `;
 
 const ThumbImage = styled.img`
   width: 100%;
   cursor: pointer;
   border: 2px solid ${props => props.$active ? '#000' : 'transparent'};
+  
+  @media (max-width: 1024px) {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+  }
+  
+  @media (max-width: 480px) {
+    width: 60px;
+    height: 60px;
+  }
 `;
 
 const MainImage = styled.div`
@@ -71,6 +111,14 @@ const MainImage = styled.div`
     font-size: 0.875rem;
     font-style: italic;
   }
+  
+  @media (max-width: 1024px) {
+    order: 1;
+    
+    .zoom-hint {
+      display: none;
+    }
+  }
 `;
 
 const ZoomButton = styled.button`
@@ -80,10 +128,25 @@ const ZoomButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
+  
+  @media (max-width: 480px) {
+    top: 0.5rem;
+    right: 0.5rem;
+    
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
 `;
 
 const ProductInfo = styled.div`
   padding: 0 2rem;
+  
+  @media (max-width: 1024px) {
+    padding: 0;
+    order: 3;
+  }
 `;
 
 const NewTag = styled.span`
@@ -92,39 +155,56 @@ const NewTag = styled.span`
   font-size: 0.875rem;
   margin-bottom: 1rem;
   display: inline-block;
+  
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
+    margin-bottom: 0.75rem;
+  }
 `;
 
-// const ProductTitle = styled.h1`
-//   font-size: 2rem;
-//   margin-bottom: 1rem;
-// `;
+const ProductTitle = styled(Link)`
+  display: block;
+  color: #000;
+  text-decoration: none;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.4;
 
-// const PriceSection = styled.div`
-//   display: flex;
-//   align-items: center;
-//   gap: 1rem;
-//   margin-bottom: 2rem;
-// `;
+  &:hover {
+    text-decoration: underline;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+  }
+`;
 
 const CurrentPrice = styled.span`
   font-size: 1.5rem;
   font-weight: 600;
+  
+  @media (max-width: 768px) {
+    font-size: 1.25rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.125rem;
+  }
 `;
-
-// const OriginalPrice = styled.span`
-//   color: #666;
-//   text-decoration: line-through;
-// `;
-
-// const DiscountTag = styled.span`
-//   background: #E8F5F1;
-//   padding: 0.25rem 0.5rem;
-//   font-size: 0.875rem;
-// `;
 
 const PaymentTable = styled.div`
   border: 1px solid #E5E5E5;
   margin-bottom: 2rem;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 1.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 1.25rem;
+  }
 `;
 
 const PaymentRow = styled.div`
@@ -135,10 +215,23 @@ const PaymentRow = styled.div`
   &:last-child {
     border-bottom: none;
   }
+  
+  @media (max-width: 480px) {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.875rem;
+  }
 `;
 
 const SizeSection = styled.div`
   margin-bottom: 2rem;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 1.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 1.25rem;
+  }
 `;
 
 const SizeHeader = styled.div`
@@ -146,12 +239,25 @@ const SizeHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  
+  @media (max-width: 480px) {
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+  }
 `;
 
 const SizeGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   gap: 0.5rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  @media (max-width: 480px) {
+    gap: 0.25rem;
+  }
 `;
 
 const SizeButton = styled.button`
@@ -164,6 +270,11 @@ const SizeButton = styled.button`
   &:hover {
     background: ${props => props.$active ? '#000' : '#f5f5f5'};
   }
+  
+  @media (max-width: 480px) {
+    padding: 0.4rem 0.3rem;
+    font-size: 0.875rem;
+  }
 `;
 
 const ActionButtons = styled.div`
@@ -171,6 +282,16 @@ const ActionButtons = styled.div`
   grid-template-columns: 1fr auto;
   gap: 1rem;
   margin-bottom: 2rem;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 1.5rem;
+    gap: 0.75rem;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 1.25rem;
+    gap: 0.5rem;
+  }
 `;
 
 const AddToBagButton = styled.button`
@@ -183,6 +304,16 @@ const AddToBagButton = styled.button`
 
   &:hover {
     background: #333;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 0.875rem;
+    font-size: 0.875rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.75rem;
+    font-size: 0.75rem;
   }
 `;
 
@@ -199,6 +330,24 @@ const FavoriteButton = styled.button`
     width: 24px;
     height: 24px;
   }
+  
+  @media (max-width: 768px) {
+    padding: 0.875rem;
+    
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.75rem;
+    
+    img {
+      width: 18px;
+      height: 18px;
+    }
+  }
 `;
 
 const InfoSection = styled.div`
@@ -212,6 +361,23 @@ const InfoSection = styled.div`
   img {
     width: 24px;
     height: 24px;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 1.25rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1rem;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    
+    img {
+      width: 20px;
+      height: 20px;
+    }
   }
 `;
 
@@ -230,11 +396,31 @@ const AccordionHeader = styled.button`
   cursor: pointer;
   font-size: 1rem;
   text-align: left;
+  
+  @media (max-width: 768px) {
+    padding: 0.875rem 0;
+    font-size: 0.875rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.75rem 0;
+  }
 `;
+
 const SectionTitle = styled.h2`
   font-size: 2rem;
   text-align: center;
   margin-bottom: 3rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const ProductGrid = styled.div`
@@ -245,10 +431,14 @@ const ProductGrid = styled.div`
 
   @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
   }
 
   @media (max-width: 640px) {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
   }
 `;
 
@@ -270,12 +460,27 @@ const FavButton = styled.button`
   &:hover {
     color: #E31837;
   }
+  
+  @media (max-width: 480px) {
+    top: 0.75rem;
+    right: 0.75rem;
+    
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
 `;
 
 const FeaturedTag = styled.div`
   font-size: 0.875rem;
   color: #666;
   margin-bottom: 0.5rem;
+  
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+    margin-bottom: 0.375rem;
+  }
 `;
 
 const ProductImage = styled.img`
@@ -287,18 +492,13 @@ const ProductImage = styled.img`
   &:hover {
     transform: scale(1.05);
   }
-`;
-
-const ProductTitle = styled(Link)`
-  display: block;
-  color: #000;
-  text-decoration: none;
-  font-size: 0.875rem;
-  margin-bottom: 1rem;
-  line-height: 1.4;
-
-  &:hover {
-    text-decoration: underline;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 0.75rem;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 0.5rem;
   }
 `;
 
@@ -307,21 +507,38 @@ const PriceSection = styled.div`
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
+  
+  @media (max-width: 480px) {
+    gap: 0.375rem;
+  }
 `;
 
 const SaleTag = styled.div`
   font-size: 0.75rem;
   text-transform: uppercase;
+  
+  @media (max-width: 480px) {
+    font-size: 0.7rem;
+  }
 `;
 
 const Price = styled.span`
   font-weight: 600;
+  
+  @media (max-width: 480px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const OriginalPrice = styled.span`
   color: #666;
   text-decoration: line-through;
   font-size: 0.875rem;
+  
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+  }
 `;
 
 const DiscountTag = styled.span`
@@ -329,21 +546,52 @@ const DiscountTag = styled.span`
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
   border-radius: 2px;
+  
+  @media (max-width: 480px) {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
 `;
 
 const CategoriesSection = styled.div`
   margin-top: 3rem;
+  
+  @media (max-width: 768px) {
+    margin-top: 2.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    margin-top: 2rem;
+  }
 `;
 
 const CategoryTitle = styled.h3`
   font-size: 1.25rem;
   margin-bottom: 1.5rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1.125rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 const CategoryTags = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+  
+  @media (max-width: 768px) {
+    gap: 0.75rem;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 0.5rem;
+  }
 `;
 
 const CategoryTag = styled(Link)`
@@ -356,6 +604,15 @@ const CategoryTag = styled(Link)`
 
   &:hover {
     background: #f5f5f5;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 0.4rem 0.8rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
   }
 `;
 
@@ -610,4 +867,3 @@ const Layawaypayment = () => {
   };
   
   export default Layawaypayment;
-  
