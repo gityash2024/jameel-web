@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import { Eye } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import orderAPI from '../api/order';
 import daimond_logo from "../assets/daimond_logo.svg";
-import { Link, Outlet } from 'react-router-dom';
 import justatyourservice_1 from "../assets/justatyourservice_1.svg";
 import justatyourservice_2 from "../assets/justatyourservice_2.svg";
 import justatyourservice_3 from "../assets/justatyourservice_3.svg";
@@ -121,48 +123,93 @@ const ViewButton = styled.button`
 `;
 
 const MyOrder = () => {
-  const orders = [
-    { id: '#12345', date: '11 DEC 2024', amount: '$49.99', status: 'Pending', method: 'COD' },
-    { id: '#12345', date: '11 DEC 2024', amount: '$49.99', status: 'Pending', method: 'COD' },
-    { id: '#12345', date: '11 DEC 2024', amount: '$49.99', status: 'Pending', method: 'COD' },
-    { id: '#12345', date: '11 DEC 2024', amount: '$49.99', status: 'Pending', method: 'COD' },
-    { id: '#12345', date: '11 DEC 2024', amount: '$49.99', status: 'Pending', method: 'COD' },
-    { id: '#12345', date: '11 DEC 2024', amount: '$49.99', status: 'Pending', method: 'COD' },
-    { id: '#12345', date: '11 DEC 2024', amount: '$49.99', status: 'Pending', method: 'COD' },
-    { id: '#12345', date: '11 DEC 2024', amount: '$49.99', status: 'Pending', method: 'COD' },
-    { id: '#12345', date: '11 DEC 2024', amount: '$49.99', status: 'Pending', method: 'COD' },
-    { id: '#12345', date: '11 DEC 2024', amount: '$49.99', status: 'Pending', method: 'COD' }
-  ];
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const response = await orderAPI.getOrders();
+      
+      if (response?.data?.data?.orders) {
+        setOrders(response.data.data.orders);
+      } else {
+        setOrders([]);
+      }
+      
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching orders:', err);
+      setError('Failed to load orders. Please try again later.');
+      toast.error('Failed to load orders');
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleViewOrder = (orderId) => {
+    navigate(`/track-order/${orderId}`);
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }).toUpperCase();
+  };
 
   return (
     <Container>
-    
-      <OrderTable>
-        <TableHeader>
-          <div>Order NO</div>
-          <div>Date</div>
-          <div>Amount</div>
-          <div>Payment Status</div>
-          <div>Payment Method</div>
-          <div>Option</div>
-        </TableHeader>
-        {orders.map((order, index) => (
-          <TableRow key={index}>
-            <div>{order.id}</div>
-            <div>{order.date}</div>
-            <div>{order.amount}</div>
-            <div>
-              <StatusBadge status={order.status}>{order.status}</StatusBadge>
-            </div>
-            <div>{order.method}</div>
-            <div>
-              <ViewButton>
-                <Eye size={20} />
-              </ViewButton>
-            </div>
-          </TableRow>
-        ))}
-      </OrderTable>
+      {loading ? (
+        <p>Loading your orders...</p>
+      ) : error ? (
+        <p>{error}</p>
+      ) : orders.length === 0 ? (
+        <div className="text-center py-8">
+          <h2 className="text-xl font-semibold mb-4">You haven't placed any orders yet</h2>
+          <p className="mb-6">Explore our collection and place your first order today.</p>
+          <Link to="/products" className="bg-black text-white px-6 py-2 rounded">Shop Now</Link>
+        </div>
+      ) : (
+        <OrderTable>
+          <TableHeader>
+            <div>Order NO</div>
+            <div>Date</div>
+            <div>Amount</div>
+            <div>Order Status</div>
+            <div>Payment Method</div>
+            <div>Option</div>
+          </TableHeader>
+          {orders.map((order) => (
+            <TableRow key={order._id}>
+              <div>{order.orderNumber || 'N/A'}</div>
+              <div>{formatDate(order.createdAt)}</div>
+              <div>${order.total ? order.total.toFixed(2) : '0.00'}</div>
+              <div>
+                <StatusBadge status={order.orderStatus || 'Pending'}>
+                  {order.orderStatus ? order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1) : 'Pending'}
+                </StatusBadge>
+              </div>
+              <div>{order.paymentMethod ? order.paymentMethod.toUpperCase() : 'N/A'}</div>
+              <div>
+                <ViewButton onClick={() => handleViewOrder(order._id)}>
+                  <Eye size={20} />
+                </ViewButton>
+              </div>
+            </TableRow>
+          ))}
+        </OrderTable>
+      )}
     </Container>
   );
 };

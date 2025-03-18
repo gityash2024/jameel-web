@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
 import { useNavigate, Link } from 'react-router-dom';
 import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { cartAPI } from "../services/api";
 import { toast } from 'react-hot-toast';
+import { useCart } from '../context/CartContext';
 
 const Container = styled.div`
   max-width: 1280px;
@@ -288,71 +289,107 @@ const LoadingSpinner = styled.div`
 `;
 
 const Cart = () => {
+  const [loading, setLoading] = useState(true);
+  const [calculating, setCalculating] = useState(false);
+  const [subtotal, setSubtotal] = useState(0);
+  const { updateCart } = useCart();
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [subTotal, setSubTotal] = useState(0);
 
   useEffect(() => {
-    const loadCartData = async () => {
-      try {
-        setLoading(true);
-        const response = await cartAPI.getCart();
-        if (response.data && response.data.data && response.data.data.cart) {
-          setCartItems(response.data.data.cart.items || []);
-        } else {
-          setCartItems([]);
-        }
-        setLoading(false);
-      } catch (error) {
-        console.error('Error loading cart:', error);
-        toast.error('Failed to load cart items');
-        setCartItems([]);
-        setLoading(false);
-      }
-    };
-    
     loadCartData();
   }, []);
 
-  useEffect(() => {
-    // Calculate subtotal from cart items
-    const total = cartItems.reduce((sum, item) => {
-      const price = item.product?.salePrice || item.product?.regularPrice || 0;
-      return sum + (price * item.quantity);
-    }, 0);
+  // Helper function to safely get price from a product
+  const getProductPrice = (product) => {
+    if (!product) return 0;
     
-    setSubTotal(total);
+    // Try sale price first, then regular price
+    let price = 0;
+    
+    // Handle string or number values
+    if (product.salePrice !== undefined && product.salePrice !== null) {
+      price = parseFloat(product.salePrice);
+    } else if (product.regularPrice !== undefined && product.regularPrice !== null) {
+      price = parseFloat(product.regularPrice);
+    } else if (product.price !== undefined && product.price !== null) {
+      price = parseFloat(product.price);
+    }
+    
+    // Ensure we have a valid number
+    return isNaN(price) ? 0 : price;
+  };
+
+  // Calculate subtotal whenever cart items change
+  useEffect(() => {
+    if (cartItems && cartItems.length > 0) {
+      setCalculating(true);
+      const total = cartItems.reduce((sum, item) => {
+        const itemPrice = getProductPrice(item.product);
+        const quantity = parseInt(item.quantity || 1);
+        return sum + (itemPrice * quantity);
+      }, 0);
+      
+      setSubtotal(total);
+      setCalculating(false);
+    } else {
+      setSubtotal(0);
+    }
   }, [cartItems]);
 
-  const handleQuantityChange = async (itemId, change, currentQuantity) => {
+  const loadCartData = async () => {
+    setLoading(true);
     try {
-      const newQuantity = Math.max(1, currentQuantity + change);
+      const response = await cartAPI.getCart();
+      console.log('Cart response:', response);
       
-      await cartAPI.updateCartItem(itemId, { quantity: newQuantity });
+      let items = [];
+      if (response.data?.data?.cart?.items) {
+        items = response.data.data.cart.items;
+      } else if (response.data?.cart?.items) {
+        items = response.data.cart.items;
+      } else if (response.data?.items) {
+        items = response.data.items;
+      }
       
-      // Update local state
-      setCartItems(prevItems => 
-        prevItems.map(item => 
-          item._id === itemId 
-            ? { ...item, quantity: newQuantity } 
-            : item
-        )
+      setCartItems(items);
+      updateCart(items);
+    } catch (error) {
+      console.error('Error fetching cart:', error);
+      toast.error('Failed to load cart items');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleQuantityChange = async (itemId, change, currentQuantity) => {
+    if (currentQuantity + change < 1) return;
+    
+    try {
+      const newQuantity = currentQuantity + change;
+      await cartAPI.updateQuantity(itemId, newQuantity);
+      
+      const updatedItems = cartItems.map(item => 
+        item._id === itemId ? { ...item, quantity: newQuantity } : item
       );
+      
+      setCartItems(updatedItems);
+      updateCart(updatedItems);
       
       toast.success('Cart updated');
     } catch (error) {
       console.error('Error updating quantity:', error);
-      toast.error('Failed to update quantity');
+      toast.error('Failed to update cart');
     }
   };
 
   const handleRemoveItem = async (itemId) => {
     try {
-      await cartAPI.removeCartItem(itemId);
+      await cartAPI.removeItem(itemId);
       
-      // Update local state
-      setCartItems(prevItems => prevItems.filter(item => item._id !== itemId));
+      const updatedItems = cartItems.filter(item => item._id !== itemId);
+      setCartItems(updatedItems);
+      updateCart(updatedItems);
       
       toast.success('Item removed from cart');
     } catch (error) {
@@ -362,149 +399,124 @@ const Cart = () => {
   };
 
   const handleContinueShopping = () => {
-    navigate('/product-details');
+    navigate('/products');
   };
 
   const handleCheckout = () => {
-    navigate('/checkout');
+    console.log('Cart items:', cartItems);
+    console.log('Cart total:', subtotal);
+    navigate('/checkout', { state: { cartItems, cartTotal: subtotal } });
   };
-
-  if (loading) {
-    return (
-      <Container>
-        <LoadingContainer>
-          <LoadingSpinner />
-        </LoadingContainer>
-      </Container>
-    );
-  }
-
-  if (!cartItems || cartItems.length === 0) {
-    return (
-      <Container>
-        <Navigation>
-          <NavLink to="/">Home</NavLink>
-          {" / "}
-          <span>Cart</span>
-        </Navigation>
-        
-        <EmptyCart>
-          <h2>Your cart is empty</h2>
-          <p>Looks like you haven't added any items to your cart yet.</p>
-          <Button primary onClick={handleContinueShopping}>
-            <ShoppingBag size={16} />
-            Start Shopping
-          </Button>
-        </EmptyCart>
-      </Container>
-    );
-  }
 
   return (
     <Container>
       <Navigation>
-        <NavLink to="/">Home</NavLink>
-        {" / "}
-        <span>Cart</span>
+        <NavLink to="/">Home</NavLink> / <span>Cart</span>
       </Navigation>
-
+      
       <Header>
         <Title>Your Shopping Cart</Title>
         <SearchText>
           {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'} in your cart
         </SearchText>
       </Header>
-
-      <div style={{ overflowX: 'auto' }}>
-        <Table>
-          <thead>
-            <tr>
-              <Th>Product</Th>
-              <Th>Price</Th>
-              <Th>Quantity</Th>
-              <Th>Total</Th>
-              <Th></Th>
-            </tr>
-          </thead>
-          <tbody>
-            {cartItems.map((item) => {
-              const price = item.product?.salePrice || item.product?.regularPrice;
-              const originalPrice = item.product?.regularPrice;
-              const hasDiscount = item.product?.salePrice && item.product?.salePrice < item.product?.regularPrice;
-              
-              return (
-                <tr key={item._id}>
-                  <Td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <ProductImage 
-                        src={item.product?.images?.[0]?.url || '/placeholder.png'} 
-                        alt={item.product?.name} 
-                      />
-                      <div>
-                        <div style={{ fontWeight: '500', marginBottom: '4px' }}>{item.product?.name}</div>
-                        {item.attributes && item.attributes.length > 0 && (
-                          <div style={{ fontSize: '0.875rem', color: '#666' }}>
-                            {item.attributes[0].name}: {item.attributes[0].value}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </Td>
-                  <Td>
-                    <Price>
-                      ${price?.toFixed(2)}
-                      {hasDiscount && (
-                        <OriginalPrice>${originalPrice?.toFixed(2)}</OriginalPrice>
-                      )}
-                    </Price>
-                  </Td>
-                  <Td>
-                    <QuantityControl>
-                      <QuantityButton 
-                        onClick={() => handleQuantityChange(item._id, -1, item.quantity)}
-                        disabled={item.quantity <= 1}
-                      >
-                        <Minus size={16} />
-                      </QuantityButton>
-                      {item.quantity}
-                      <QuantityButton 
-                        onClick={() => handleQuantityChange(item._id, 1, item.quantity)}
-                      >
-                        <Plus size={16} />
-                      </QuantityButton>
-                    </QuantityControl>
-                  </Td>
-                  <Td>${(price * item.quantity).toFixed(2)}</Td>
-                  <Td>
-                    <RemoveButton onClick={() => handleRemoveItem(item._id)}>
-                      <X size={20} />
-                    </RemoveButton>
-                  </Td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </Table>
-      </div>
-
-      <Summary>
-        <SubTotal>
-          <span>Subtotal:</span>
-          <span>${subTotal.toFixed(2)}</span>
-        </SubTotal>
-        <div style={{ fontSize: '0.875rem', color: '#666', textAlign: 'right', maxWidth: '300px' }}>
-          Shipping and taxes will be calculated at checkout
-        </div>
-        <ButtonGroup>
+      
+      {loading ? (
+        <div>Loading cart...</div>
+      ) : cartItems.length === 0 ? (
+        <EmptyCart>
+          <h2>Your cart is empty</h2>
+          <p>Looks like you haven't added any products to your cart yet.</p>
           <Button onClick={handleContinueShopping}>
+            <ShoppingBag size={18} />
             Continue Shopping
           </Button>
-          <Button primary onClick={handleCheckout}>
-            <ShoppingBag size={16} />
-            Checkout
-          </Button>
-        </ButtonGroup>
-      </Summary>
+        </EmptyCart>
+      ) : (
+        <>
+          <div style={{ overflowX: 'auto' }}>
+            <Table>
+              <thead>
+                <tr>
+                  <Th>Product</Th>
+                  <Th>Price</Th>
+                  <Th>Quantity</Th>
+                  <Th>Total</Th>
+                  <Th></Th>
+                </tr>
+              </thead>
+              <tbody>
+                {cartItems.map((item) => {
+                  return (
+                    <tr key={item._id}>
+                      <Td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                          <ProductImage 
+                            src={item.product?.images && Array.isArray(item.product.images) 
+                              ? (item.product.images[0]?.url || '/placeholder.png') 
+                              : '/placeholder.png'} 
+                            alt={item.product?.name || 'Product image'} 
+                            onError={(e) => {e.target.src = '/placeholder.png'}}
+                          />
+                          <div>
+                            <div style={{ fontWeight: '500' }}>{item.product?.name}</div>
+                            {item.product?.sku && <div style={{ color: '#666', fontSize: '0.875rem' }}>SKU: {item.product.sku}</div>}
+                          </div>
+                        </div>
+                      </Td>
+                      <Td>
+                        <Price>
+                          ${getProductPrice(item.product).toFixed(2)}
+                          {item.product?.regularPrice && item.product?.salePrice && parseFloat(item.product.regularPrice) > parseFloat(item.product.salePrice) && (
+                            <OriginalPrice>${parseFloat(item.product.regularPrice).toFixed(2)}</OriginalPrice>
+                          )}
+                        </Price>
+                      </Td>
+                      <Td>
+                        <QuantityControl>
+                          <QuantityButton onClick={() => handleQuantityChange(item._id, -1, parseInt(item.quantity || 1))} disabled={parseInt(item.quantity || 1) <= 1}>
+                            <Minus size={16} />
+                          </QuantityButton>
+                          <span>{parseInt(item.quantity || 1)}</span>
+                          <QuantityButton onClick={() => handleQuantityChange(item._id, 1, parseInt(item.quantity || 1))}>
+                            <Plus size={16} />
+                          </QuantityButton>
+                        </QuantityControl>
+                      </Td>
+                      <Td>
+                        <strong>${(getProductPrice(item.product) * parseInt(item.quantity || 1)).toFixed(2)}</strong>
+                      </Td>
+                      <Td>
+                        <RemoveButton onClick={() => handleRemoveItem(item._id)}>
+                          <X size={18} />
+                        </RemoveButton>
+                      </Td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </div>
+          
+          <Summary>
+            <SubTotal>
+              <span>Subtotal:</span>
+              <strong>${calculating ? '...' : subtotal.toFixed(2)}</strong>
+            </SubTotal>
+            <div style={{ color: '#666', fontSize: '0.875rem', textAlign: 'right' }}>
+              Shipping and taxes will be calculated at checkout
+            </div>
+            <ButtonGroup>
+              <Button onClick={handleContinueShopping}>
+                Continue Shopping
+              </Button>
+              <Button primary onClick={handleCheckout}>
+                Checkout
+              </Button>
+            </ButtonGroup>
+          </Summary>
+        </>
+      )}
     </Container>
   );
 };

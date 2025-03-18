@@ -145,6 +145,23 @@ export const productAPI = {
   getFeaturedProducts: () => api.get('/products/featured'),
   getNewArrivals: () => api.get('/products/new-arrivals'),
   searchProducts: (params) => api.get('/products/search', { params }),
+  searchProductSuggestions: async (query) => {
+    try {
+      console.log("API: Searching for suggestions with query:", query);
+      // Always use encoded query to handle special characters
+      const encodedQuery = encodeURIComponent(query);
+      const response = await api.get(`/products/suggestions?query=${encodedQuery}`);
+      console.log("API: Got suggestions response:", response.status);
+      return response;
+    } catch (error) {
+      console.error("API: Error fetching suggestions:", 
+        error.response?.status, 
+        error.response?.data?.message || error.message
+      );
+      // Re-throw to let the caller handle the error
+      throw error;
+    }
+  },
   getRelatedProducts: (productId) => api.get(`/products/${productId}/related`),
 };
 
@@ -170,8 +187,8 @@ export const supportAPI = {
 export const cartAPI = {
   getCart: () => api.get('/cart'),
   addToCart: (data) => api.post('/cart/items', data),
-  updateCartItem: (itemId, data) => api.put(`/cart/items/${itemId}`, data),
-  removeCartItem: (itemId) => api.delete(`/cart/items/${itemId}`),
+  updateQuantity: (itemId, quantity) => api.put(`/cart/items/${itemId}`, { quantity }),
+  removeItem: (itemId) => api.delete(`/cart/items/${itemId}`),
   clearCart: () => api.delete('/cart'),
   applyCoupon: (code) => api.post('/cart/apply-coupon', { code }),
   removeCoupon: () => api.delete('/cart/remove-coupon'),
@@ -182,7 +199,6 @@ export const cartAPI = {
   mergeCart: (items) => api.post('/cart/merge', { items }),
   getCartSummary: () => api.get('/cart/summary')
 };
-
 
 export const storeAPI = {
   getAllStores: () => api.get('/stores'),

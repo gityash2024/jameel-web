@@ -306,6 +306,9 @@ const CardOption = () => {
   const [loading, setLoading] = React.useState(true);
   const [subTotal, setSubTotal] = React.useState(0);
   const [freeShippingThreshold] = React.useState(100);
+  const [isUpdating, setIsUpdating] = React.useState(false);
+  const [isRemoving, setIsRemoving] = React.useState(false);
+  const [isClearing, setIsClearing] = React.useState(false);
 
   useEffect(() => {
     const loadCart = async () => {
@@ -334,10 +337,14 @@ const CardOption = () => {
     }
   }, [cartItems]);
 
-  const updateQuantity = async (itemId, change, currentQuantity) => {
+  const handleQuantityChange = async (itemId, change, currentQuantity) => {
     try {
+      setIsUpdating(true);
       const newQuantity = Math.max(1, currentQuantity + change);
-      await cartAPI.updateCartItem(itemId, { quantity: newQuantity });
+      
+      await cartAPI.updateQuantity(itemId, newQuantity);
+      
+      // Update local state
       setCartItems(prevItems => 
         prevItems.map(item => 
           item._id === itemId 
@@ -345,31 +352,47 @@ const CardOption = () => {
             : item
         )
       );
+      
+      toast.success('Cart updated');
     } catch (error) {
       console.error('Error updating quantity:', error);
       toast.error('Failed to update quantity');
+    } finally {
+      setIsUpdating(false);
     }
   };
 
-  const removeItem = async (itemId) => {
+  const handleRemoveItem = async (itemId) => {
     try {
-      await cartAPI.removeCartItem(itemId);
+      setIsRemoving(true);
+      await cartAPI.removeItem(itemId);
+      
+      // Update local state
       setCartItems(prevItems => prevItems.filter(item => item._id !== itemId));
+      
       toast.success('Item removed from cart');
     } catch (error) {
       console.error('Error removing item:', error);
       toast.error('Failed to remove item');
+    } finally {
+      setIsRemoving(false);
     }
   };
 
-  const clearCart = async () => {
+  const handleClearCart = async () => {
     try {
+      setIsClearing(true);
       await cartAPI.clearCart();
+      
+      // Update local state
       setCartItems([]);
+      
       toast.success('Cart cleared');
     } catch (error) {
       console.error('Error clearing cart:', error);
       toast.error('Failed to clear cart');
+    } finally {
+      setIsClearing(false);
     }
   };
 
@@ -382,7 +405,7 @@ const CardOption = () => {
   };
 
   const handleCheckout = () => {
-    navigate('/checkout');
+    navigate('/checkout', { state: { cartItems, cartTotal: subTotal } });
   };
 
   const handleShopNow = () => {
@@ -407,7 +430,7 @@ const CardOption = () => {
       </ShippingMessage>
       <ProgressBar percent={progressPercent} />
       {cartItems && cartItems.length > 0 && (
-        <ClearCartButton onClick={clearCart}>
+        <ClearCartButton onClick={handleClearCart}>
           Clear Cart
         </ClearCartButton>
       )}
@@ -433,12 +456,12 @@ const CardOption = () => {
                       </div>
                     )}
                     <QuantityControl>
-                      <button onClick={() => updateQuantity(item._id, -1, item.quantity)} disabled={item.quantity <= 1}>-</button>
+                      <button onClick={() => handleQuantityChange(item._id, -1, item.quantity)} disabled={item.quantity <= 1}>-</button>
                       <span>{item.quantity.toString().padStart(2, '0')}</span>
-                      <button onClick={() => updateQuantity(item._id, 1, item.quantity)}>+</button>
+                      <button onClick={() => handleQuantityChange(item._id, 1, item.quantity)}>+</button>
                     </QuantityControl>
                   </ProductInfo>
-                  <DeleteButton onClick={() => removeItem(item._id)}>
+                  <DeleteButton onClick={() => handleRemoveItem(item._id)}>
                     <Trash2 size={20} />
                   </DeleteButton>
                 </CartItem>

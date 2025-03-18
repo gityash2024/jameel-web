@@ -252,6 +252,9 @@ const RelatedProducts = ({ productId, categoryId }) => {
         setWishlistItems(prev => [...prev, product._id]);
         toast.success('Added to wishlist');
       }
+      
+      // Dispatch custom event to trigger wishlist update in header
+      window.dispatchEvent(new Event('wishlistUpdated'));
     } catch (error) {
       toast.error('Failed to update wishlist');
     }

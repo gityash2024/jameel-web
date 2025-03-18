@@ -56,6 +56,9 @@ import AuthGuard from './components/guards/AuthGuard';
 import SavedAddress from './pages/SavedOrder';
 import BlogDetails from './pages/BlogDetails';
 import ProductCompare from './pages/ProductCompare';
+import Payment from './pages/Payment';
+import OrderSuccess from './pages/OrderSuccess';
+import CartProvider from './context/CartContext';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -79,93 +82,102 @@ const AuthLayout = ({ children }) => {
 
 function App() {
   return (
-    <BrowserRouter>
-      <ScrollToTop />
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: '#333',
-            color: '#fff',
-          },
-          success: {
+    <CartProvider>
+      <BrowserRouter>
+        <ScrollToTop />
+        <Toaster
+          position="top-right"
+          toastOptions={{
             duration: 3000,
-            theme: {
-              primary: '#059669',
-              secondary: '#white',
+            style: {
+              background: '#333',
+              color: '#fff',
             },
-          },
-          error: {
-            duration: 3000,
-            theme: {
-              primary: '#DC2626',
-              secondary: '#white',
+            success: {
+              duration: 3000,
+              theme: {
+                primary: '#059669',
+                secondary: '#white',
+              },
             },
-          },
-        }}
-      />
-      <Routes>
-        <Route path="/login" element={<AuthLayout><Login /></AuthLayout>} />
-        <Route path="/signup" element={<AuthLayout><SignUp /></AuthLayout>} />
-        <Route path="/register" element={<AuthLayout><Register /></AuthLayout>} />
-        
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="/product-details" element={<Products />} />
-          <Route path="/products/:slug" element={<ProductDetail />} />
-          <Route path="products" element={<Products />} />
-          <Route path="product-compare" element={<ProductCompare />} />
+            error: {
+              duration: 3000,
+              theme: {
+                primary: '#DC2626',
+                secondary: '#white',
+              },
+            },
+          }}
+          gutter={8}
+          containerStyle={{}}
+          containerClassName=""
+          reverseOrder={false}
+          limit={3}
+        />
+        <Routes>
+          <Route path="/login" element={<AuthLayout><Login /></AuthLayout>} />
+          <Route path="/signup" element={<AuthLayout><SignUp /></AuthLayout>} />
+          <Route path="/register" element={<AuthLayout><Register /></AuthLayout>} />
+          
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="/product-details" element={<Products />} />
+            <Route path="/products/:slug" element={<ProductDetail />} />
+            <Route path="products" element={<Products />} />
+            <Route path="product-compare" element={<ProductCompare />} />
 
-          <Route path="cart" element={<AuthGuard><Cart /></AuthGuard>} />
-          <Route path="checkout" element={<AuthGuard><CheckOut /></AuthGuard>} />
-          <Route path="profile" element={<AuthGuard><Profile /></AuthGuard>} />
-          <Route path="home-erraring" element={<HomeErraring />} />
-          <Route path="/blog/:slug" element={<BlogDetails />} />
-          <Route path="home-payment" element={<Homepayment />} />
-          <Route path="collection" element={<Collection />} />
-          <Route path="collectiontwo" element={<CollectionTwo />} />
-          <Route path="booking-appoinment" element={<AuthGuard><BookingAppoiment /></AuthGuard>} />
-          <Route path="blogs-one" element={<BlogsOne />} />
-          <Route path="blogs-two" element={<BlogsTwo />} />
-          <Route path="ring" element={<Ring />} />
-          <Route path="custom-jewelry" element={<CustomJewelry />} />
-          <Route path="custom-jewelrytwo" element={<CustomJewelryTwo />} />
-          <Route path="help-center" element={<HelpCenter />} />
-          <Route path="checkout-page" element={<AuthGuard><CheckoutPage /></AuthGuard>} />
-          <Route path="personalized-jewelry" element={<PersonalizedJewelry />} />
-          <Route path="card-page" element={<AuthGuard><CardPage /></AuthGuard>} />
-          <Route path="search-in-store" element={<SearchInStore />} />
-          <Route path="payment-hub" element={<AuthGuard><PaymentHub /></AuthGuard>} />
-          <Route path="repair-and-maintances" element={<RepairandMaintances />} />
-          <Route path="privacy" element={<Privacy />} />
-          <Route path="terms-use" element={<Termtouse />} />
-          <Route path="faq" element={<FAQ />} />
-          <Route path="contact-us" element={<ContactUs />} />
-          <Route path="about-us" element={<AboutUs />} />
-          <Route path="appraisals" element={<Appraisal />} />
-          <Route path="learn-more-about" element={<LearnMoreAbout />} />
-          <Route path="find-your-store" element={<Findyourstore />} />
-          <Route path="personalized" element={<Personalized />} />
-          <Route path="layawaypayment" element={<AuthGuard><Layawaypayment /></AuthGuard>} />
-          <Route path="saved-order" element={<AuthGuard><SavedOrder /></AuthGuard>} />
-          <Route path="favorites-remove" element={<AuthGuard><FavoritesRemove /></AuthGuard>} />
-          <Route path="add-address" element={<AuthGuard><AddAddress /></AuthGuard>} />
-          <Route path="about-us-two" element={<AboutUsTwo />} />
+            <Route path="cart" element={<AuthGuard><Cart /></AuthGuard>} />
+            <Route path="checkout" element={<AuthGuard><CheckOut /></AuthGuard>} />
+            <Route path="payment/:orderId" element={<AuthGuard><Payment /></AuthGuard>} />
+            <Route path="order-success/:orderId" element={<AuthGuard><OrderSuccess /></AuthGuard>} />
+            <Route path="profile" element={<AuthGuard><Profile /></AuthGuard>} />
+            <Route path="home-erraring" element={<HomeErraring />} />
+            <Route path="/blog/:slug" element={<BlogDetails />} />
+            <Route path="home-payment" element={<Homepayment />} />
+            <Route path="collection" element={<Collection />} />
+            <Route path="collectiontwo" element={<CollectionTwo />} />
+            <Route path="booking-appoinment" element={<AuthGuard><BookingAppoiment /></AuthGuard>} />
+            <Route path="blogs-one" element={<BlogsOne />} />
+            <Route path="blogs-two" element={<BlogsTwo />} />
+            <Route path="ring" element={<Ring />} />
+            <Route path="custom-jewelry" element={<CustomJewelry />} />
+            <Route path="custom-jewelrytwo" element={<CustomJewelryTwo />} />
+            <Route path="help-center" element={<HelpCenter />} />
+            <Route path="checkout-page" element={<AuthGuard><CheckoutPage /></AuthGuard>} />
+            <Route path="personalized-jewelry" element={<PersonalizedJewelry />} />
+            <Route path="card-page" element={<AuthGuard><CardPage /></AuthGuard>} />
+            <Route path="search-in-store" element={<SearchInStore />} />
+            <Route path="payment-hub" element={<AuthGuard><PaymentHub /></AuthGuard>} />
+            <Route path="repair-and-maintances" element={<RepairandMaintances />} />
+            <Route path="privacy" element={<Privacy />} />
+            <Route path="terms-use" element={<Termtouse />} />
+            <Route path="faq" element={<FAQ />} />
+            <Route path="contact-us" element={<ContactUs />} />
+            <Route path="about-us" element={<AboutUs />} />
+            <Route path="appraisals" element={<Appraisal />} />
+            <Route path="learn-more-about" element={<LearnMoreAbout />} />
+            <Route path="find-your-store" element={<Findyourstore />} />
+            <Route path="personalized" element={<Personalized />} />
+            <Route path="layawaypayment" element={<AuthGuard><Layawaypayment /></AuthGuard>} />
+            <Route path="saved-order" element={<AuthGuard><SavedOrder /></AuthGuard>} />
+            <Route path="favorites-remove" element={<AuthGuard><FavoritesRemove /></AuthGuard>} />
+            <Route path="add-address" element={<AuthGuard><AddAddress /></AuthGuard>} />
+            <Route path="about-us-two" element={<AboutUsTwo />} />
 
-          <Route path="/" element={<AuthGuard><MyAccountLayout /></AuthGuard>}>
-            <Route path="my-account" element={<MyAccount />} />
-            <Route path="my-order" element={<MyOrder />} />
-            <Route path="saved-address" element={<SavedAddress />} />
-            <Route path="add-address" element={<AddAddress />} />
-            <Route path="favorites" element={<Favorites />} />
-            <Route path="track-order" element={<TrackOrder />} />
+            <Route path="/" element={<AuthGuard><MyAccountLayout /></AuthGuard>}>
+              <Route path="my-account" element={<MyAccount />} />
+              <Route path="my-order" element={<MyOrder />} />
+              <Route path="saved-address" element={<SavedAddress />} />
+              <Route path="add-address" element={<AddAddress />} />
+              <Route path="favorites" element={<Favorites />} />
+              <Route path="track-order" element={<TrackOrder />} />
+            </Route>
+
+            <Route path="*" element={<NotFound />} />
           </Route>
-
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </CartProvider>
   );
 }
 

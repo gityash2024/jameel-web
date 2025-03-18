@@ -1327,6 +1327,9 @@ const ProductDetail = () => {
         }]);
       }
       
+      // Dispatch custom event to trigger cart update in header
+      window.dispatchEvent(new Event('cartUpdated'));
+      
       toast.success('Added to cart successfully');
     } catch (error) {
       console.error('Error adding to cart:', error);
@@ -1344,19 +1347,26 @@ const ProductDetail = () => {
     try {
       if (isInWishlist) {
         await userAPI.removeFromWishlist(product._id);
+        setIsInWishlist(false);
+        
         if (setWishlistItems) {
           setWishlistItems(prev => prev.filter(id => id !== product._id));
         }
-        setIsInWishlist(false);
+        
         toast.success('Removed from wishlist');
       } else {
         await userAPI.addToWishlist(product._id);
+        setIsInWishlist(true);
+        
         if (setWishlistItems) {
           setWishlistItems(prev => [...prev, product._id]);
         }
-        setIsInWishlist(true);
+        
         toast.success('Added to wishlist');
       }
+      
+      // Dispatch custom event to trigger wishlist update in header
+      window.dispatchEvent(new Event('wishlistUpdated'));
     } catch (error) {
       console.error('Error updating wishlist:', error);
       toast.error('Failed to update wishlist');

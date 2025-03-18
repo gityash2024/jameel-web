@@ -1,8 +1,9 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { MapPin, HelpCircle, User, Search, ShoppingCart, Heart, ChevronDown, Camera, Menu, X, LogOut } from 'lucide-react';
-import { categoryAPI, subcategoryAPI, cartAPI, userAPI } from '../../services/api';
+import { MapPin, HelpCircle, User, Search, ShoppingCart, Heart, ChevronDown, Camera, Menu, X, LogOut, AlertCircle } from 'lucide-react';
+import { categoryAPI, subcategoryAPI, cartAPI, userAPI, productAPI } from '../../services/api';
 import styled from 'styled-components';
+import { useCart } from '../../context/CartContext';
 
 const CartPreview = styled.div`
   position: absolute;
@@ -88,35 +89,37 @@ const CartItem = styled.div`
 `;
 
 const CartFooter = styled.div`
-  margin-top: 12px;
+  padding: 15px;
+  border-top: 1px solid #e2e8f0;
   
   .subtotal {
     display: flex;
     justify-content: space-between;
     padding: 8px 0;
     font-weight: 500;
+    margin-bottom: 15px;
   }
   
   .buttons {
-    margin-top: 12px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    
+    display: flex;
+    width: 100%;
+  
     button {
-      padding: 10px;
-      border-radius: 4px;
-      font-size: 14px;
-      font-weight: 500;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
-
+      transition: all 0.3s;
+      font-weight: 500;
       
       &.view-cart {
-        background: white;
-        border: 1px solid #e2e8f0;
+        background-color: white;
+        border: 1px solid black;
+        color: black;
+        width: 100%;
         
         &:hover {
-          background: #f7fafc;
+          background-color: #f5f5f5;
         }
       }
       
@@ -159,10 +162,101 @@ const EmptyCart = styled.div`
   }
 `;
 
+// Add styled components for search dropdown
+const SearchContainer = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+const SearchDropdown = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 3px;
+`;
+
+const SearchItem = styled.div`
+  display: flex;
+  padding: 10px 15px;
+  border-bottom: 1px solid #f7fafc;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: #f7fafc;
+  }
+  
+  .image {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #f0f0f0;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+  
+  .details {
+    flex: 1;
+    
+    .title {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    
+    .category {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .price {
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+`;
+
+const EmptySearchResult = styled.div`
+  text-align: center;
+  padding: 20px;
+  
+  .icon {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  p {
+    color: #666;
+    margin-bottom: 5px;
+  }
+  
+  .search-query {
+    font-weight: 600;
+    color: #333;
+  }
+`;
+
 export const HeaderContext = createContext();
 
 export const HeaderProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [wishlistItems, setWishlistItems] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -175,13 +269,16 @@ export const HeaderProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [showCartPreview, setShowCartPreview] = useState(false);
   const location = useLocation();
-
+  const { updateCart } = useCart();
+  const searchTimeoutRef = useRef(null);
+  
   // Close mobile menu when location changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
     setIsMobileSearchOpen(false);
   }, [location]);
 
+  // This effect runs only once on component mount
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userDataStr = localStorage.getItem('jammelUser');
@@ -212,44 +309,124 @@ export const HeaderProvider = ({ children }) => {
     fetchCategoriesAndSubcategories();
   }, []);
   
+  // Add a listener effect to detect and update cart changes
+  useEffect(() => {
+    // Create a custom event for cart updates
+    window.addEventListener('cartUpdated', fetchCartData);
+    window.addEventListener('wishlistUpdated', fetchWishlistData);
+    
+    return () => {
+      window.removeEventListener('cartUpdated', fetchCartData);
+      window.removeEventListener('wishlistUpdated', fetchWishlistData);
+    };
+  }, []);
+  
+  // Search products effect
+  useEffect(() => {
+    if (searchQuery.trim().length >= 2) {
+      setIsSearching(true);
+      
+      // Clear previous timeout
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+      
+      // Set new timeout for debouncing
+      searchTimeoutRef.current = setTimeout(async () => {
+        try {
+          // Clean up the search query for better results
+          const cleanQuery = searchQuery.trim();
+          console.log("Searching for:", cleanQuery);
+          
+          const response = await productAPI.searchProductSuggestions(cleanQuery);
+          console.log("Search API response:", response);
+          
+          const products = response.data?.data?.products || [];
+          console.log("Search results:", products.length, "products found");
+          
+          setSearchResults(products);
+          setShowSearchDropdown(true);
+        } catch (error) {
+          console.error('Error searching products:', error.response || error);
+          // Don't hide dropdown on error - show empty state instead
+          setSearchResults([]);
+          setShowSearchDropdown(searchQuery.trim().length >= 2);
+        } finally {
+          setIsSearching(false);
+        }
+      }, 300); // 300ms debounce
+    } else {
+      setSearchResults([]);
+      setShowSearchDropdown(false);
+    }
+    
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [searchQuery]);
+  
   const fetchCartData = async () => {
     try {
       const response = await cartAPI.getCart();
       if (response.data && response.data.data && response.data.data.cart) {
         const updatedCartItems = response.data.data.cart.items || [];
         setCartItems(updatedCartItems);
+        updateCart(updatedCartItems);
         return updatedCartItems;
       } else {
+        setCartItems([]);
+        updateCart([]);
         return [];
       }
     } catch (error) {
       console.error('Error fetching cart data:', error);
+      setCartItems([]);
+      updateCart([]);
       return [];
     }
   };
   
-const fetchWishlistData = async () => {
-  try {
-    const response = await userAPI.getWishlist();
-    if (response.data.data && response.data.data.products) {
-      const wishlistProductIds = response.data.data.products.map(item => 
-        item?.product?._id || item?.product
-      );
-      setWishlistItems(wishlistProductIds);
+  const fetchWishlistData = async () => {
+    try {
+      const response = await userAPI.getWishlist();
+      if (response.data.data && response.data.data.products) {
+        const wishlistProductIds = response.data.data.products.map(item => 
+          item?.product?._id || item?.product
+        );
+        setWishlistItems(wishlistProductIds);
+      }
+    } catch (error) {
+      console.error('Error fetching wishlist data:', error);
     }
-  } catch (error) {
-    console.error('Error fetching wishlist data:', error);
-  }
-};
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('jammelUser');
     setIsLoggedIn(false);
     setUserData(null);
-    setShowProfileModal(false);
     setCartItems([]);
     setWishlistItems([]);
+    updateCart([]);
+    window.location.href = '/';
+  };
+  
+  const clearSearch = () => {
+    setSearchQuery('');
+    setSearchResults([]);
+    setShowSearchDropdown(false);
+  };
+  
+  const handleSearchItemClick = (product) => {
+    console.log("Product clicked:", product._id, product.name);
+    console.log("Navigating to product with ID:", product._id);
+    
+    // Clear search and hide dropdown
+    setSearchQuery('');
+    setSearchResults([]);
+    setShowSearchDropdown(false);
   };
 
   const dynamicNavigation = [
@@ -311,29 +488,42 @@ const fetchWishlistData = async () => {
   }, 0);
 
   return (
-    <HeaderContext.Provider value={{
-      headerData,
-      searchQuery,
-      setSearchQuery,
-      cartItems,
-      setCartItems,
-      wishlistItems,
-      setWishlistItems,
-      isLoggedIn,
-      isMobileMenuOpen,
-      setIsMobileMenuOpen,
-      isMobileSearchOpen,
-      setIsMobileSearchOpen,
-      showProfileModal,
-      setShowProfileModal,
-      jammelUser,
-      handleLogout,
-      isLoading,
-      showCartPreview,
-      setShowCartPreview,
-      cartSubtotal,
-      fetchCartData
-    }}>
+    <HeaderContext.Provider
+      value={{
+        headerData,
+        searchQuery,
+        setSearchQuery,
+        searchResults,
+        isSearching,
+        showSearchDropdown,
+        setShowSearchDropdown,
+        clearSearch,
+        handleSearchItemClick,
+        cartItems,
+        setCartItems,
+        wishlistItems,
+        setWishlistItems,
+        isLoggedIn,
+        setIsLoggedIn,
+        isMobileMenuOpen,
+        setIsMobileMenuOpen,
+        isMobileSearchOpen,
+        setIsMobileSearchOpen,
+        showProfileModal,
+        setShowProfileModal,
+        jammelUser,
+        setUserData,
+        categories,
+        subcategories,
+        isLoading,
+        showCartPreview,
+        setShowCartPreview,
+        handleLogout,
+        fetchCartData,
+        fetchWishlistData,
+        cartSubtotal
+      }}
+    >
       {children}
     </HeaderContext.Provider>
   );
@@ -431,6 +621,12 @@ const MainHeader = () => {
     headerData,
     searchQuery,
     setSearchQuery,
+    searchResults,
+    isSearching,
+    showSearchDropdown,
+    setShowSearchDropdown,
+    clearSearch,
+    handleSearchItemClick,
     cartItems,
     wishlistItems,
     isMobileMenuOpen,
@@ -443,12 +639,28 @@ const MainHeader = () => {
     isLoggedIn
   } = useContext(HeaderContext);
   const navigate = useNavigate();
+  const searchRef = useRef(null);
+  
+  // Close search dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSearchDropdown(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [setShowSearchDropdown]);
   
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/product-details?search=${encodeURIComponent(searchQuery.trim())}`);
       setIsMobileSearchOpen(false);
+      clearSearch();
     }
   };
   
@@ -482,21 +694,94 @@ const MainHeader = () => {
             </button>
           </div>
 
-          <div className="hidden md:block relative">
-            <form onSubmit={handleSearch} className="flex items-center">
-              <input
-                type="text"
-                placeholder="What can I help you find?"
-                className="w-full px-4 py-2 pr-20 border border-gray-300 rounded"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <div className="absolute right-2 flex items-center gap-2">
-                <button type="submit" className="p-1 hover:text-gray-600">
-                  <Search className="w-5 h-5 text-gray-400" />
-                </button>
-              </div>
-            </form>
+          <div className="hidden md:block relative" ref={searchRef}>
+            <SearchContainer>
+              <form onSubmit={handleSearch} className="flex items-center">
+                <input
+                  type="text"
+                  placeholder="What can I help you find?"
+                  className="w-full px-4 py-2 pr-20 border border-gray-300 rounded"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => {
+                    if (searchResults.length > 0) {
+                      setShowSearchDropdown(true);
+                    }
+                  }}
+                />
+                <div className="absolute right-2 flex items-center gap-2">
+                  {searchQuery && (
+                    <button 
+                      type="button" 
+                      className="p-1 hover:text-gray-600"
+                      onClick={clearSearch}
+                    >
+                      <X className="w-4 h-4 text-gray-400" />
+                    </button>
+                  )}
+                  <button type="submit" className="p-1 hover:text-gray-600">
+                    <Search className="w-5 h-5 text-gray-400" />
+                  </button>
+                </div>
+              </form>
+              
+              {showSearchDropdown && (
+                <SearchDropdown>
+                  {isSearching ? (
+                    <div className="text-center py-4">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900 mx-auto"></div>
+                      <p className="text-sm text-gray-600 mt-2">Searching...</p>
+                    </div>
+                  ) : searchResults.length > 0 ? (
+                    <>
+                      {searchResults.map((product) => (
+                        <Link to={`/product-details?id=${product._id}`} key={product._id}>
+                          <SearchItem onClick={() => handleSearchItemClick(product)}>
+                            <div className="image">
+                              <img 
+                                src={product.images && Array.isArray(product.images) 
+                                  ? (product.images[0]?.url || '/placeholder.png') 
+                                  : '/placeholder.png'} 
+                                alt={product.name || 'Product image'} 
+                                onError={(e) => {e.target.src = '/placeholder.png'}}
+                              />
+                            </div>
+                            <div className="details">
+                              <div className="title">{product.name}</div>
+                              {product.category && (
+                                <div className="category">{product.category.name}</div>
+                              )}
+                              <div className="price">
+                                ${(product.salePrice || product.regularPrice || product.price || 0).toFixed(2)}
+                              </div>
+                            </div>
+                          </SearchItem>
+                        </Link>
+                      ))}
+                      <div className="p-3 text-center">
+                        <button 
+                          className="text-sm text-blue-600 hover:underline"
+                          onClick={() => {
+                            navigate(`/product-details?search=${encodeURIComponent(searchQuery.trim())}`);
+                            clearSearch();
+                          }}
+                        >
+                          See all results
+                        </button>
+                      </div>
+                    </>
+                  ) : searchQuery.trim().length >= 2 ? (
+                    <EmptySearchResult>
+                      <div className="icon">
+                        <AlertCircle className="w-6 h-6 text-gray-400" />
+                      </div>
+                      <p>No products found for</p>
+                      <p className="search-query">"{searchQuery}"</p>
+                    </EmptySearchResult>
+                  ) : null}
+                </SearchDropdown>
+              )}
+            </SearchContainer>
           </div>
 
           <Link to={headerData.logo.link} className="flex flex-col items-center justify-center flex-grow md:flex-grow-0">
@@ -546,8 +831,11 @@ const MainHeader = () => {
                         <CartItem key={item._id}>
                           <div className="image">
                             <img 
-                              src={item.product?.images?.[0]?.url || '/placeholder.png'} 
-                              alt={item.product?.name} 
+                              src={item.product?.images && Array.isArray(item.product.images) 
+                                ? (item.product.images[0]?.url || '/placeholder.png') 
+                                : '/placeholder.png'} 
+                              alt={item.product?.name || 'Product image'} 
+                              onError={(e) => {e.target.src = '/placeholder.png'}}
                             />
                           </div>
                           <div className="details">
@@ -584,9 +872,6 @@ const MainHeader = () => {
                         <button className="view-cart" onClick={handleViewCart}>
                           View Bag
                         </button>
-                        <button className="checkout" onClick={handleCheckout}>
-                          Checkout
-                        </button>
                       </div>
                     </CartFooter>
                   </>
@@ -606,19 +891,94 @@ const MainHeader = () => {
         </div>
 
         {isMobileSearchOpen && (
-          <div className="md:hidden mt-4">
-            <form onSubmit={handleSearch} className="flex items-center">
-              <input
-                type="text"
-                placeholder="What can I help you find?"
-                className="w-full px-4 py-2 pr-20 border border-gray-300 rounded"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button type="submit" className="p-2 hover:text-gray-600 -ml-10">
-                <Search className="w-5 h-5 text-gray-400" />
-              </button>
-            </form>
+          <div className="md:hidden mt-4" ref={searchRef}>
+            <SearchContainer>
+              <form onSubmit={handleSearch} className="flex items-center">
+                <input
+                  type="text"
+                  placeholder="What can I help you find?"
+                  className="w-full px-4 py-2 pr-20 border border-gray-300 rounded"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => {
+                    if (searchResults.length > 0) {
+                      setShowSearchDropdown(true);
+                    }
+                  }}
+                />
+                <div className="absolute right-2 flex items-center gap-2">
+                  {searchQuery && (
+                    <button 
+                      type="button" 
+                      className="p-1 hover:text-gray-600"
+                      onClick={clearSearch}
+                    >
+                      <X className="w-4 h-4 text-gray-400" />
+                    </button>
+                  )}
+                  <button type="submit" className="p-1 hover:text-gray-600">
+                    <Search className="w-5 h-5 text-gray-400" />
+                  </button>
+                </div>
+              </form>
+
+              {showSearchDropdown && (
+                <SearchDropdown>
+                  {isSearching ? (
+                    <div className="text-center py-4">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900 mx-auto"></div>
+                      <p className="text-sm text-gray-600 mt-2">Searching...</p>
+                    </div>
+                  ) : searchResults.length > 0 ? (
+                    <>
+                      {searchResults.map((product) => (
+                        <Link to={`/product-details?id=${product._id}`} key={product._id}>
+                          <SearchItem onClick={() => handleSearchItemClick(product)}>
+                            <div className="image">
+                              <img 
+                                src={product.images && Array.isArray(product.images) 
+                                  ? (product.images[0]?.url || '/placeholder.png') 
+                                  : '/placeholder.png'} 
+                                alt={product.name || 'Product image'} 
+                                onError={(e) => {e.target.src = '/placeholder.png'}}
+                              />
+                            </div>
+                            <div className="details">
+                              <div className="title">{product.name}</div>
+                              {product.category && (
+                                <div className="category">{product.category.name}</div>
+                              )}
+                              <div className="price">
+                                ${(product.salePrice || product.regularPrice || product.price || 0).toFixed(2)}
+                              </div>
+                            </div>
+                          </SearchItem>
+                        </Link>
+                      ))}
+                      <div className="p-3 text-center">
+                        <button 
+                          className="text-sm text-blue-600 hover:underline"
+                          onClick={() => {
+                            navigate(`/product-details?search=${encodeURIComponent(searchQuery.trim())}`);
+                            clearSearch();
+                          }}
+                        >
+                          See all results
+                        </button>
+                      </div>
+                    </>
+                  ) : searchQuery.trim().length >= 2 ? (
+                    <EmptySearchResult>
+                      <div className="icon">
+                        <AlertCircle className="w-6 h-6 text-gray-400" />
+                      </div>
+                      <p>No products found for</p>
+                      <p className="search-query">"{searchQuery}"</p>
+                    </EmptySearchResult>
+                  ) : null}
+                </SearchDropdown>
+              )}
+            </SearchContainer>
           </div>
         )}
       </div>
