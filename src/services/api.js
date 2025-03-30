@@ -51,6 +51,7 @@ api.interceptors.response.use(
 export const authAPI = {
   login: (data) => api.post('/auth/login', data),
   register: (data) => api.post('/auth/register', { ...data, role: 'customer' }),
+  googleLogin: (data) => api.post('/auth/google', data),
   forgotPassword: (data) => api.post('/auth/forgot-password', data),
   resetPassword: (token, data) => api.post(`/auth/reset-password/${token}`, data),
   logout: () => api.post('/auth/logout'),
@@ -173,6 +174,26 @@ export const orderAPI = {
   getOrders: () => api.get('/orders'),
   getOrder: (id) => api.get(`/orders/${id}`),
   cancelOrder: (id) => api.put(`/orders/${id}/cancel`),
+  getOrderById: async (orderId) => {
+    try {
+      console.log(`Fetching order details for ID: ${orderId}`);
+      const response = await api.get(`/orders/${orderId}`);
+      return response;
+    } catch (error) {
+      console.error(`Error fetching order ${orderId}:`, error);
+      throw error;
+    }
+  },
+  trackShipment: async (orderId) => {
+    try {
+      console.log(`Tracking shipment for order ID: ${orderId}`);
+      const response = await api.get(`/orders/${orderId}/track`);
+      return response;
+    } catch (error) {
+      console.error(`Error tracking shipment for order ${orderId}:`, error);
+      throw error;
+    }
+  }
 };
 
 export const reviewAPI = {

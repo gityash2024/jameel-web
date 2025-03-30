@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { authAPI } from '../services/api';
+import { useDispatch, useSelector } from 'react-redux';
+import { login, googleAuth } from '../features/auth/authSlice';
 import Loader from '../components/common/Loader';
+import { useGoogleLogin } from '@react-oauth/google';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -15,6 +16,17 @@ const Login = () => {
   
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
+  
+  const { loading, error, isAuthenticated } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    // Redirect if already authenticated
+    if (isAuthenticated) {
+      const from = location.state?.from?.pathname || '/';
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, location]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -50,20 +62,33 @@ const Login = () => {
     e.preventDefault();
     if (!validateForm()) return;
     
-    setLoading(true);
-    try {
-      const response = await authAPI.login(formData);
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('jammelUser', JSON.stringify(response.data));
+    const resultAction = await dispatch(login(formData));
+    if (login.fulfilled.match(resultAction)) {
       toast.success('Login successful!');
-      const from = location.state?.from?.pathname || '/';
-      navigate(from, { replace: true });
-    } catch (error) {
-      console.error('Login error:', error);
-    } finally {
-      setLoading(false);
+      // Navigation is handled by the useEffect hook above
     }
   };
+
+  const googleLoginHandler = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const resultAction = await dispatch(googleAuth({
+          credential: tokenResponse.access_token
+        }));
+        
+        if (googleAuth.fulfilled.match(resultAction)) {
+          toast.success('Google login successful!');
+          // Navigation is handled by the useEffect hook above
+        }
+      } catch (err) {
+        console.error('Google login error:', err);
+      }
+    },
+    onError: (error) => {
+      console.error('Google login error:', error);
+      toast.error('Failed to login with Google');
+    }
+  });
 
   if (loading) {
     return <Loader />;
@@ -79,6 +104,8 @@ const Login = () => {
           </svg>
         </Link>
       </div>
+
+      {error && <div className="bg-red-100 text-red-700 p-3 rounded mt-4">{error}</div>}
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-6">
         <div>
@@ -125,7 +152,11 @@ const Login = () => {
           Sign In
         </button>
 
-        <button type="button" className="w-full border border-gray-300 p-3 rounded flex items-center justify-center gap-2">
+        <button 
+          type="button" 
+          onClick={() => googleLoginHandler()}
+          className="w-full border border-gray-300 p-3 rounded flex items-center justify-center gap-2"
+        >
           <img src="https://www.google.com/favicon.ico" alt="Google" className="w-5 h-5" />
           Sign in with Google
         </button>

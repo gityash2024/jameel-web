@@ -344,361 +344,380 @@ const ContactButton = styled.a`
 `;
 
 const TrackOrder = () => {
-  const { orderId } = useParams();
-  const [order, setOrder] = useState(null);
+  const { id } = useParams();
   const [loading, setLoading] = useState(true);
+  const [order, setOrder] = useState(null);
+  const [trackingInfo, setTrackingInfo] = useState(null);
   const [error, setError] = useState(null);
   
   useEffect(() => {
-    const fetchOrderDetails = async () => {
-      if (!orderId) {
-        setError('No order ID provided');
-        setLoading(false);
-        return;
+    fetchOrderDetails();
+  }, [id]);
+  
+  const fetchOrderDetails = async () => {
+    try {
+      setLoading(true);
+      const response = await orderAPI.getOrderById(id);
+      setOrder(response.data.data.order);
+      
+      // If order has tracking info, fetch detailed tracking
+      if (response.data.data.order.shipping && response.data.data.order.shipping.trackingNumber) {
+        try {
+          console.log("Fetching tracking info for tracking number:", response.data.data.order.shipping.trackingNumber);
+          const trackingResponse = await orderAPI.trackShipment(response.data.data.order._id);
+          if (trackingResponse && trackingResponse.data && trackingResponse.data.data) {
+            setTrackingInfo(trackingResponse.data.data);
+          } else {
+            console.error("Invalid tracking response format:", trackingResponse);
+            // Create basic tracking info based on order data
+            setTrackingInfo({
+              trackingNumber: response.data.data.order.shipping.trackingNumber,
+              status: response.data.data.order.orderStatus,
+              statusDetails: `Order is currently ${response.data.data.order.orderStatus.replace('_', ' ')}`,
+              estimatedDelivery: response.data.data.order.shipping.estimatedDeliveryDate,
+              lastUpdated: response.data.data.order.updatedAt,
+              trackingHistory: []
+            });
+          }
+        } catch (trackingErr) {
+          console.error("Error fetching tracking details:", trackingErr);
+          // Create basic tracking info based on order data
+          setTrackingInfo({
+            trackingNumber: response.data.data.order.shipping.trackingNumber,
+            status: response.data.data.order.orderStatus,
+            statusDetails: `Order is currently ${response.data.data.order.orderStatus.replace('_', ' ')}`,
+            estimatedDelivery: response.data.data.order.shipping.estimatedDeliveryDate,
+            lastUpdated: response.data.data.order.updatedAt,
+            trackingHistory: []
+          });
+        }
       }
       
-      try {
-        setLoading(true);
-        const response = await orderAPI.getOrder(orderId);
-        
-        if (response?.data?.data?.order) {
-          setOrder(response.data.data.order);
-        } else {
-          setError('Order not found');
-        }
-      } catch (err) {
-        console.error('Error fetching order:', err);
-        setError('Failed to load order details. Please try again later.');
-        toast.error('Failed to load order details');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchOrderDetails();
-  }, [orderId]);
-  
-  // Get current step based on order status
-  const getOrderStep = (status) => {
-    switch(status?.toLowerCase()) {
-      case 'delivered':
-        return 4;
-      case 'shipped':
-        return 3;
-      case 'processing':
-        return 2;
-      case 'pending':
-        return 1;
-      case 'cancelled':
-        return -1;
-      default:
-        return 0;
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching order details:", err);
+      setError(err.response?.data?.message || "Failed to fetch order details");
+    } finally {
+      setLoading(false);
     }
   };
   
-  const currentStep = order ? getOrderStep(order.orderStatus) : 0;
+  const getDeliveryStatusStep = () => {
+    if (!order) return 0;
+    
+    const statusMapping = {
+      'pending': 0,
+      'processing': 1,
+      'packed': 2,
+      'shipped': 3,
+      'out_for_delivery': 4,
+      'delivered': 5
+    };
+    
+    return statusMapping[order.orderStatus] || 0;
+  };
+  
+  const formatTrackingDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
+  };
+  
+  const renderTrackingHistory = () => {
+    if (!trackingInfo || !trackingInfo.trackingHistory || trackingInfo.trackingHistory.length === 0) {
+      return (
+        <div className="p-4 bg-gray-100 rounded-md text-center">
+          <p className="text-gray-500">No detailed tracking information available yet.</p>
+        </div>
+      );
+    }
+    
+    return trackingInfo.trackingHistory.map((event, index) => (
+      <div key={index} className="mb-6 border-l-2 border-gray-200 pl-4 pb-2">
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="font-medium text-gray-900">{event.status}</h3>
+            <p className="text-sm text-gray-600">{event.statusDetails}</p>
+            <p className="text-sm text-gray-500 mt-1">{event.location}</p>
+          </div>
+          <span className="text-xs text-gray-500">{formatTrackingDate(event.timestamp)}</span>
+        </div>
+      </div>
+    ));
+  };
   
   if (loading) {
     return (
-      <Container>
-        <p>Loading order details...</p>
-      </Container>
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+      </div>
     );
   }
   
   if (error) {
     return (
-      <Container>
-        <Header>
-          <BackButton to="/my-account/orders">
-            <ArrowLeft size={16} />
-            Back to My Orders
-          </BackButton>
-        </Header>
-        <div style={{ textAlign: 'center', padding: '3rem 0' }}>
-          <HelpCircle size={48} color="#d1d5db" />
-          <h2 style={{ marginTop: '1rem' }}>Order Not Found</h2>
-          <p style={{ color: '#6b7280' }}>{error}</p>
-          <Link to="/my-account/orders" style={{ 
-            display: 'inline-block', 
-            marginTop: '1rem',
-            padding: '0.75rem 1.5rem',
-            background: 'black',
-            color: 'white',
-            textDecoration: 'none',
-            borderRadius: '4px',
-            fontSize: '14px'
-          }}>
-            View My Orders
-          </Link>
+      <div className="flex flex-col items-center justify-center min-h-screen px-4">
+        <div className="text-red-500 text-center mb-4">
+          <HelpCircle size={48} />
         </div>
-      </Container>
+        <h2 className="text-xl font-bold mb-2">Something went wrong</h2>
+        <p className="text-gray-600 mb-6">{error}</p>
+        <BackButton to="/my-orders">Back to My Orders</BackButton>
+      </div>
     );
   }
   
   if (!order) {
     return (
-      <Container>
-        <Header>
-          <BackButton to="/my-account/orders">
-            <ArrowLeft size={16} />
-            Back to My Orders
-          </BackButton>
-        </Header>
-        <div style={{ textAlign: 'center', padding: '3rem 0' }}>
-          <HelpCircle size={48} color="#d1d5db" />
-          <h2 style={{ marginTop: '1rem' }}>Order Not Found</h2>
-          <p style={{ color: '#6b7280' }}>We couldn't find the order you're looking for.</p>
-          <Link to="/my-account/orders" style={{ 
-            display: 'inline-block', 
-            marginTop: '1rem',
-            padding: '0.75rem 1.5rem',
-            background: 'black',
-            color: 'white',
-            textDecoration: 'none',
-            borderRadius: '4px',
-            fontSize: '14px'
-          }}>
-            View My Orders
-          </Link>
+      <div className="flex flex-col items-center justify-center min-h-screen px-4">
+        <div className="text-yellow-500 text-center mb-4">
+          <HelpCircle size={48} />
         </div>
-      </Container>
+        <h2 className="text-xl font-bold mb-2">Order Not Found</h2>
+        <p className="text-gray-600 mb-6">The order you're looking for doesn't exist or you don't have permission to view it.</p>
+        <BackButton to="/my-orders">Back to My Orders</BackButton>
+      </div>
     );
   }
+  
+  const deliveryStep = getDeliveryStatusStep();
   
   return (
     <Container>
       <Header>
-        <BackButton to="/my-account/orders">
+        <BackButton to="/my-orders">
           <ArrowLeft size={16} />
-          Back to My Orders
+          <span>Back to My Orders</span>
         </BackButton>
-        <Title>Track Order</Title>
+        <Title>Order #{order.orderNumber}</Title>
       </Header>
       
       <StatusContainer>
         <StatusHeader>
-          <StatusTitle>Order #{order.orderNumber || orderId}</StatusTitle>
-          <StatusBadge status={order.orderStatus}>
-            {order.orderStatus ? order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1) : 'Pending'}
-          </StatusBadge>
+          <StatusTitle>Delivery Status</StatusTitle>
+          <StatusBadge status={order.orderStatus}>{order.orderStatus.replace('_', ' ')}</StatusBadge>
         </StatusHeader>
         
         <div>
-          <TrackingStep completed={currentStep >= 1}>
-            <StepIcon completed={currentStep >= 1} active={currentStep === 1}>
-              <CheckCircle size={16} />
+          <TrackingStep completed={deliveryStep >= 1} active={deliveryStep === 1}>
+            <StepIcon completed={deliveryStep >= 1} active={deliveryStep === 1}>
+              <Clock size={16} />
             </StepIcon>
             <StepContent>
-              <StepTitle completed={currentStep >= 1} active={currentStep === 1}>
+              <StepTitle completed={deliveryStep >= 1} active={deliveryStep === 1}>
                 Order Placed
-                <StepTimestamp>
-                  {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : '-'}
-                </StepTimestamp>
+                {order.createdAt && <StepTimestamp>{formatTrackingDate(order.createdAt)}</StepTimestamp>}
               </StepTitle>
-              <StepInfo>Your order has been received and is being prepared.</StepInfo>
+              <StepInfo>Your order has been placed successfully.</StepInfo>
             </StepContent>
           </TrackingStep>
           
-          <TrackingStep completed={currentStep >= 2}>
-            <StepIcon completed={currentStep >= 2} active={currentStep === 2}>
-              {currentStep >= 2 ? <CheckCircle size={16} /> : <Package size={16} />}
+          <TrackingStep completed={deliveryStep >= 2} active={deliveryStep === 2}>
+            <StepIcon completed={deliveryStep >= 2} active={deliveryStep === 2}>
+              <Package size={16} />
             </StepIcon>
             <StepContent>
-              <StepTitle completed={currentStep >= 2} active={currentStep === 2}>
-                Processing
-                {currentStep >= 2 && (
-                  <StepTimestamp>
-                    {/* You can add actual timestamps from order history here */}
-                    -
-                  </StepTimestamp>
-                )}
+              <StepTitle completed={deliveryStep >= 2} active={deliveryStep === 2}>
+                Order Processing
               </StepTitle>
-              <StepInfo>Your order is being processed and prepared for shipping.</StepInfo>
+              <StepInfo>Your order is being processed and items are being prepared.</StepInfo>
             </StepContent>
           </TrackingStep>
           
-          <TrackingStep completed={currentStep >= 3}>
-            <StepIcon completed={currentStep >= 3} active={currentStep === 3}>
-              {currentStep >= 3 ? <CheckCircle size={16} /> : <Truck size={16} />}
+          <TrackingStep completed={deliveryStep >= 3} active={deliveryStep === 3}>
+            <StepIcon completed={deliveryStep >= 3} active={deliveryStep === 3}>
+              <Package size={16} />
             </StepIcon>
             <StepContent>
-              <StepTitle completed={currentStep >= 3} active={currentStep === 3}>
-                Shipped
-                {currentStep >= 3 && (
-                  <StepTimestamp>
-                    {/* You can add actual timestamps from order history here */}
-                    -
-                  </StepTimestamp>
-                )}
+              <StepTitle completed={deliveryStep >= 3} active={deliveryStep === 3}>
+                Order Shipped
+                {order.shipping?.shippedAt && <StepTimestamp>{formatTrackingDate(order.shipping.shippedAt)}</StepTimestamp>}
               </StepTitle>
               <StepInfo>
                 Your order has been shipped.
-                {order.trackingNumber && (
-                  <>
-                    <br />
-                    Tracking Number: {order.trackingNumber}
-                  </>
+                {order.shipping?.trackingNumber && (
+                  <div className="mt-2">
+                    <span className="text-xs font-medium text-gray-700">Tracking Number:</span>
+                    <a 
+                      href={order.shipping.trackingUrl || `https://www.fedex.com/fedextrack/?trknbr=${order.shipping.trackingNumber}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ml-2 text-sm text-blue-600 hover:underline"
+                    >
+                      {order.shipping.trackingNumber}
+                    </a>
+                  </div>
                 )}
               </StepInfo>
             </StepContent>
           </TrackingStep>
           
-          <TrackingStep completed={currentStep >= 4}>
-            <StepIcon completed={currentStep >= 4} active={currentStep === 4}>
-              {currentStep >= 4 ? <CheckCircle size={16} /> : <Clock size={16} />}
+          <TrackingStep completed={deliveryStep >= 4} active={deliveryStep === 4}>
+            <StepIcon completed={deliveryStep >= 4} active={deliveryStep === 4}>
+              <Truck size={16} />
             </StepIcon>
             <StepContent>
-              <StepTitle completed={currentStep >= 4} active={currentStep === 4}>
+              <StepTitle completed={deliveryStep >= 4} active={deliveryStep === 4}>
+                Out for Delivery
+              </StepTitle>
+              <StepInfo>Your order is out for delivery.</StepInfo>
+            </StepContent>
+          </TrackingStep>
+          
+          <TrackingStep completed={deliveryStep >= 5} active={deliveryStep === 5}>
+            <StepIcon completed={deliveryStep >= 5} active={deliveryStep === 5}>
+              <CheckCircle size={16} />
+            </StepIcon>
+            <StepContent>
+              <StepTitle completed={deliveryStep >= 5} active={deliveryStep === 5}>
                 Delivered
-                {currentStep >= 4 && (
-                  <StepTimestamp>
-                    {/* You can add actual timestamps from order history here */}
-                    -
-                  </StepTimestamp>
-                )}
+                {order.shipping?.deliveredAt && <StepTimestamp>{formatTrackingDate(order.shipping.deliveredAt)}</StepTimestamp>}
               </StepTitle>
               <StepInfo>Your order has been delivered.</StepInfo>
             </StepContent>
           </TrackingStep>
-          
-          {currentStep === -1 && (
-            <TrackingStep>
-              <StepIcon active={true} style={{ background: '#fee2e2', color: '#ef4444' }}>
-                <Clock size={16} />
-              </StepIcon>
-              <StepContent>
-                <StepTitle active={true} style={{ color: '#ef4444' }}>
-                  Cancelled
-                  <StepTimestamp>
-                    {/* You can add actual timestamps from order history here */}
-                    -
-                  </StepTimestamp>
-                </StepTitle>
-                <StepInfo>Your order has been cancelled.</StepInfo>
-              </StepContent>
-            </TrackingStep>
-          )}
         </div>
       </StatusContainer>
       
+      {order.shipping?.trackingNumber && (
+        <StatusContainer>
+          <StatusHeader>
+            <StatusTitle>FedEx Tracking Details</StatusTitle>
+            <span className="text-sm text-gray-500">
+              Last updated: {trackingInfo?.lastUpdated ? formatTrackingDate(trackingInfo.lastUpdated) : 'N/A'}
+            </span>
+          </StatusHeader>
+          
+          {trackingInfo ? (
+            <div className="mt-6">
+              <div className="mb-4">
+                <h3 className="text-lg font-medium text-gray-900">Current Status</h3>
+                <p className="text-sm text-gray-600">{trackingInfo.statusDetails || 'Status information not available'}</p>
+              </div>
+              
+              {order.shipping.estimatedDeliveryDate && (
+                <div className="mb-4 p-3 bg-blue-50 rounded-md">
+                  <h3 className="text-sm font-medium text-blue-800">Estimated Delivery</h3>
+                  <p className="text-sm text-blue-700">{formatTrackingDate(order.shipping.estimatedDeliveryDate)}</p>
+                </div>
+              )}
+              
+              <div className="mt-8">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Tracking History</h3>
+                <div className="mt-4">
+                  {renderTrackingHistory()}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="p-4 bg-gray-100 rounded-md text-center">
+              <p className="text-gray-500">Detailed tracking information is not available yet.</p>
+            </div>
+          )}
+        </StatusContainer>
+      )}
+      
       <OrderDetails>
-        <h2 style={{ marginTop: 0, marginBottom: '1.5rem' }}>Order Information</h2>
+        <h2 className="text-xl font-bold mb-4">Order Details</h2>
         <OrderDetailsGrid>
           <OrderInfo>
-            <OrderInfoLabel>Order Number</OrderInfoLabel>
-            <OrderInfoValue>{order.orderNumber || orderId}</OrderInfoValue>
-          </OrderInfo>
-          
-          <OrderInfo>
             <OrderInfoLabel>Order Date</OrderInfoLabel>
-            <OrderInfoValue>
-              {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : '-'}
-            </OrderInfoValue>
+            <OrderInfoValue>{formatTrackingDate(order.createdAt)}</OrderInfoValue>
           </OrderInfo>
           
           <OrderInfo>
             <OrderInfoLabel>Payment Method</OrderInfoLabel>
-            <OrderInfoValue>{order.paymentMethod || 'N/A'}</OrderInfoValue>
+            <OrderInfoValue>{order.paymentMethod.replace('_', ' ')}</OrderInfoValue>
           </OrderInfo>
           
           <OrderInfo>
-            <OrderInfoLabel>Payment Status</OrderInfoLabel>
-            <OrderInfoValue>
-              <StatusBadge status={order.paymentStatus || 'pending'} style={{ fontSize: '12px', padding: '0.25rem 0.5rem' }}>
-                {order.paymentStatus ? order.paymentStatus.charAt(0).toUpperCase() + order.paymentStatus.slice(1) : 'Pending'}
-              </StatusBadge>
-            </OrderInfoValue>
+            <OrderInfoLabel>Shipping Method</OrderInfoLabel>
+            <OrderInfoValue>{order.shippingMethod}</OrderInfoValue>
+          </OrderInfo>
+          
+          <OrderInfo>
+            <OrderInfoLabel>Total Amount</OrderInfoLabel>
+            <OrderInfoValue>${order.total.toFixed(2)}</OrderInfoValue>
           </OrderInfo>
         </OrderDetailsGrid>
       </OrderDetails>
       
       <OrderDetails>
-        <h2 style={{ marginTop: 0, marginBottom: '1.5rem' }}>Shipping Address</h2>
-        <OrderInfoValue>
-          {order.shippingAddress ? (
-            <>
-              {order.shippingAddress.firstName} {order.shippingAddress.lastName}<br />
-              {order.shippingAddress.addressLine1}<br />
-              {order.shippingAddress.addressLine2 && (
-                <>
-                  {order.shippingAddress.addressLine2}<br />
-                </>
-              )}
-              {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.postalCode}<br />
-              {order.shippingAddress.country}<br />
-              {order.shippingAddress.phone}
-            </>
-          ) : (
-            'No shipping address provided'
-          )}
-        </OrderInfoValue>
+        <h2 className="text-xl font-bold mb-4">Shipping Address</h2>
+        <p className="text-gray-700">{order.shippingAddress.firstName} {order.shippingAddress.lastName}</p>
+        <p className="text-gray-700">{order.shippingAddress.addressLine1}</p>
+        {order.shippingAddress.addressLine2 && <p className="text-gray-700">{order.shippingAddress.addressLine2}</p>}
+        <p className="text-gray-700">{order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.postalCode}</p>
+        <p className="text-gray-700">{order.shippingAddress.country}</p>
+        <p className="text-gray-700">{order.shippingAddress.phone}</p>
       </OrderDetails>
       
       <Items>
-        <h2 style={{ marginTop: 0, marginBottom: '1.5rem' }}>Order Items</h2>
-        <ItemsList>
-          {order.items && order.items.length > 0 ? (
-            order.items.map((item, index) => (
-              <Item key={index}>
-                {item.product?.images && item.product.images.length > 0 ? (
-                  <ItemImage src={item.product.images[0]} alt={item.product.name} />
-                ) : (
-                  <ItemImage src="https://via.placeholder.com/80" alt="Product placeholder" />
-                )}
-                
-                <ItemInfo>
-                  <ItemName>{item.product?.name || 'Unknown Product'}</ItemName>
-                  <ItemMeta>SKU: {item.product?.sku || 'N/A'}</ItemMeta>
-                  <ItemMeta>Quantity: {item.quantity}</ItemMeta>
-                </ItemInfo>
-                
-                <ItemPrice>
-                  <PriceDetail>Price: ${item.price ? item.price.toFixed(2) : '0.00'}</PriceDetail>
-                  <PriceDetail>Total: ${item.total ? item.total.toFixed(2) : '0.00'}</PriceDetail>
-                </ItemPrice>
-              </Item>
-            ))
-          ) : (
-            <p>No items in this order</p>
-          )}
-        </ItemsList>
-        
-        <Summary>
-          <SummaryRow>
-            <span>Subtotal</span>
-            <span>${order.subTotal ? order.subTotal.toFixed(2) : '0.00'}</span>
-          </SummaryRow>
-          <SummaryRow>
-            <span>Shipping</span>
-            <span>${order.shippingCost ? order.shippingCost.toFixed(2) : '0.00'}</span>
-          </SummaryRow>
-          <SummaryRow>
-            <span>Tax</span>
-            <span>${order.tax ? order.tax.toFixed(2) : '0.00'}</span>
-          </SummaryRow>
-          {order.discount > 0 && (
-            <SummaryRow>
-              <span>Discount</span>
-              <span>-${order.discount.toFixed(2)}</span>
-            </SummaryRow>
-          )}
-          <SummaryRow total={true}>
-            <span>Total</span>
-            <span>${order.total ? order.total.toFixed(2) : '0.00'}</span>
-          </SummaryRow>
-        </Summary>
-        
-        <HelpSection>
-          <HelpIcon>
-            <HelpCircle size={20} />
-          </HelpIcon>
-          <HelpText>
-            <HelpTitle>Need Help With Your Order?</HelpTitle>
-            <HelpDescription>If you have any questions or concerns about your order, our customer service team is here to help.</HelpDescription>
-          </HelpText>
-          <ContactButton href="/contact">Contact Us</ContactButton>
-        </HelpSection>
+        <h2 className="text-xl font-bold mb-4">Order Items</h2>
+        <table className="w-full">
+          <thead>
+            <tr className="border-b">
+              <th className="py-2 text-left text-gray-500 font-medium">Item</th>
+              <th className="py-2 text-left text-gray-500 font-medium">Quantity</th>
+              <th className="py-2 text-right text-gray-500 font-medium">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {order.items.map((item, index) => (
+              <tr key={index} className="border-b">
+                <td className="py-4">
+                  <div className="flex items-center">
+                    <div className="w-16 h-16 flex-shrink-0 mr-4 bg-gray-100 rounded-md overflow-hidden">
+                      {item.product.images && item.product.images[0] && (
+                        <img src={item.product.images[0].url} alt={item.product.name} className="w-full h-full object-cover" />
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">{item.product.name}</h3>
+                      {item.variant && (
+                        <p className="text-sm text-gray-500">
+                          Variant: {item.variant.name || `${item.variant.color || ''} ${item.variant.size || ''}`}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </td>
+                <td className="py-4 text-gray-700">{item.quantity}</td>
+                <td className="py-4 text-right text-gray-700">${item.price.toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr className="border-b">
+              <td colSpan="2" className="py-2 text-right font-medium">Subtotal</td>
+              <td className="py-2 text-right">${order.subTotal.toFixed(2)}</td>
+            </tr>
+            <tr className="border-b">
+              <td colSpan="2" className="py-2 text-right font-medium">Shipping</td>
+              <td className="py-2 text-right">${order.shippingCost.toFixed(2)}</td>
+            </tr>
+            {order.discount > 0 && (
+              <tr className="border-b">
+                <td colSpan="2" className="py-2 text-right font-medium text-green-600">Discount</td>
+                <td className="py-2 text-right text-green-600">-${order.discount.toFixed(2)}</td>
+              </tr>
+            )}
+            <tr className="border-b">
+              <td colSpan="2" className="py-2 text-right font-medium">Tax</td>
+              <td className="py-2 text-right">${order.tax.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td colSpan="2" className="py-2 text-right font-bold text-lg">Total</td>
+              <td className="py-2 text-right font-bold text-lg">${order.total.toFixed(2)}</td>
+            </tr>
+          </tfoot>
+        </table>
       </Items>
     </Container>
   );
