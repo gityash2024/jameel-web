@@ -1781,6 +1781,172 @@ const ProductDetail = () => {
           </AccordionContent>
         </AccordionSection>
         
+        {/* Jewelry Details Section */}
+        <AccordionSection>
+          <AccordionHeader 
+            onClick={() => setOpenSection(openSection === "jewelry" ? "" : "jewelry")}
+          >
+            Jewelry Details
+            {openSection === "jewelry" ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+          </AccordionHeader>
+          <AccordionContent isOpen={openSection === "jewelry"}>
+            <SpecificationList>
+              {/* Stone Details */}
+              {product.stone && (
+                <div>
+                  <span>Stone:</span>
+                  <span>{product.stone}</span>
+                </div>
+              )}
+              {product.totalWeight && (
+                <div>
+                  <span>Total Weight:</span>
+                  <span>{product.totalWeight} CT</span>
+                </div>
+              )}
+              {product.color && (
+                <div>
+                  <span>Color:</span>
+                  <span style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ 
+                      width: '16px', 
+                      height: '16px', 
+                      backgroundColor: product.color,
+                      borderRadius: '4px',
+                      marginRight: '8px',
+                      border: '1px solid #ddd'
+                    }} />
+                    {product.color}
+                  </span>
+                </div>
+              )}
+              {product.clarity && (
+                <div>
+                  <span>Clarity:</span>
+                  <span>{product.clarity}</span>
+                </div>
+              )}
+              {product.stoneType && (
+                <div>
+                  <span>Stone Type:</span>
+                  <span>{product.stoneType}</span>
+                </div>
+              )}
+              {product.stoneColor && (
+                <div>
+                  <span>Stone Color:</span>
+                  <span style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ 
+                      width: '16px', 
+                      height: '16px', 
+                      backgroundColor: product.stoneColor,
+                      borderRadius: '4px',
+                      marginRight: '8px',
+                      border: '1px solid #ddd'
+                    }} />
+                    {product.stoneColor}
+                  </span>
+                </div>
+              )}
+              {product.stoneShape && (
+                <div>
+                  <span>Stone Shape:</span>
+                  <span>{product.stoneShape}</span>
+                </div>
+              )}
+              {product.stoneCaratRange && (
+                <div>
+                  <span>Stone Carat Range:</span>
+                  <span>{product.stoneCaratRange}</span>
+                </div>
+              )}
+              {product.stoneClass && (
+                <div>
+                  <span>Stone Class:</span>
+                  <span>{product.stoneClass}</span>
+                </div>
+              )}
+              {product.stoneSetting && (
+                <div>
+                  <span>Stone Setting:</span>
+                  <span>{product.stoneSetting}</span>
+                </div>
+              )}
+              {product.settingOnly !== undefined && (
+                <div>
+                  <span>Setting Only:</span>
+                  <span>{product.settingOnly ? 'Yes' : 'No'}</span>
+                </div>
+              )}
+              
+              {/* Metal Details */}
+              {product.metalType && (
+                <div>
+                  <span>Metal Type:</span>
+                  <span>{product.metalType}</span>
+                </div>
+              )}
+              {product.metalColor && (
+                <div>
+                  <span>Metal Color:</span>
+                  <span style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ 
+                      width: '16px', 
+                      height: '16px', 
+                      backgroundColor: product.metalColor,
+                      borderRadius: '4px',
+                      marginRight: '8px',
+                      border: '1px solid #ddd'
+                    }} />
+                    {product.metalColor}
+                  </span>
+                </div>
+              )}
+              {product.metalFinish && (
+                <div>
+                  <span>Metal Finish:</span>
+                  <span>{product.metalFinish}</span>
+                </div>
+              )}
+              {product.goldKarat && (
+                <div>
+                  <span>Gold Karat:</span>
+                  <span>{product.goldKarat}</span>
+                </div>
+              )}
+              
+              {/* Ring Details */}
+              {product.ringDesign && (
+                <div>
+                  <span>Ring Design:</span>
+                  <span>{product.ringDesign}</span>
+                </div>
+              )}
+              {product.ringStyle && (
+                <div>
+                  <span>Ring Style:</span>
+                  <span>{product.ringStyle}</span>
+                </div>
+              )}
+              {product.standardRingSize && (
+                <div>
+                  <span>Standard Ring Size:</span>
+                  <span>{product.standardRingSize}</span>
+                </div>
+              )}
+              {product.height && (
+                <div>
+                  <span>Height:</span>
+                  <span>{product.height}</span>
+                </div>
+              )}
+            </SpecificationList>
+            {(!product.stone && !product.metalType && !product.ringStyle) && (
+              <p>No jewelry details available for this product.</p>
+            )}
+          </AccordionContent>
+        </AccordionSection>
+        
         <AccordionSection>
           <AccordionHeader 
             onClick={() => setOpenSection(openSection === "reviews" ? "" : "reviews")}

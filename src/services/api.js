@@ -68,6 +68,9 @@ export const userAPI = {
   getWishlist: () => api.get('/user/wishlist'),
   addToWishlist: (productId) => api.post('/user/wishlist', { productId }),
   removeFromWishlist: (productId) => api.delete(`/user/wishlist/${productId}`),
+  bookAppointment: (data) => api.post('/appointments', data),
+  bookCustomDesignAppointment: (data) => api.post('/appointments/custom-design', data),
+  getMyAppointments: () => api.get('/appointments/my-appointments'),
 };
 
 // Add these to your api.js file
@@ -182,6 +185,10 @@ export const supportAPI = {
   getSupportTicket: (id) => api.get(`/support-tickets/${id}`),
   addTicketResponse: (id, data) => api.post(`/support-tickets/${id}/responses`, data),
   updateTicketStatus: (id, status) => api.put(`/support-tickets/${id}/status`, { status })
+};
+
+export const bannerAPI = {
+  getActiveBanner: () => api.get('/banners/active')
 };
 
 export const cartAPI = {

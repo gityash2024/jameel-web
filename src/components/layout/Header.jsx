@@ -573,11 +573,17 @@ const UtilityNav = () => {
             ))}
           </div>
           <div className="flex items-center gap-4 md:gap-8">
-            <Link
+            {/* <Link
               to="/booking-appoinment"
               className="flex items-center text-sm hover:text-gray-600"
             >
               Book an Appointment
+            </Link> */}
+            <Link
+              to="/make-with-jsk"
+              className="flex items-center text-sm hover:text-gray-600"
+            >
+              Make with JSK
             </Link>
             {isLoggedIn ? (
               <div className="flex items-center gap-3">

@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
-import { ChevronLeft, X, Check } from "lucide-react";
+import { ChevronLeft, X, Check, ArrowLeft, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 const Container = styled.div`
@@ -298,6 +297,19 @@ const EmptyState = styled.div`
   }
 `;
 
+const PageHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+`;
+
 const ProductCompare = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -428,194 +440,386 @@ const ProductCompare = () => {
     return null;
   };
   
-  const specificationNames = getSpecificationNames();
-  const attributeNames = getAttributeNames();
-  
   if (loading) {
     return (
       <Container>
+        <PageHeader>
+          <BackButton onClick={handleBack}>
+            <ArrowLeft size={18} />
+            Back
+          </BackButton>
+          <h1>Compare Products</h1>
+        </PageHeader>
         <LoadingSpinner />
       </Container>
     );
   }
   
-  if (products.length < 2) {
+  if (!products || products.length < 2) {
     return (
       <Container>
+        <PageHeader>
+          <BackButton onClick={handleBack}>
+            <ArrowLeft size={18} />
+            Back
+          </BackButton>
+          <h1>Compare Products</h1>
+        </PageHeader>
         <EmptyState>
-          <h2>Not enough products to compare</h2>
-          <p>Please select at least 2 products to compare. You can select up to 5 products from the product list.</p>
-          <button onClick={() => navigate('/product-details')}>
-            Go to Products
-          </button>
+          <h2>Add items to compare</h2>
+          <p>You need at least two products to make a comparison. Browse our collection and select products to compare.</p>
+          <button onClick={() => navigate('/shop')}>Browse Products</button>
         </EmptyState>
       </Container>
     );
   }
   
+  const specificationNames = getSpecificationNames();
+  const attributeNames = getAttributeNames();
+  
+  // Get jewelry-specific fields that exist in at least one product
+  const stoneFields = [
+    { key: 'stone', label: 'Stone' },
+    { key: 'totalWeight', label: 'Total Weight' },
+    { key: 'clarity', label: 'Clarity' },
+    { key: 'stoneType', label: 'Stone Type' },
+    { key: 'stoneShape', label: 'Stone Shape' },
+    { key: 'stoneCaratRange', label: 'Stone Carat Range' },
+    { key: 'stoneClass', label: 'Stone Class' },
+    { key: 'stoneSetting', label: 'Stone Setting' },
+  ];
+  
+  const metalFields = [
+    { key: 'metalType', label: 'Metal Type' },
+    { key: 'metalFinish', label: 'Metal Finish' },
+    { key: 'goldKarat', label: 'Gold Karat' },
+  ];
+  
+  const ringFields = [
+    { key: 'ringDesign', label: 'Ring Design' },
+    { key: 'ringStyle', label: 'Ring Style' },
+    { key: 'standardRingSize', label: 'Standard Ring Size' },
+    { key: 'height', label: 'Height' },
+  ];
+  
+  // Filter to only include fields that exist in at least one product
+  const activeStoneFields = stoneFields.filter(field => 
+    products.some(product => product[field.key])
+  );
+  
+  const activeMetalFields = metalFields.filter(field => 
+    products.some(product => product[field.key])
+  );
+  
+  const activeRingFields = ringFields.filter(field => 
+    products.some(product => product[field.key])
+  );
+  
+  // Check if we have any jewelry fields to display
+  const hasJewelryDetails = activeStoneFields.length > 0 || 
+                           activeMetalFields.length > 0 || 
+                           activeRingFields.length > 0;
+
   return (
     <Container>
-      <Breadcrumb>
-        <Link to="/">Home</Link> / 
-        <Link to="/product-details">Products</Link> / 
-        <span>Compare Products</span>
-      </Breadcrumb>
-      
-      <Header>
-        <Title>Compare Products</Title>
+      <PageHeader>
         <BackButton onClick={handleBack}>
-          <ChevronLeft size={18} />
-          Back to Products
+          <ArrowLeft size={18} />
+          Back
         </BackButton>
-      </Header>
+        <h1>Compare Products</h1>
+      </PageHeader>
       
       <CompareTable>
-        <Table>
-          <thead>
-            <tr>
-              <th>Product</th>
-              {products.map(product => (
-                <th key={product._id}>
-                  <ProductHeader>
-                    <RemoveButton onClick={() => handleRemoveProduct(product._id)}>
-                      <X size={14} />
-                    </RemoveButton>
-                    <ProductImage>
-                      <img 
-                        src={product.images?.[0]?.url || '/placeholder.png'} 
-                        alt={product.name} 
-                      />
-                    </ProductImage>
-                    <ProductName>{product.name}</ProductName>
-                    <ProductPrice>
-                      <span className="current">
-                        ${(product.salePrice || product.regularPrice).toFixed(2)}
-                      </span>
-                      
-                      {product.salePrice && product.salePrice < product.regularPrice && (
-                        <>
-                          <span className="original">${product.regularPrice.toFixed(2)}</span>
-                          <span className="discount">
-                            {Math.round((1 - product.salePrice / product.regularPrice) * 100)}% off
-                          </span>
-                        </>
-                      )}
-                    </ProductPrice>
-                    <ViewButton onClick={() => handleViewProduct(product)}>
-                      View Product
-                    </ViewButton>
-                  </ProductHeader>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Availability</td>
-              {products.map(product => (
-                <td key={product._id}>
-                  {product.stockQuantity > 0 ? (
-                    <AvailabilityTag inStock={true}>
-                      <Check size={16} />
-                      In Stock
-                    </AvailabilityTag>
-                  ) : (
-                    <AvailabilityTag inStock={false}>
-                      <X size={16} />
-                      Out of Stock
-                    </AvailabilityTag>
-                  )}
-                </td>
-              ))}
-            </tr>
-            <tr>
-              <td>Brand</td>
-              {products.map(product => (
-                <td key={product._id}>{product.brand || 'N/A'}</td>
-              ))}
-            </tr>
-            {attributeNames.map(attrName => (
-              <tr key={`attr-${attrName}`}>
-                <td>{attrName}</td>
-                {products.map(product => (
-                  <td key={product._id}>{getAttributeValue(product, attrName)}</td>
-                ))}
-              </tr>
+        <tbody>
+          <tr>
+            <th>Product</th>
+            {products.map(product => (
+              <td key={product._id}>
+                <ProductHeader>
+                  <RemoveButton onClick={() => handleRemoveProduct(product._id)}>
+                    <X size={16} />
+                  </RemoveButton>
+                  <ProductImage 
+                    src={product.images && product.images[0] ? product.images[0].url : 'https://via.placeholder.com/150'}
+                    alt={product.name}
+                    onClick={() => handleViewProduct(product)}
+                  />
+                  <ProductName onClick={() => handleViewProduct(product)}>
+                    {product.name}
+                  </ProductName>
+                  <ProductPrice>
+                    {product.salePrice ? (
+                      <>
+                        <span className="sale">${product.salePrice.toFixed(2)}</span>
+                        <span className="regular">${product.regularPrice.toFixed(2)}</span>
+                      </>
+                    ) : (
+                      <span>${product.regularPrice.toFixed(2)}</span>
+                    )}
+                  </ProductPrice>
+                  <AvailabilityTag inStock={product.stockStatus === 'in_stock'}>
+                    {product.stockStatus === 'in_stock' ? (
+                      <>
+                        <CheckCircle size={16} />
+                        In Stock
+                      </>
+                    ) : (
+                      <>
+                        <XCircle size={16} />
+                        Out of Stock
+                      </>
+                    )}
+                  </AvailabilityTag>
+                </ProductHeader>
+              </td>
             ))}
-            {specificationNames.map(specName => {
-              const bestValue = findBestValue(specName);
-              return (
-                <tr key={`spec-${specName}`}>
-                  <td>{specName}</td>
-                  {products.map(product => {
-                    const value = getSpecificationValue(product, specName);
-                    const isHighlighted = bestValue !== null && value === bestValue;
-                    
-                    return (
-                      <td key={product._id}>
-                        <SpecValue className={isHighlighted ? 'highlight' : ''}>
-                          {value}
-                        </SpecValue>
-                      </td>
-                    );
-                  })}
+          </tr>
+          
+          <tr className="section-header">
+            <th colSpan={products.length + 1}>Basic Information</th>
+          </tr>
+          
+          <tr>
+            <th>Brand</th>
+            {products.map(product => (
+              <td key={product._id}>
+                {product.brand || '-'}
+              </td>
+            ))}
+          </tr>
+          
+          <tr>
+            <th>Category</th>
+            {products.map(product => (
+              <td key={product._id}>
+                {product.category?.name || '-'}
+              </td>
+            ))}
+          </tr>
+          
+          <tr>
+            <th>Stock</th>
+            {products.map(product => (
+              <td key={product._id}>
+                {product.stockQuantity || '-'}
+              </td>
+            ))}
+          </tr>
+          
+          {/* Jewelry Details Section */}
+          {hasJewelryDetails && (
+            <>
+              <tr className="section-header">
+                <th colSpan={products.length + 1}>Jewelry Details</th>
+              </tr>
+              
+              {/* Stone Details */}
+              {activeStoneFields.length > 0 && (
+                <>
+                  <tr className="sub-section-header">
+                    <th colSpan={products.length + 1}>Stone Details</th>
+                  </tr>
+                  
+                  {activeStoneFields.map(field => (
+                    <tr key={field.key}>
+                      <th>{field.label}</th>
+                      {products.map(product => (
+                        <td key={product._id}>
+                          {field.key === 'stoneColor' || field.key === 'color' ? (
+                            product[field.key] ? (
+                              <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <div style={{ 
+                                  width: '16px', 
+                                  height: '16px', 
+                                  backgroundColor: product[field.key],
+                                  borderRadius: '4px',
+                                  marginRight: '8px',
+                                  border: '1px solid #ddd'
+                                }} />
+                                {product[field.key]}
+                              </div>
+                            ) : '-'
+                          ) : field.key === 'totalWeight' ? (
+                            product[field.key] ? `${product[field.key]} CT` : '-'
+                          ) : (
+                            product[field.key] || '-'
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </>
+              )}
+              
+              {/* Metal Details */}
+              {activeMetalFields.length > 0 && (
+                <>
+                  <tr className="sub-section-header">
+                    <th colSpan={products.length + 1}>Metal Details</th>
+                  </tr>
+                  
+                  {activeMetalFields.map(field => (
+                    <tr key={field.key}>
+                      <th>{field.label}</th>
+                      {products.map(product => (
+                        <td key={product._id}>
+                          {field.key === 'metalColor' ? (
+                            product[field.key] ? (
+                              <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <div style={{ 
+                                  width: '16px', 
+                                  height: '16px', 
+                                  backgroundColor: product[field.key],
+                                  borderRadius: '4px',
+                                  marginRight: '8px',
+                                  border: '1px solid #ddd'
+                                }} />
+                                {product[field.key]}
+                              </div>
+                            ) : '-'
+                          ) : (
+                            product[field.key] || '-'
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </>
+              )}
+              
+              {/* Ring Details */}
+              {activeRingFields.length > 0 && (
+                <>
+                  <tr className="sub-section-header">
+                    <th colSpan={products.length + 1}>Ring Details</th>
+                  </tr>
+                  
+                  {activeRingFields.map(field => (
+                    <tr key={field.key}>
+                      <th>{field.label}</th>
+                      {products.map(product => (
+                        <td key={product._id}>
+                          {product[field.key] || '-'}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </>
+              )}
+            </>
+          )}
+          
+          {/* Specifications */}
+          {specificationNames.length > 0 && (
+            <>
+              <tr className="section-header">
+                <th colSpan={products.length + 1}>Specifications</th>
+              </tr>
+              
+              {specificationNames.map(specName => {
+                const bestValue = findBestValue(specName);
+                return (
+                  <tr key={`spec-${specName}`}>
+                    <td>{specName}</td>
+                    {products.map(product => {
+                      const value = getSpecificationValue(product, specName);
+                      const isHighlighted = bestValue !== null && value === bestValue;
+                      
+                      return (
+                        <td key={product._id}>
+                          <SpecValue className={isHighlighted ? 'highlight' : ''}>
+                            {value}
+                          </SpecValue>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </>
+          )}
+          
+          {/* Attributes */}
+          {attributeNames.length > 0 && (
+            <>
+              <tr className="section-header">
+                <th colSpan={products.length + 1}>Attributes</th>
+              </tr>
+              
+              {attributeNames.map(attrName => (
+                <tr key={`attr-${attrName}`}>
+                  <td>{attrName}</td>
+                  {products.map(product => (
+                    <td key={product._id}>{getAttributeValue(product, attrName)}</td>
+                  ))}
                 </tr>
-              );
-            })}
-            {products.some(p => p.materials && p.materials.length > 0) && (
-              <tr>
-                <td>Materials</td>
-                {products.map(product => (
-                  <td key={product._id}>
-                    {product.materials && product.materials.length > 0 
-                      ? product.materials.join(', ') 
-                      : 'N/A'}
-                  </td>
-                ))}
-              </tr>
-            )}
-            {products.some(p => p.dimensions) && (
-              <tr>
-                <td>Dimensions</td>
-                {products.map(product => (
-                  <td key={product._id}>
-                    {product.dimensions 
-                      ? `${product.dimensions.length} × ${product.dimensions.width} × ${product.dimensions.height} ${product.dimensions.unit}` 
-                      : 'N/A'}
-                  </td>
-                ))}
-              </tr>
-            )}
-            {products.some(p => p.weight) && (
-              <tr>
-                <td>Weight</td>
-                {products.map(product => (
-                  <td key={product._id}>
-                    {product.weight 
-                      ? `${product.weight.value} ${product.weight.unit}` 
-                      : 'N/A'}
-                  </td>
-                ))}
-              </tr>
-            )}
+              ))}
+            </>
+          )}
+          
+          {/* Materials */}
+          {products.some(p => p.materials && p.materials.length > 0) && (
             <tr>
-              <td>Description</td>
+              <td>Materials</td>
               {products.map(product => (
                 <td key={product._id}>
-                  {product.shortDescription || 'N/A'}
+                  {product.materials && product.materials.length > 0 
+                    ? product.materials.join(', ') 
+                    : 'N/A'}
                 </td>
               ))}
             </tr>
+          )}
+          
+          {/* Dimensions */}
+          {products.some(p => p.dimensions) && (
             <tr>
-              <td>Rating</td>
+              <td>Dimensions</td>
               {products.map(product => (
                 <td key={product._id}>
-                  {product.averageRating ? `${product.averageRating.toFixed(1)}/5 (${product.numberOfReviews} reviews)` : 'No ratings yet'}
+                  {product.dimensions 
+                    ? `${product.dimensions.length} × ${product.dimensions.width} × ${product.dimensions.height} ${product.dimensions.unit}` 
+                    : 'N/A'}
                 </td>
               ))}
             </tr>
-          </tbody>
-        </Table>
+          )}
+          
+          {/* Weight */}
+          {products.some(p => p.weight) && (
+            <tr>
+              <td>Weight</td>
+              {products.map(product => (
+                <td key={product._id}>
+                  {product.weight 
+                    ? `${product.weight.value} ${product.weight.unit}` 
+                    : 'N/A'}
+                </td>
+              ))}
+            </tr>
+          )}
+          
+          {/* Description */}
+          <tr>
+            <td>Description</td>
+            {products.map(product => (
+              <td key={product._id}>
+                {product.shortDescription || 'N/A'}
+              </td>
+            ))}
+          </tr>
+          
+          {/* Rating */}
+          <tr>
+            <td>Rating</td>
+            {products.map(product => (
+              <td key={product._id}>
+                {product.averageRating ? `${product.averageRating.toFixed(1)}/5 (${product.numberOfReviews} reviews)` : 'No ratings yet'}
+              </td>
+            ))}
+          </tr>
+        </tbody>
       </CompareTable>
     </Container>
   );

@@ -16,6 +16,7 @@ import Productstwo from './pages/Productstwo';
 import Collection from './pages/Collection';
 import CollectionTwo from './pages/CollectionTwo';
 import BookingAppoiment from './pages/BookingAppoiment';
+import MakeWithJSK from './pages/MakeWithJSK';
 import BlogsOne from './pages/BlogsOne';
 import BlogsTwo from './pages/BlogsTwo';
 import BlogsThree from './pages/BlogsThree';
@@ -59,6 +60,7 @@ import ProductCompare from './pages/ProductCompare';
 import Payment from './pages/Payment';
 import OrderSuccess from './pages/OrderSuccess';
 import CartProvider from './context/CartContext';
+import BannerModal from './components/common/BannerModal';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -114,6 +116,7 @@ function App() {
           reverseOrder={false}
           limit={3}
         />
+        <BannerModal />
         <Routes>
           <Route path="/login" element={<AuthLayout><Login /></AuthLayout>} />
           <Route path="/signup" element={<AuthLayout><SignUp /></AuthLayout>} />
@@ -137,6 +140,7 @@ function App() {
             <Route path="collection" element={<Collection />} />
             <Route path="collectiontwo" element={<CollectionTwo />} />
             <Route path="booking-appoinment" element={<AuthGuard><BookingAppoiment /></AuthGuard>} />
+            <Route path="make-with-jsk" element={<AuthGuard><MakeWithJSK /></AuthGuard>} />
             <Route path="blogs-one" element={<BlogsOne />} />
             <Route path="blogs-two" element={<BlogsTwo />} />
             <Route path="ring" element={<Ring />} />
