@@ -63,7 +63,7 @@ const Login = () => {
     if (!validateForm()) return;
     
     const resultAction = await dispatch(login(formData));
-    if (login.fulfilled.match(resultAction)) {
+    if (login.fulfilled?.match(resultAction)) {
       toast.success('Login successful!');
       // Navigation is handled by the useEffect hook above
     }
@@ -76,7 +76,7 @@ const Login = () => {
           credential: tokenResponse.access_token
         }));
         
-        if (googleAuth.fulfilled.match(resultAction)) {
+        if (googleAuth.fulfilled?.match(resultAction)) {
           toast.success('Google login successful!');
           // Navigation is handled by the useEffect hook above
         }
