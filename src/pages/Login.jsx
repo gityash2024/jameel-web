@@ -63,12 +63,12 @@ const Login = () => {
     if (!validateForm()) return;
     
     const resultAction = await dispatch(login(formData));
-    if (login.fulfilled?.match(resultAction)) {
+    if (resultAction.meta && resultAction.meta.requestStatus === 'fulfilled') {
       toast.success('Login successful!');
       // Navigation is handled by the useEffect hook above
     }
   };
-
+  
   const googleLoginHandler = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
@@ -76,7 +76,7 @@ const Login = () => {
           credential: tokenResponse.access_token
         }));
         
-        if (googleAuth.fulfilled?.match(resultAction)) {
+        if (resultAction.meta && resultAction.meta.requestStatus === 'fulfilled') {
           toast.success('Google login successful!');
           // Navigation is handled by the useEffect hook above
         }
@@ -89,7 +89,6 @@ const Login = () => {
       toast.error('Failed to login with Google');
     }
   });
-
   if (loading) {
     return <Loader />;
   }

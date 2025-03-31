@@ -87,12 +87,12 @@ const SignUp = () => {
     };
     
     const resultAction = await dispatch(register(userData));
-    if (register.fulfilled.match(resultAction)) {
+    if (resultAction.meta && resultAction.meta.requestStatus === 'fulfilled') {
       toast.success('Account created successfully!');
       // Navigation is handled by the useEffect hook
     }
   };
-
+  
   const googleLoginHandler = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
@@ -100,7 +100,7 @@ const SignUp = () => {
           credential: tokenResponse.access_token
         }));
         
-        if (googleAuth.fulfilled.match(resultAction)) {
+        if (resultAction.meta && resultAction.meta.requestStatus === 'fulfilled') {
           toast.success('Google sign up successful!');
           // Navigation is handled by the useEffect hook
         }
