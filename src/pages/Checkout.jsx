@@ -291,7 +291,7 @@ const Checkout = () => {
         setCouponDiscount(0);
         setCouponError('');
     };
-    
+
     const handlePlaceOrder = async () => {
         if (!selectedAddress) {
             toast.error('Please select a shipping address');
@@ -657,12 +657,12 @@ const Checkout = () => {
                             <Link to="/product-details" style={{ display: 'inline-block', marginTop: '16px', textDecoration: 'underline' }}>
                                 Continue Shopping
                             </Link>
-                        </div>
+      </div>
                     )}
                 </OrderSummary>
             </CheckoutGrid>
         </PageContainer>
     );
-};
-
-export default Checkout;
+  };
+  
+  export default Checkout;

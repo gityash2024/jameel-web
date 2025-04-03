@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { ChromePicker } from "react-color";
-import { userAPI } from "../services/api";
+import { userAPI, storeAPI } from "../services/api";
 
 const Container = styled.div`
   max-width: 1200px;
@@ -215,12 +215,35 @@ const MakeWithJSK = () => {
     appointmentDate: "",
     appointmentTime: "",
     shoppingFor: "",
-    isSpecialOccasion: false
+    isSpecialOccasion: false,
+    storeId: ""
   });
   
   const [showStoneColorPicker, setShowStoneColorPicker] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [stores, setStores] = useState([]);
+  const [loadingStores, setLoadingStores] = useState(true);
+  
+  // Fetch stores on component mount
+  useEffect(() => {
+    const fetchStores = async () => {
+      try {
+        setLoadingStores(true);
+        const response = await storeAPI.getAllStores();
+        if (response.data && response.data.data) {
+          setStores(response.data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching stores:', error);
+        toast.error('Failed to load store locations.');
+      } finally {
+        setLoadingStores(false);
+      }
+    };
+    
+    fetchStores();
+  }, []);
   
   // Generate dates for next 14 days
   const dates = Array.from({ length: 14 }, (_, i) => {
@@ -276,6 +299,8 @@ const MakeWithJSK = () => {
         return value ? '' : 'Please select a preferred date';
       case 'appointmentTime':
         return value ? '' : 'Please select a preferred time';
+      case 'storeId':
+        return value ? '' : 'Please select a store';
       default:
         return '';
     }
@@ -319,6 +344,7 @@ const MakeWithJSK = () => {
     if (!formData.productType) newErrors.productType = 'Product type is required';
     if (!formData.appointmentDate) newErrors.appointmentDate = 'Please select a preferred date';
     if (!formData.appointmentTime) newErrors.appointmentTime = 'Please select a preferred time';
+    if (!formData.storeId) newErrors.storeId = 'Please select a store';
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -361,7 +387,8 @@ const MakeWithJSK = () => {
         appointmentDate: '',
         appointmentTime: '',
         shoppingFor: '',
-        isSpecialOccasion: false
+        isSpecialOccasion: false,
+        storeId: ''
       });
       
       navigate('/');
@@ -375,7 +402,7 @@ const MakeWithJSK = () => {
   
   return (
     <Container>
-      <Title>Make with JSK</Title>
+      <Title>Create with JSK</Title>
       <Subtitle>
         Create your own custom jewelry design with our expert craftsmanship
       </Subtitle>
@@ -604,6 +631,27 @@ const MakeWithJSK = () => {
           <SectionTitle>Appointment</SectionTitle>
           
           <FormGroup>
+            <Label>Select a Store *</Label>
+            <Select
+              name="storeId"
+              value={formData.storeId}
+              onChange={handleInputChange}
+              onBlur={handleBlur}
+              required
+              disabled={loadingStores}
+            >
+              <option value="">Select a store</option>
+              {stores.map((store) => (
+                <option key={store._id} value={store._id}>
+                  {store.name} - {store.address.city}, {store.address.state}
+                </option>
+              ))}
+            </Select>
+            {loadingStores && <div style={{ marginTop: '8px', fontSize: '14px', color: '#666' }}>Loading stores...</div>}
+            {errors.storeId && <ErrorMessage>{errors.storeId}</ErrorMessage>}
+          </FormGroup>
+          
+          <FormGroup>
             <Label>Select a Date *</Label>
             <DateGrid>
               {dates.map((dateObj) => (
@@ -620,6 +668,7 @@ const MakeWithJSK = () => {
                 </DateOption>
               ))}
             </DateGrid>
+            {errors.appointmentDate && <ErrorMessage>{errors.appointmentDate}</ErrorMessage>}
           </FormGroup>
           
           <FormGroup>
@@ -639,6 +688,7 @@ const MakeWithJSK = () => {
                 </TimeOption>
               ))}
             </TimeGrid>
+            {errors.appointmentTime && <ErrorMessage>{errors.appointmentTime}</ErrorMessage>}
           </FormGroup>
         </FormContainer>
         

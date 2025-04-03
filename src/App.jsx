@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useEffect } from 'react';
 import Layout from './components/layout/Layout';
@@ -16,7 +16,7 @@ import Productstwo from './pages/Productstwo';
 import Collection from './pages/Collection';
 import CollectionTwo from './pages/CollectionTwo';
 import BookingAppoiment from './pages/BookingAppoiment';
-import MakeWithJSK from './pages/MakeWithJSK';
+import CreateWithJSK from './pages/CreateWithJSK';
 import BlogsOne from './pages/BlogsOne';
 import BlogsTwo from './pages/BlogsTwo';
 import BlogsThree from './pages/BlogsThree';
@@ -140,7 +140,8 @@ function App() {
             <Route path="collection" element={<Collection />} />
             <Route path="collectiontwo" element={<CollectionTwo />} />
             <Route path="booking-appoinment" element={<AuthGuard><BookingAppoiment /></AuthGuard>} />
-            <Route path="make-with-jsk" element={<AuthGuard><MakeWithJSK /></AuthGuard>} />
+            <Route path="create-with-jsk" element={<AuthGuard><CreateWithJSK /></AuthGuard>} />
+            <Route path="make-with-jsk" element={<Navigate to="/create-with-jsk" replace />} />
             <Route path="blogs-one" element={<BlogsOne />} />
             <Route path="blogs-two" element={<BlogsTwo />} />
             <Route path="ring" element={<Ring />} />
