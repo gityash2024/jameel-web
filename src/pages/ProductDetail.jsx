@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import SocialShare from './SocialShare';
+import ReviewForm from '../components/review/ReviewForm';
+import ReviewList from '../components/review/ReviewList';
 
 import styled from "styled-components";
 import {
@@ -16,7 +18,7 @@ import {
   Star,
   ShoppingBag
 } from "lucide-react";
-import { productAPI, userAPI, cartAPI } from "../services/api";
+import { productAPI, userAPI, cartAPI, shippingAPI } from "../services/api";
 import { toast } from "react-hot-toast";
 import { HeaderContext } from "../components/layout/Header";
 import RelatedProducts from "../components/product/RelatedProducts";
@@ -399,7 +401,7 @@ const SizeButton = styled.button`
 
 const AddToCartSection = styled.div`
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr auto auto;
   gap: 12px;
   margin-top: 30px;
   
@@ -434,6 +436,34 @@ const AddToCartButton = styled.button`
   &:disabled {
     background: #ccc;
     cursor: not-allowed;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 14px;
+    font-size: 15px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 12px;
+    font-size: 14px;
+    gap: 6px;
+  }
+`;
+
+const CustomDesignButton = styled.button`
+  background: white;
+  color: black;
+  border: 1px solid black;
+  padding: 16px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  &:hover {
+    background: #f5f5f5;
   }
   
   @media (max-width: 768px) {
@@ -1122,65 +1152,6 @@ const HighlightsList = styled.div`
   }
 `;
 
-const FinancingInfo = styled.div`
-  background: #f9f9f9;
-  padding: 16px;
-  border-radius: 4px;
-  margin: 16px 0;
-  
-  h4 {
-    font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 8px;
-  }
-  
-  p {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 8px;
-  }
-  
-  a {
-    color: #000;
-    text-decoration: underline;
-    font-weight: 500;
-  }
-  
-  @media (max-width: 768px) {
-    padding: 14px;
-    margin: 14px 0;
-    
-    h4 {
-      font-size: 15px;
-      margin-bottom: 6px;
-    }
-    
-    p {
-      font-size: 13px;
-      margin-bottom: 6px;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    padding: 12px;
-    margin: 12px 0;
-    
-    h4 {
-      font-size: 14px;
-      margin-bottom: 5px;
-    }
-    
-    p {
-      font-size: 12px;
-      margin-bottom: 5px;
-    }
-    
-    a {
-      font-size: 12px;
-    }
-  }
-`;
-
 const ProductDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -1195,9 +1166,15 @@ const ProductDetail = () => {
   const [openSection, setOpenSection] = useState("overview");
   const [isInWishlist, setIsInWishlist] = useState(false);
   
+  const [shippingMethods, setShippingMethods] = useState([]);
+  const [deliveryEstimate, setDeliveryEstimate] = useState(null);
+  const [loadingShippingInfo, setLoadingShippingInfo] = useState(false);
+  const [userZipCode, setUserZipCode] = useState('');
+  
   const imageWrapperRef = useRef(null);
   const zoomedImageRef = useRef(null);
   const [isZoomed, setIsZoomed] = useState(false);
+  const reviewListRef = useRef(null);
   
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -1278,6 +1255,66 @@ const ProductDetail = () => {
     }
   }, [product, wishlistItems, isLoggedIn, localIsLoggedIn, setWishlistItems]);
   
+  useEffect(() => {
+    const fetchShippingMethods = async () => {
+      try {
+        const response = await shippingAPI.getShippingMethods();
+        if (response?.data?.data) {
+          setShippingMethods(response.data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching shipping methods:', error);
+      }
+    };
+    
+    fetchShippingMethods();
+    
+    const savedAddress = localStorage.getItem('userAddress');
+    if (savedAddress) {
+      try {
+        const addressData = JSON.parse(savedAddress);
+        if (addressData.postalCode) {
+          setUserZipCode(addressData.postalCode);
+          fetchDeliveryEstimate(addressData.postalCode);
+        }
+      } catch (e) {
+        console.error('Error parsing saved address:', e);
+      }
+    }
+  }, []);
+  
+  const fetchDeliveryEstimate = async (postalCode) => {
+    if (!postalCode) return;
+    
+    setLoadingShippingInfo(true);
+    try {
+      const response = await shippingAPI.getDeliveryEstimate(postalCode);
+      if (response?.data?.data) {
+        setDeliveryEstimate(response.data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching delivery estimate:', error);
+    } finally {
+      setLoadingShippingInfo(false);
+    }
+  };
+  
+  const handleZipCodeSubmit = (e) => {
+    e.preventDefault();
+    if (userZipCode && userZipCode.length >= 5) {
+      fetchDeliveryEstimate(userZipCode);
+      
+      try {
+        const savedAddress = localStorage.getItem('userAddress');
+        const addressData = savedAddress ? JSON.parse(savedAddress) : {};
+        addressData.postalCode = userZipCode;
+        localStorage.setItem('userAddress', JSON.stringify(addressData));
+      } catch (e) {
+        console.error('Error saving address to localStorage:', e);
+      }
+    }
+  };
+  
   const handlePrevImage = () => {
     if (!product || !product.images || product.images.length === 0) return;
     
@@ -1327,7 +1364,6 @@ const ProductDetail = () => {
         }]);
       }
       
-      // Dispatch custom event to trigger cart update in header
       window.dispatchEvent(new Event('cartUpdated'));
       
       toast.success('Added to cart successfully');
@@ -1365,7 +1401,6 @@ const ProductDetail = () => {
         toast.success('Added to wishlist');
       }
       
-      // Dispatch custom event to trigger wishlist update in header
       window.dispatchEvent(new Event('wishlistUpdated'));
     } catch (error) {
       console.error('Error updating wishlist:', error);
@@ -1602,12 +1637,6 @@ const ProductDetail = () => {
             <InStockInfo>In Stock</InStockInfo>
           )}
           
-          <FinancingInfo>
-            <h4>Financing Options Available</h4>
-            <p>Pay over time with special financing offers</p>
-            <Link to="#">View Other Financing Options</Link>
-          </FinancingInfo>
-          
           <HighlightsList>
             <h4>Product Highlights</h4>
             <ul>
@@ -1671,6 +1700,10 @@ const ProductDetail = () => {
               <ShoppingBag size={18} />
               {isOutOfStock ? 'OUT OF STOCK' : 'ADD TO BAG'}
             </AddToCartButton>
+            <CustomDesignButton onClick={() => navigate('/make-with-jsk')}>
+              <Diamond size={18} />
+              CUSTOM DESIGN
+            </CustomDesignButton>
             <WishlistButton 
               active={isInWishlist}
               onClick={handleWishlistToggle}
@@ -1691,8 +1724,52 @@ const ProductDetail = () => {
             <div>
               <Truck size={24} />
               <div>
-                <div>Delivery by Friday, November 22</div>
-                <div>Order within 9 hours 10 mins</div>
+                {loadingShippingInfo ? (
+                  <>
+                    <div>Calculating delivery estimate...</div>
+                    <div>Please wait</div>
+                  </>
+                ) : deliveryEstimate ? (
+                  <>
+                    <div>Estimated Delivery: {new Date(deliveryEstimate.estimatedDeliveryDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
+                    <div>Free shipping with FedEx {deliveryEstimate.serviceType || 'Standard'}</div>
+                  </>
+                ) : (
+                  <>
+                    <div>Enter your ZIP code for delivery estimate</div>
+                    <form onSubmit={handleZipCodeSubmit} style={{ display: 'flex', marginTop: '8px' }}>
+                      <input 
+                        type="text" 
+                        value={userZipCode}
+                        onChange={(e) => setUserZipCode(e.target.value)}
+                        placeholder="ZIP Code"
+                        style={{ 
+                          width: '100px', 
+                          padding: '6px 8px', 
+                          border: '1px solid #ddd',
+                          borderTopLeftRadius: '4px',
+                          borderBottomLeftRadius: '4px',
+                          fontSize: '13px'
+                        }}
+                      />
+                      <button 
+                        type="submit"
+                        style={{
+                          background: '#000',
+                          color: '#fff',
+                          border: 'none',
+                          padding: '6px 10px',
+                          borderTopRightRadius: '4px',
+                          borderBottomRightRadius: '4px',
+                          fontSize: '13px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Go
+                      </button>
+                    </form>
+                  </>
+                )}
               </div>
             </div>
 
@@ -1704,7 +1781,7 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            <Link to="#">
+            <Link to="/find-your-store">
               Choose a Store.
             </Link>
           </DeliveryInfo>
@@ -1742,13 +1819,59 @@ const ProductDetail = () => {
             {openSection === "shipping" ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
           </AccordionHeader>
           <AccordionContent isOpen={openSection === "shipping"}>
-            <p>We want you to be completely satisfied with your purchase. If you're not happy with your item, you may return it within 30 days of delivery for a full refund of the merchandise value.</p>
-            <ul>
-              <li>Items must be in their original condition with all original packaging.</li>
-              <li>Shipping charges are not refundable.</li>
-              <li>Custom orders cannot be returned or exchanged.</li>
-              <li>Please allow 5-7 business days for returns to be processed.</li>
-            </ul>
+            <div style={{ marginBottom: '20px' }}>
+              <h4 style={{ fontSize: '16px', fontWeight: '500', marginBottom: '12px' }}>Shipping Options</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {shippingMethods && shippingMethods.length > 0 ? (
+                  shippingMethods.map((method, index) => (
+                    <div key={index} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>
+                      <div>
+                        <div style={{ fontWeight: '500' }}>{method.name}</div>
+                        <div style={{ fontSize: '14px', color: '#666' }}>{method.description}</div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div>{method.estimatedDays} business days</div>
+                        <div style={{ fontWeight: '500' }}>{method.cost > 0 ? `$${method.cost.toFixed(2)}` : 'Free'}</div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div>
+                    <div style={{ fontWeight: '500' }}>FedEx Standard Shipping</div>
+                    <div style={{ fontSize: '14px', color: '#666' }}>Delivered within 3-5 business days</div>
+                    <div style={{ fontWeight: '500', marginTop: '8px' }}>Free on orders over $50</div>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div style={{ marginBottom: '20px' }}>
+              <h4 style={{ fontSize: '16px', fontWeight: '500', marginBottom: '12px' }}>Shipping Policy</h4>
+              <ul style={{ paddingLeft: '20px' }}>
+                <li>Orders are typically processed within 1-2 business days.</li>
+                <li>All orders are fulfilled by FedEx, with tracking information provided via email.</li>
+                <li>Expedited shipping options available at checkout for faster delivery.</li>
+                <li>International shipping available to select countries.</li>
+                <li>Some items may require signature confirmation upon delivery.</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 style={{ fontSize: '16px', fontWeight: '500', marginBottom: '12px' }}>Returns & Exchanges</h4>
+              <p>We want you to be completely satisfied with your purchase. If you're not happy with your item, you may return it within 30 days of delivery for a full refund of the merchandise value.</p>
+              <ul style={{ paddingLeft: '20px', marginTop: '10px' }}>
+                <li>Items must be in their original condition with all original packaging.</li>
+                <li>Shipping charges are not refundable.</li>
+                <li>Custom orders cannot be returned or exchanged.</li>
+                <li>Please allow 5-7 business days for returns to be processed.</li>
+              </ul>
+              
+              <div style={{ marginTop: '16px' }}>
+                <Link to="/return-policy" style={{ color: '#000', textDecoration: 'underline' }}>
+                  View our full Return Policy
+                </Link>
+              </div>
+            </div>
           </AccordionContent>
         </AccordionSection>
         
@@ -1955,28 +2078,40 @@ const ProductDetail = () => {
             {openSection === "reviews" ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
           </AccordionHeader>
           <AccordionContent isOpen={openSection === "reviews"}>
-            <p>No reviews yet. Be the first to leave a review!</p>
-            <button
-              style={{
-                background: '#000',
-                color: 'white',
-                padding: '10px 20px',
-                border: 'none',
-                borderRadius: '4px',
-                marginTop: '16px',
-                cursor: 'pointer'
-              }}
-              onClick={() => {
-                if (!isLoggedIn && !localIsLoggedIn) {
-                  toast.error('Please login to write a review');
-                  navigate('/login', { state: { from: `/products/${slug}` } });
-                  return;
-                }
-                toast.success('Review feature is coming soon!');
-              }}
-            >
-              Write a Review
-            </button>
+            {!isLoggedIn && !localIsLoggedIn ? (
+              <div style={{ textAlign: 'center', margin: '20px 0' }}>
+                <p style={{ marginBottom: '15px' }}>Please login to write a review</p>
+                <button
+                  style={{
+                    background: '#000',
+                    color: 'white',
+                    padding: '10px 20px',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => navigate('/login', { state: { from: `/products/${slug}` } })}
+                >
+                  Login
+                </button>
+              </div>
+            ) : (
+              <ReviewForm 
+                productId={product._id} 
+                onReviewSubmitted={() => {
+                  if (reviewListRef.current) {
+                    reviewListRef.current.fetchReviews(true);
+                  }
+                }} 
+              />
+            )}
+            
+            <ReviewList 
+              productId={product._id}
+              isLoggedIn={isLoggedIn}
+              localIsLoggedIn={localIsLoggedIn}
+              ref={reviewListRef}
+            />
           </AccordionContent>
         </AccordionSection>
       </div>

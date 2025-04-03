@@ -197,9 +197,14 @@ export const orderAPI = {
 };
 
 export const reviewAPI = {
-  getProductReviews: (productId) => api.get(`/products/${productId}/reviews`),
+  getProductReviews: (productId, params) => api.get(`/products/${productId}/reviews`, { params }),
   addProductReview: (productId, data) => api.post(`/products/${productId}/reviews`, data),
+  markReviewHelpful: (reviewId) => api.post(`/reviews/${reviewId}/helpful`),
+  removeHelpfulMark: (reviewId) => api.delete(`/reviews/${reviewId}/helpful`),
+  reportReview: (reviewId, reason) => api.post(`/reviews/${reviewId}/report`, { reason }),
+  getMyReviews: (params) => api.get('/reviews/my-reviews', { params }),
 };
+
 export const supportAPI = {
   createSupportTicket: (data) => api.post('/support-tickets', data),
   getAllSupportTickets: (params) => api.get('/support-tickets', { params }),
@@ -236,6 +241,14 @@ export const storeAPI = {
   deleteStore: (id) => api.delete(`/stores/${id}`),
   findNearbyStores: (lat, lng, distance) => 
     api.get(`/stores/nearby?lat=${lat}&lng=${lng}&distance=${distance || 10000}`)
+};
+
+export const shippingAPI = {
+  getShippingMethods: () => api.get('/shipping/methods'),
+  getDeliveryEstimate: (postalCode, shippingMethod) => 
+    api.get(`/shipping/delivery-estimate?postalCode=${postalCode}${shippingMethod ? `&method=${shippingMethod}` : ''}`),
+  calculateShippingRates: (data) => api.post('/shipping/rates', data),
+  trackShipment: (trackingNumber) => api.get(`/shipping/track/${trackingNumber}`),
 };
 
 export default api;
