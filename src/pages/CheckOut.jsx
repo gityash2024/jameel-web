@@ -395,7 +395,8 @@ const CheckoutForm = () => {
     address: '',
     city: '',
     state: '',
-    zipCode: ''
+    zipCode: '',
+    message: '',
   });
 
   useEffect(() => {
@@ -590,6 +591,7 @@ const CheckoutForm = () => {
           postalCode: formData.zipCode,
           country: "US"
         },
+        message: formData.message,
         items: cartItems.map(item => {
           // Handle different product data structures
           const productId = item.product?._id || item.product?.id || item._id || item.id;
@@ -750,6 +752,24 @@ const CheckoutForm = () => {
                 value={formData.phone}
                 onChange={handleInputChange}
                 required
+              />
+            </FormGroup>
+            <FormGroup>
+              <label>Special Instructions or Requirements</label>
+              <textarea
+                name="message"
+                value={formData.message}
+                onChange={handleInputChange}
+                placeholder="Add any special requirements or instructions for your order"
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  backgroundColor: '#f8f9fc',
+                  minHeight: '100px',
+                  resize: 'vertical'
+                }}
               />
             </FormGroup>
             <FormGroup>
